@@ -1,4 +1,5 @@
 import { COMBAT_STYLES, DISCIPLINES, combatStyleByName, disciplinesOfStyle } from '../src/reference/swtor';
+import { BOSSES_SEED } from '../src/reference/bossesSeed';
 
 describe('reference swtor', () => {
   it('tem 16 combat styles e 48 disciplinas', () => {
@@ -21,5 +22,22 @@ describe('reference swtor', () => {
     expect(by('Tank')).toBe(6);
     expect(by('Healer')).toBe(6);
     expect(by('DPS')).toBe(36);
+  });
+});
+
+describe('bosses seed', () => {
+  it('soma exatamente 105 pontos (invariante do Tier 6)', () => {
+    expect(BOSSES_SEED.reduce((s, b) => s + b.points, 0)).toBe(105);
+  });
+
+  it('contagem por tipo: boss=88, timer=8, lair=9', () => {
+    const by = (t: string) => BOSSES_SEED.filter((b) => b.type === t).reduce((s, b) => s + b.points, 0);
+    expect(by('boss')).toBe(88);
+    expect(by('timer')).toBe(8);
+    expect(by('lair')).toBe(9);
+  });
+
+  it('timers não têm dificuldade', () => {
+    expect(BOSSES_SEED.filter((b) => b.type === 'timer').every((b) => b.difficulty === null)).toBe(true);
   });
 });
