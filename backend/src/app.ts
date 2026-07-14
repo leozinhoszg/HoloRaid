@@ -9,9 +9,11 @@ import { logger } from './common/logger/logger';
 import { requestId } from './common/middleware/requestId';
 import { errorHandler, notFoundHandler } from './common/middleware/errorHandler';
 import { createAuthRouter } from './modules/auth/auth.router';
+import { createUsersRouter } from './modules/users/users.router';
 import type { AuthService } from './modules/auth/auth.service';
+import type { UserService } from './modules/users/users.service';
 
-export function createApp(deps: { authService: AuthService }): Express {
+export function createApp(deps: { authService: AuthService; userService?: UserService }): Express {
   const cfg = getConfig();
   const app = express();
 
@@ -31,6 +33,7 @@ export function createApp(deps: { authService: AuthService }): Express {
 
   app.get('/health', (_req, res) => res.json({ ok: true }));
   app.use('/auth', authLimiter, createAuthRouter(deps.authService));
+  if (deps.userService) app.use('/', createUsersRouter(deps.userService));
 
   app.use(notFoundHandler);
   app.use(errorHandler);
