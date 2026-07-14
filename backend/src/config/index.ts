@@ -8,7 +8,11 @@ const csv = (s: string) => s.split(',').map((x) => x.trim()).filter(Boolean);
 const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(3000),
-  DATABASE_URL: z.string().min(1),
+  DB_HOST: z.string().min(1).default('127.0.0.1'),
+  DB_PORT: z.coerce.number().int().positive().default(3306),
+  DB_USER: z.string().min(1).default('root'),
+  DB_PASSWORD: z.string().default(''),
+  DB_NAME: z.string().min(1).default('raidsync'),
   JWT_SECRET: z.string().min(32),
   ACCESS_TOKEN_TTL: z.string().default('15m'),
   REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().positive().default(30),
