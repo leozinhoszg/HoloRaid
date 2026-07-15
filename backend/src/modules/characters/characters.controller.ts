@@ -24,5 +24,10 @@ export function createCharactersController(characterService: CharacterService, p
     async history(req: Request, res: Response) {
       res.json(await progressionService.history(Number(req.params.id)));
     },
+    async setBosses(req: Request, res: Response) {
+      await characterService.assertOwner(req.user!.sub, Number(req.params.id));
+      const { bossIds } = req.body as { bossIds: number[] };
+      res.json(await progressionService.setCompletions(Number(req.params.id), bossIds));
+    },
   };
 }

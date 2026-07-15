@@ -54,6 +54,9 @@ export function createCharacterService(deps: { personagemRepo: PersonagemRepo })
       await owned(actorId, id);
       await deps.personagemRepo.delete(id);
     },
+    async assertOwner(actorId: number, id: number): Promise<void> {
+      await owned(actorId, id);
+    },
   };
 }
 

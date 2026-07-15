@@ -10,6 +10,7 @@ import type { ProgressionService } from '../progression/progression.service';
 const wrap = (fn: (req: any, res: any) => Promise<unknown> | unknown) =>
   (req: any, res: any, next: any) => Promise.resolve(fn(req, res)).catch(next);
 const idParam = z.object({ id: z.coerce.number().int().positive() });
+const bossIdsSchema = z.object({ bossIds: z.array(z.number().int().positive()) });
 
 export function createCharactersRouter(characterService: CharacterService, progressionService: ProgressionService): Router {
   const c = createCharactersController(characterService, progressionService);
@@ -20,5 +21,6 @@ export function createCharactersRouter(characterService: CharacterService, progr
   r.patch('/characters/:id', requireAuth, validate({ params: idParam, body: updateCharacterSchema }), wrap(c.update));
   r.delete('/characters/:id', requireAuth, validate({ params: idParam }), wrap(c.remove));
   r.get('/characters/:id/history', requireAuth, validate({ params: idParam }), wrap(c.history));
+  r.put('/characters/:id/bosses', requireAuth, validate({ params: idParam, body: bossIdsSchema }), wrap(c.setBosses));
   return r;
 }

@@ -37,6 +37,18 @@ export function createProgressionService(deps: Deps) {
       await ensureExists(personagemId);
       return deps.charBossRepo.listWithBoss(personagemId);
     },
+    async setCompletions(personagemId: number, bossIds: number[]): Promise<{ awarded: number; removed: number; total_points: number }> {
+      await ensureExists(personagemId);
+      const validIds = (await deps.bossRepo.findByIds([...new Set(bossIds)])).map((b) => b.id);
+      const desired = new Set(validIds);
+      const current = new Set(await deps.charBossRepo.listBossIds(personagemId));
+      const toAdd = [...desired].filter((id) => !current.has(id));
+      const toRemove = [...current].filter((id) => !desired.has(id));
+      await deps.charBossRepo.insertMany(personagemId, toAdd);
+      for (const id of toRemove) await deps.charBossRepo.deleteOne(personagemId, id);
+      const total_points = await recomputeTotal(personagemId);
+      return { awarded: toAdd.length, removed: toRemove.length, total_points };
+    },
   };
 }
 
