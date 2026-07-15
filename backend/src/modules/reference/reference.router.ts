@@ -11,5 +11,6 @@ export function createReferenceRouter(bossRepo: BossRepo): Router {
   const r = Router();
   r.get('/reference/classes', requireAuth, wrap(c.classes));
   r.get('/reference/bosses', requireAuth, wrap(c.bosses));
+  r.get('/reference/operations', requireAuth, wrap(c.operations));
   return r;
 }

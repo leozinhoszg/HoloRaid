@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { FACTIONS, ROLES, COMBAT_STYLES, DISCIPLINES } from '../../reference/swtor';
+import { OPERATIONS } from '../../reference/operations';
 import type { BossRepo } from '../../db/repositories/bossRepo';
 
 export function createReferenceController(bossRepo: BossRepo) {
@@ -7,6 +8,9 @@ export function createReferenceController(bossRepo: BossRepo) {
     classes(_req: Request, res: Response) {
       const originStories = [...new Set(COMBAT_STYLES.map((c) => c.originStory))];
       res.json({ factions: FACTIONS, roles: ROLES, originStories, combatStyles: COMBAT_STYLES, disciplines: DISCIPLINES });
+    },
+    operations(_req: Request, res: Response) {
+      res.json({ operations: OPERATIONS });
     },
     async bosses(_req: Request, res: Response) {
       const all = await bossRepo.list();
