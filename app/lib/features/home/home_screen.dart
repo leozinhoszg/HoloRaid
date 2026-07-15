@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/auth/auth_providers.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -33,6 +34,12 @@ class HomeScreen extends ConsumerWidget {
                 Text(me['username'] as String? ?? 'sem nome',
                     style: Theme.of(context).textTheme.titleLarge),
                 Text('Papel: ${me['role'] ?? '-'}'),
+                const SizedBox(height: 24),
+                FilledButton.icon(
+                  onPressed: () => context.push('/characters'),
+                  icon: const Icon(Icons.people),
+                  label: const Text('Meus Personagens'),
+                ),
               ],
             );
           },

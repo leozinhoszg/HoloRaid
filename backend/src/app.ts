@@ -10,10 +10,22 @@ import { requestId } from './common/middleware/requestId';
 import { errorHandler, notFoundHandler } from './common/middleware/errorHandler';
 import { createAuthRouter } from './modules/auth/auth.router';
 import { createUsersRouter } from './modules/users/users.router';
+import { createReferenceRouter } from './modules/reference/reference.router';
+import { createCharactersRouter } from './modules/characters/characters.router';
+import { createProgressionRouter } from './modules/progression/progression.router';
 import type { AuthService } from './modules/auth/auth.service';
 import type { UserService } from './modules/users/users.service';
+import type { CharacterService } from './modules/characters/characters.service';
+import type { ProgressionService } from './modules/progression/progression.service';
+import type { BossRepo } from './db/repositories/bossRepo';
 
-export function createApp(deps: { authService: AuthService; userService?: UserService }): Express {
+export function createApp(deps: {
+  authService: AuthService;
+  userService?: UserService;
+  characterService?: CharacterService;
+  progressionService?: ProgressionService;
+  bossRepo?: BossRepo;
+}): Express {
   const cfg = getConfig();
   const app = express();
 
@@ -34,6 +46,11 @@ export function createApp(deps: { authService: AuthService; userService?: UserSe
   app.get('/health', (_req, res) => res.json({ ok: true }));
   app.use('/auth', authLimiter, createAuthRouter(deps.authService));
   if (deps.userService) app.use('/', createUsersRouter(deps.userService));
+  if (deps.bossRepo) app.use('/', createReferenceRouter(deps.bossRepo));
+  if (deps.characterService && deps.progressionService) {
+    app.use('/', createCharactersRouter(deps.characterService, deps.progressionService));
+    app.use('/', createProgressionRouter(deps.progressionService));
+  }
 
   app.use(notFoundHandler);
   app.use(errorHandler);

@@ -35,8 +35,42 @@ export interface AdminAuditLogTable {
   created_at: Created;
 }
 
+export interface PersonagensTable {
+  id: Generated<number>;
+  usuario_id: number;
+  nome: string;
+  faccao: 'Republic' | 'Empire';
+  classe: string;
+  especializacao: string | null;
+  role: 'Tank' | 'Healer' | 'DPS';
+  origin_story: string | null;
+  item_level: number;
+  total_points: number;
+  created_at: Created;
+  updated_at: Updated;
+}
+
+export interface BossesTable {
+  id: Generated<number>;
+  operation: string;
+  boss: string;
+  difficulty: 'Veteran' | 'Master' | null;
+  type: 'boss' | 'timer' | 'lair';
+  points: number;
+}
+
+export interface CharacterBossesTable {
+  id: Generated<number>;
+  personagem_id: number;
+  boss_id: number;
+  completed_at: ColumnType<Date, Date | string, never>;
+}
+
 export interface DB {
   usuarios: UsuariosTable;
   refresh_tokens: RefreshTokensTable;
   admin_audit_log: AdminAuditLogTable;
+  personagens: PersonagensTable;
+  bosses: BossesTable;
+  character_bosses: CharacterBossesTable;
 }

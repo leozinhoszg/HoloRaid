@@ -5,6 +5,11 @@ import { createRefreshTokenRepo } from './db/repositories/refreshTokenRepo';
 import { createAuditLog } from './db/repositories/auditRepo';
 import { createAuthService } from './modules/auth/auth.service';
 import { createUserService } from './modules/users/users.service';
+import { createPersonagemRepo } from './db/repositories/personagemRepo';
+import { createBossRepo } from './db/repositories/bossRepo';
+import { createCharacterBossRepo } from './db/repositories/characterBossRepo';
+import { createCharacterService } from './modules/characters/characters.service';
+import { createProgressionService } from './modules/progression/progression.service';
 import { createApp } from './app';
 import { logger } from './common/logger/logger';
 
@@ -19,5 +24,11 @@ const authService = createAuthService({
 });
 const userService = createUserService({ userRepo, auditLog: createAuditLog(db) });
 
-const app = createApp({ authService, userService });
+const personagemRepo = createPersonagemRepo(db);
+const bossRepo = createBossRepo(db);
+const charBossRepo = createCharacterBossRepo(db);
+const characterService = createCharacterService({ personagemRepo });
+const progressionService = createProgressionService({ personagemRepo, bossRepo, charBossRepo });
+
+const app = createApp({ authService, userService, characterService, progressionService, bossRepo });
 app.listen(cfg.PORT, () => logger.info(`RaidSync backend ouvindo em :${cfg.PORT}`));
