@@ -1,9 +1,10 @@
-import { raidCreateSchema } from '../modules/raids/raids.schemas';
+import { raidCreateSchema, raidUpdateSchema } from '../modules/raids/raids.schemas';
 import { defaultSlots } from '../modules/raids/raids.util';
-import type { RaidService } from '../modules/raids/raids.service';
+import type { RaidService, RaidDetail } from '../modules/raids/raids.service';
 import type { UserRepo } from '../db/repositories/userRepo';
 import type { GuildConfigRepo } from '../db/repositories/guildConfigRepo';
 import type { RaidBroadcaster } from '../realtime/broadcaster';
+import { AppError } from '../common/errors/AppError';
 
 export interface CommandInteraction {
   user: { id: string; username: string };
@@ -21,6 +22,7 @@ export type CommandDeps = {
   userRepo: UserRepo;
   guildConfigRepo: GuildConfigRepo;
   bus: RaidBroadcaster;
+  report?: (detail: RaidDetail, guildId: string, channelId: string) => Promise<'posted' | 'exists' | 'failed'>;
 };
 
 export async function handleSetRaidChannel(i: CommandInteraction, deps: CommandDeps): Promise<void> {
@@ -65,4 +67,23 @@ export async function handleCreateRaid(i: CommandInteraction, deps: CommandDeps)
   const detail = await deps.raidService.create({ sub: user.id, role: user.role }, { ...parsed.data, notes: parsed.data.notes ?? null });
   deps.bus.raidCreated(detail);
   await i.reply({ content: `Raid created: **${detail.operation}** (${detail.codigo}). It will be posted in configured channels.`, ephemeral: true });
+}
+
+export async function handleReportRaid(i: CommandInteraction, deps: CommandDeps): Promise<void> {
+  const code = i.getString('code');
+  if (!code) { await i.reply({ content: 'Provide the raid code.', ephemeral: true }); return; }
+  if (!i.guildId) { await i.reply({ content: 'Use this command in a server.', ephemeral: true }); return; }
+  if (!deps.report) { await i.reply({ content: 'Reporting is unavailable.', ephemeral: true }); return; }
+
+  let detail: RaidDetail;
+  try { detail = await deps.raidService.getByCodigo(code); }
+  catch { await i.reply({ content: 'Raid not found.', ephemeral: true }); return; }
+
+  if (detail.status !== 'OPEN') { await i.reply({ content: "This raid isn't open for sign-ups.", ephemeral: true }); return; }
+
+  const result = await deps.report(detail, i.guildId, i.channelId);
+  const msg = result === 'posted' ? 'Raid reported in this channel. ✅'
+    : result === 'exists' ? 'This raid is already posted in this channel.'
+      : "Couldn't post here — check my permissions.";
+  await i.reply({ content: msg, ephemeral: true });
 }
