@@ -49,3 +49,28 @@ describe('DiscordSync', () => {
     expect(refs[0]!.channel_id).toBe('c2');
   });
 });
+
+describe('reportTo', () => {
+  it('canal novo → posted + grava ref', async () => {
+    const { core, gateway, msgRepo } = await setup();
+    const r = await core.reportTo(detail(), 'g9', 'c9');
+    expect(r).toBe('posted');
+    expect((await msgRepo.listByRaid(7)).some((m) => m.channel_id === 'c9')).toBe(true);
+    expect(gateway.calls.filter((c) => c.kind === 'post')).toHaveLength(1);
+  });
+
+  it('canal já reportado → exists sem duplicar', async () => {
+    const { core, msgRepo } = await setup();
+    await core.reportTo(detail(), 'g9', 'c9');
+    const r = await core.reportTo(detail(), 'g9', 'c9');
+    expect(r).toBe('exists');
+    expect((await msgRepo.listByRaid(7)).filter((m) => m.channel_id === 'c9')).toHaveLength(1);
+  });
+
+  it('gateway falha → failed e não grava ref', async () => {
+    const { core, msgRepo } = await setup({ failChannels: ['cbad'] });
+    const r = await core.reportTo(detail(), 'g9', 'cbad');
+    expect(r).toBe('failed');
+    expect((await msgRepo.listByRaid(7)).some((m) => m.channel_id === 'cbad')).toBe(false);
+  });
+});

@@ -1,6 +1,6 @@
 import { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder, PermissionFlagsBits, Events, type ChatInputCommandInteraction } from 'discord.js';
 import { OPERATIONS } from '../reference/operations';
-import { handleCreateRaid, handleSetRaidChannel, type CommandDeps, type CommandInteraction } from './commands';
+import { handleCreateRaid, handleSetRaidChannel, handleEditRaid, handleReportRaid, type CommandDeps, type CommandInteraction } from './commands';
 import { logger } from '../common/logger/logger';
 
 export function buildCommandDefs() {
@@ -22,7 +22,25 @@ export function buildCommandDefs() {
     .setDescription('Set this channel as the raid announcement channel')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
 
-  return [createRaid.toJSON(), setChannel.toJSON()];
+  const editRaid = new SlashCommandBuilder()
+    .setName('edit_raid')
+    .setDescription('Edit an open raid (times are in UTC)')
+    .addStringOption((o) => o.setName('code').setDescription('Raid code').setRequired(true))
+    .addIntegerOption((o) => o.setName('minimum_tier').setDescription('Minimum Tier 0-6').setMinValue(0).setMaxValue(6))
+    .addStringOption((o) => o.setName('notes').setDescription('Notes'))
+    .addStringOption((o) => o.setName('date').setDescription('Date YYYY-MM-DD (UTC)'))
+    .addStringOption((o) => o.setName('time').setDescription('Time HH:MM (UTC)'))
+    .addBooleanOption((o) => o.setName('check_composition').setDescription('Enforce role slots'))
+    .addIntegerOption((o) => o.setName('slots_tank').setDescription('Tank slots').setMinValue(0))
+    .addIntegerOption((o) => o.setName('slots_heal').setDescription('Healer slots').setMinValue(0))
+    .addIntegerOption((o) => o.setName('slots_dps').setDescription('DPS slots').setMinValue(0));
+
+  const reportRaid = new SlashCommandBuilder()
+    .setName('report_raid')
+    .setDescription('Post a raid in this channel')
+    .addStringOption((o) => o.setName('code').setDescription('Raid code').setRequired(true));
+
+  return [createRaid.toJSON(), setChannel.toJSON(), editRaid.toJSON(), reportRaid.toJSON()];
 }
 
 // Adapta a interação do discord.js para a superfície mínima dos handlers.
@@ -54,6 +72,8 @@ export function attachBot(client: Client, deps: { token: string; clientId: strin
     try {
       if (interaction.commandName === 'create_raid') await handleCreateRaid(i, deps);
       else if (interaction.commandName === 'set_raid_channel') await handleSetRaidChannel(i, deps);
+      else if (interaction.commandName === 'edit_raid') await handleEditRaid(i, deps);
+      else if (interaction.commandName === 'report_raid') await handleReportRaid(i, deps);
     } catch (err) {
       logger.error({ err, cmd: interaction.commandName }, 'Discord: erro no comando');
       if (!interaction.replied) await interaction.reply({ content: 'Something went wrong.', ephemeral: true }).catch(() => {});

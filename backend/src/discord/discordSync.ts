@@ -40,15 +40,30 @@ export function createDiscordSyncCore(deps: Deps) {
       }
       await deps.msgRepo.deleteByRaid(id);
     },
+    async reportTo(detail: RaidDetail, guildId: string, channelId: string): Promise<'posted' | 'exists' | 'failed'> {
+      const already = (await deps.msgRepo.listByRaid(detail.id)).some((m) => m.channel_id === channelId);
+      if (already) return 'exists';
+      try {
+        const messageId = await deps.gateway.postEmbed(channelId, buildRaidEmbed(detail, deps.appPublicUrl));
+        await deps.msgRepo.create({ raid_id: detail.id, guild_id: guildId, channel_id: channelId, message_id: messageId });
+        return 'posted';
+      } catch (err) {
+        logger.error({ err, channel: channelId }, 'discord: report falhou');
+        return 'failed';
+      }
+    },
   };
 }
 
-export function createDiscordSync(deps: Deps): RaidBroadcaster {
+export function createDiscordSync(deps: Deps): RaidBroadcaster & {
+  reportTo(detail: RaidDetail, guildId: string, channelId: string): Promise<'posted' | 'exists' | 'failed'>;
+} {
   const core = createDiscordSyncCore(deps);
   const run = (p: Promise<unknown>) => { p.catch((err) => logger.error({ err }, 'discord sync falhou')); };
   return {
     raidCreated(detail) { run(core.onCreated(detail)); },
     raidUpdated(detail, event) { run(core.onUpdated(detail, event)); },
     raidRemoved(id) { run(core.onRemoved(id)); },
+    reportTo: core.reportTo,
   };
 }
