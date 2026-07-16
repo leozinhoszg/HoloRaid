@@ -13,11 +13,14 @@ import { createUsersRouter } from './modules/users/users.router';
 import { createReferenceRouter } from './modules/reference/reference.router';
 import { createCharactersRouter } from './modules/characters/characters.router';
 import { createProgressionRouter } from './modules/progression/progression.router';
+import { createRaidsRouter } from './modules/raids/raids.router';
 import type { AuthService } from './modules/auth/auth.service';
 import type { UserService } from './modules/users/users.service';
 import type { CharacterService } from './modules/characters/characters.service';
 import type { ProgressionService } from './modules/progression/progression.service';
 import type { BossRepo } from './db/repositories/bossRepo';
+import type { RaidService } from './modules/raids/raids.service';
+import type { RaidJoinService } from './modules/raids/raidJoin.service';
 
 export function createApp(deps: {
   authService: AuthService;
@@ -25,6 +28,8 @@ export function createApp(deps: {
   characterService?: CharacterService;
   progressionService?: ProgressionService;
   bossRepo?: BossRepo;
+  raidService?: RaidService;
+  raidJoinService?: RaidJoinService;
 }): Express {
   const cfg = getConfig();
   const app = express();
@@ -50,6 +55,9 @@ export function createApp(deps: {
   if (deps.characterService && deps.progressionService) {
     app.use('/', createCharactersRouter(deps.characterService, deps.progressionService));
     app.use('/', createProgressionRouter(deps.progressionService));
+  }
+  if (deps.raidService && deps.raidJoinService) {
+    app.use('/', createRaidsRouter(deps.raidService, deps.raidJoinService));
   }
 
   app.use(notFoundHandler);
