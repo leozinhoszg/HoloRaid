@@ -97,6 +97,22 @@ export interface RaidPlayersTable {
   joined_at: ColumnType<Date, Date | string, never>;
 }
 
+export interface GuildConfigTable {
+  guild_id: string;
+  raid_channel_id: string;
+  created_at: Created;
+  updated_at: Updated;
+}
+
+export interface RaidDiscordMessagesTable {
+  id: Generated<number>;
+  raid_id: number;
+  guild_id: string;
+  channel_id: string;
+  message_id: string;
+  created_at: Created;
+}
+
 export interface DB {
   usuarios: UsuariosTable;
   refresh_tokens: RefreshTokensTable;
@@ -106,4 +122,6 @@ export interface DB {
   character_bosses: CharacterBossesTable;
   raids: RaidsTable;
   raid_players: RaidPlayersTable;
+  guild_config: GuildConfigTable;
+  raid_discord_messages: RaidDiscordMessagesTable;
 }
