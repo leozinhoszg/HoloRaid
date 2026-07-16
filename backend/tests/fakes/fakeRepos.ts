@@ -5,6 +5,8 @@ import type { BossRepo, BossRecord } from '../../src/db/repositories/bossRepo';
 import type { CharacterBossRepo, CompletedBossRow } from '../../src/db/repositories/characterBossRepo';
 import type { RaidRepo, RaidRecord, NewRaid } from '../../src/db/repositories/raidRepo';
 import type { RaidPlayerRepo, RaidPlayerRecord, RosterRow } from '../../src/db/repositories/raidPlayerRepo';
+import type { GuildConfigRepo, GuildConfig } from '../../src/db/repositories/guildConfigRepo';
+import type { RaidDiscordMessageRepo, RaidDiscordMessage, NewRaidDiscordMessage } from '../../src/db/repositories/raidDiscordMessageRepo';
 import { BOSSES_SEED } from '../../src/reference/bossesSeed';
 
 export function makeFakeUserRepo(): UserRepo {
@@ -121,5 +123,27 @@ export function makeFakeRaidPlayerRepo(personagemRepo: PersonagemRepo): RaidPlay
     },
     async updateStatus(id, status) { const x = rows.find((r) => r.id === id); if (x) x.status = status; },
     async deleteByRaidAndUser(raidId, usuarioId) { const i = rows.findIndex((r) => r.raid_id === raidId && r.usuario_id === usuarioId); if (i >= 0) rows.splice(i, 1); },
+  };
+}
+
+export function makeFakeGuildConfigRepo(): GuildConfigRepo {
+  const rows: GuildConfig[] = [];
+  return {
+    async upsert(guild_id, raid_channel_id) {
+      const x = rows.find((r) => r.guild_id === guild_id);
+      if (x) x.raid_channel_id = raid_channel_id; else rows.push({ guild_id, raid_channel_id });
+    },
+    async list() { return rows.map((r) => ({ ...r })); },
+    async findByGuild(guild_id) { return rows.find((r) => r.guild_id === guild_id) ?? null; },
+  };
+}
+
+export function makeFakeRaidDiscordMessageRepo(): RaidDiscordMessageRepo {
+  const rows: RaidDiscordMessage[] = [];
+  let seq = 1;
+  return {
+    async create(row: NewRaidDiscordMessage) { rows.push({ id: seq++, ...row }); },
+    async listByRaid(raid_id) { return rows.filter((r) => r.raid_id === raid_id).map((r) => ({ ...r })); },
+    async deleteByRaid(raid_id) { for (let i = rows.length - 1; i >= 0; i--) if (rows[i]!.raid_id === raid_id) rows.splice(i, 1); },
   };
 }

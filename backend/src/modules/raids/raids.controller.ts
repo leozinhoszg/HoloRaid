@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import type { RaidService, Actor } from './raids.service';
+import { isRaidFull, type RaidService, type Actor } from './raids.service';
 import type { RaidJoinService } from './raidJoin.service';
 import { noopBroadcaster, type RaidBroadcaster } from '../../realtime/broadcaster';
 
@@ -53,7 +53,9 @@ export function createRaidsController(raidService: RaidService, raidJoinService:
       const id = Number(req.params.id);
       const { personagem_id } = req.body as { personagem_id: number };
       const result = await raidJoinService.join(req.user!.sub, id, personagem_id);
-      broadcaster.raidUpdated(await raidService.getDetail(id), 'playerJoined');
+      const detail = await raidService.getDetail(id);
+      broadcaster.raidUpdated(detail, 'playerJoined');
+      if (result.status === 'confirmed' && isRaidFull(detail)) broadcaster.raidUpdated(detail, 'raidFull');
       res.json(result);
     },
     async leave(req: Request, res: Response) {

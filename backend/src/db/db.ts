@@ -18,6 +18,7 @@ export function createDb(): Kysely<DB> {
       password: cfg.DB_PASSWORD,
       database: cfg.DB_NAME,
       connectionLimit: 10,
+      timezone: 'Z',
     }) as unknown as MysqlPool,
   });
   return new Kysely<DB>({ dialect });

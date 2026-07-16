@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../core/auth/auth_providers.dart';
+import '../../core/config/app_config.dart';
 import '../characters/characters_providers.dart';
 import 'raid_model.dart';
 import 'raids_providers.dart';
@@ -26,6 +27,10 @@ class RaidDetailScreen extends ConsumerWidget {
           final waitlist = raid.roster.where((r) => r.status == 'waitlist').toList();
           final iAmIn = meId != null && raid.roster.any((r) => r.usuarioId == meId);
           final iAmLeader = meId != null && raid.createdBy == meId;
+          int confirmedByRole(String role) => raid.roster.where((r) => r.status == 'confirmed' && r.role == role).length;
+          final isFull = raid.checkComposition
+              ? (confirmedByRole('Tank') >= raid.slotsTank && confirmedByRole('Healer') >= raid.slotsHeal && confirmedByRole('DPS') >= raid.slotsDps)
+              : confirmed.length >= raid.size;
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
@@ -33,6 +38,17 @@ class RaidDetailScreen extends ConsumerWidget {
               Text('${raid.faction} · ${raid.size} players · Tier mín. ${raid.minimumTier} · ${raid.status}'),
               Text('Início: ${raid.startAt.toLocal()}'),
               if (raid.notes != null && raid.notes!.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 8), child: Text(raid.notes!)),
+              if (isFull && raid.status == 'OPEN')
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.errorContainer, borderRadius: BorderRadius.circular(8)),
+                  child: Row(children: [
+                    const Icon(Icons.check_circle, size: 18),
+                    const SizedBox(width: 8),
+                    Text('Raid cheia — vai começar!', style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer)),
+                  ]),
+                ),
               const SizedBox(height: 8),
               Wrap(spacing: 8, children: [
                 OutlinedButton.icon(onPressed: () => _share(context, raid), icon: const Icon(Icons.share), label: const Text('Compartilhar')),
@@ -104,7 +120,7 @@ class RaidDetailScreen extends ConsumerWidget {
   }
 
   void _share(BuildContext context, Raid raid) {
-    final url = 'https://raid.brazilforce.com/r/${raid.codigo}';
+    final url = '${AppConfig.appPublicUrl}/r/${raid.codigo}';
     showDialog(context: context, builder: (_) => AlertDialog(
       title: const Text('Compartilhar raid'),
       content: Column(mainAxisSize: MainAxisSize.min, children: [
