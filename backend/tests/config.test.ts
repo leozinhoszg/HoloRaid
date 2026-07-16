@@ -39,4 +39,16 @@ describe('loadConfig', () => {
     const { DISCORD_CLIENT_ID, ...rest } = good;
     expect(() => loadConfig(rest as any)).toThrow();
   });
+
+  it('APP_PUBLIC_URL default é holoraid.fun e DISCORD_BOT_TOKEN é opcional', () => {
+    const c = loadConfig(good as any);
+    expect(c.APP_PUBLIC_URL).toBe('https://holoraid.fun');
+    expect(c.DISCORD_BOT_TOKEN).toBeUndefined();
+  });
+
+  it('aceita DISCORD_BOT_TOKEN e APP_PUBLIC_URL customizados', () => {
+    const c = loadConfig({ ...good, DISCORD_BOT_TOKEN: 'tok', APP_PUBLIC_URL: 'https://x.test' } as any);
+    expect(c.DISCORD_BOT_TOKEN).toBe('tok');
+    expect(c.APP_PUBLIC_URL).toBe('https://x.test');
+  });
 });

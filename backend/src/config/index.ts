@@ -21,6 +21,8 @@ const EnvSchema = z.object({
   DISCORD_REDIRECT_URI: z.string().url(),
   ADMIN_DISCORD_IDS: z.string().default('').transform(csv),
   CORS_ORIGINS: z.string().default('').transform(csv),
+  DISCORD_BOT_TOKEN: z.string().min(1).optional(),
+  APP_PUBLIC_URL: z.string().url().default('https://holoraid.fun'),
 });
 
 export type AppConfig = z.infer<typeof EnvSchema>;
