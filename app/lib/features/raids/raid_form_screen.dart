@@ -45,7 +45,7 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
         'notes': _notes.text.trim().isEmpty ? null : _notes.text.trim(),
         'start_at': startAt.toIso8601String(),
       });
-      ref.invalidate(raidsProvider);
+      ref.invalidate(raidsListProvider);
       if (mounted) context.pop();
     } on DioException catch (e) {
       setState(() => _error = e.response?.statusCode == 422 ? 'Dados inválidos (confira as vagas somando o size).' : 'Falha: ${e.message}');
