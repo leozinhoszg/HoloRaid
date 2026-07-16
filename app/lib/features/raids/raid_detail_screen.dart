@@ -12,7 +12,7 @@ class RaidDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final raidAsync = ref.watch(raidProvider(id));
+    final raidAsync = ref.watch(raidDetailProvider(id));
     final auth = ref.watch(authStateProvider);
     final meId = auth is AuthSignedIn ? (auth.user['id'] as int?) : null;
 
@@ -86,7 +86,7 @@ class RaidDetailScreen extends ConsumerWidget {
     if (chosen == null) return;
     try {
       final status = await ref.read(raidsRepositoryProvider).join(raid.id, chosen);
-      ref.invalidate(raidProvider(raid.id));
+      ref.invalidate(raidDetailProvider(raid.id));
       if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(status == 'confirmed' ? 'Confirmado!' : 'Você entrou na lista de espera.')));
     } catch (e) {
       if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro: $e')));
@@ -95,12 +95,12 @@ class RaidDetailScreen extends ConsumerWidget {
 
   Future<void> _leave(BuildContext context, WidgetRef ref) async {
     await ref.read(raidsRepositoryProvider).leave(id);
-    ref.invalidate(raidProvider(id));
+    ref.invalidate(raidDetailProvider(id));
   }
 
   Future<void> _transition(BuildContext context, WidgetRef ref, String action) async {
     await ref.read(raidsRepositoryProvider).transition(id, action);
-    ref.invalidate(raidProvider(id));
+    ref.invalidate(raidDetailProvider(id));
   }
 
   void _share(BuildContext context, Raid raid) {

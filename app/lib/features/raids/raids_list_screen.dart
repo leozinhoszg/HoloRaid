@@ -7,7 +7,7 @@ class RaidsListScreen extends ConsumerWidget {
   const RaidsListScreen({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final raids = ref.watch(raidsProvider(null));
+    final raids = ref.watch(raidsListProvider);
     return Scaffold(
       appBar: AppBar(title: const Text('Raids')),
       floatingActionButton: FloatingActionButton.extended(
@@ -21,7 +21,7 @@ class RaidsListScreen extends ConsumerWidget {
         data: (list) => list.isEmpty
             ? const Center(child: Text('Nenhuma raid ainda.'))
             : RefreshIndicator(
-                onRefresh: () async => ref.refresh(raidsProvider(null).future),
+                onRefresh: () async => ref.refresh(raidsListProvider.future),
                 child: ListView.builder(
                   itemCount: list.length,
                   itemBuilder: (_, i) {
