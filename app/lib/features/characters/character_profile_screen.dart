@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'characters_providers.dart';
 
 class CharacterProfileScreen extends ConsumerWidget {
@@ -28,6 +29,12 @@ class CharacterProfileScreen extends ConsumerWidget {
                   Text('${c.faccao} · ${c.classe}${c.especializacao != null ? ' · ${c.especializacao}' : ''} · ${c.role}'),
                   const SizedBox(height: 8),
                   Chip(label: Text(c.tier == 0 ? 'Sem Tier' : 'Tier ${c.tier}')),
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    onPressed: () => context.push('/characters/${c.id}/progression'),
+                    icon: const Icon(Icons.checklist),
+                    label: const Text('Marcar bosses'),
+                  ),
                 ]),
               ),
               const SizedBox(height: 16),

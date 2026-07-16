@@ -40,6 +40,12 @@ class HomeScreen extends ConsumerWidget {
                   icon: const Icon(Icons.people),
                   label: const Text('Meus Personagens'),
                 ),
+                const SizedBox(height: 12),
+                FilledButton.icon(
+                  onPressed: () => context.push('/raids'),
+                  icon: const Icon(Icons.event),
+                  label: const Text('Raids'),
+                ),
               ],
             );
           },

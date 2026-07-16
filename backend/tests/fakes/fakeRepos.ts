@@ -3,6 +3,8 @@ import type { RefreshTokenRepo, RefreshRecord, NewRefresh } from '../../src/db/r
 import type { PersonagemRepo, PersonagemRecord, PersonagemInput } from '../../src/db/repositories/personagemRepo';
 import type { BossRepo, BossRecord } from '../../src/db/repositories/bossRepo';
 import type { CharacterBossRepo, CompletedBossRow } from '../../src/db/repositories/characterBossRepo';
+import type { RaidRepo, RaidRecord, NewRaid } from '../../src/db/repositories/raidRepo';
+import type { RaidPlayerRepo, RaidPlayerRecord, RosterRow } from '../../src/db/repositories/raidPlayerRepo';
 import { BOSSES_SEED } from '../../src/reference/bossesSeed';
 
 export function makeFakeUserRepo(): UserRepo {
@@ -81,5 +83,43 @@ export function makeFakeCharacterBossRepo(bossRepo: BossRepo): CharacterBossRepo
       const bosses = await bossRepo.findByIds(ids);
       return bosses.map((b) => ({ boss_id: b.id, operation: b.operation, boss: b.boss, difficulty: b.difficulty, type: b.type, points: b.points, completed_at: new Date(0) })) as CompletedBossRow[];
     },
+  };
+}
+
+export function makeFakeRaidRepo(): RaidRepo {
+  const rows: RaidRecord[] = [];
+  let seq = 1;
+  return {
+    async create(r: NewRaid) { const rec: RaidRecord = { id: seq++, status: 'OPEN', ...r }; rows.push(rec); return { ...rec }; },
+    async findById(id) { return rows.find((x) => x.id === id) ?? null; },
+    async findByCodigo(codigo) { return rows.find((x) => x.codigo === codigo) ?? null; },
+    async list(f) {
+      return rows.filter((x) => (!f.status || x.status === f.status) && (!f.faction || x.faction === f.faction) && (!f.operation || x.operation === f.operation)).map((x) => ({ ...x }));
+    },
+    async update(id, patch) { const x = rows.find((r) => r.id === id); if (x) Object.assign(x, patch); },
+    async updateStatus(id, status) { const x = rows.find((r) => r.id === id); if (x) x.status = status; },
+    async delete(id) { const i = rows.findIndex((r) => r.id === id); if (i >= 0) rows.splice(i, 1); },
+  };
+}
+
+// personagemRepo é usado só para montar o roster (nome/classe/pontos)
+export function makeFakeRaidPlayerRepo(personagemRepo: PersonagemRepo): RaidPlayerRepo {
+  const rows: RaidPlayerRecord[] = [];
+  let seq = 1;
+  return {
+    async create(row) { rows.push({ id: seq++, ...row }); },
+    async findByRaidAndUser(raidId, usuarioId) { return rows.find((r) => r.raid_id === raidId && r.usuario_id === usuarioId) ?? null; },
+    async listByRaid(raidId) { return rows.filter((r) => r.raid_id === raidId).sort((a, b) => +a.joined_at - +b.joined_at).map((r) => ({ ...r })); },
+    async listRoster(raidId) {
+      const list = rows.filter((r) => r.raid_id === raidId).sort((a, b) => +a.joined_at - +b.joined_at);
+      const out: RosterRow[] = [];
+      for (const r of list) {
+        const p = await personagemRepo.findById(r.personagem_id);
+        out.push({ usuario_id: r.usuario_id, username: 'u' + r.usuario_id, avatar: null, personagem_id: r.personagem_id, nome: p?.nome ?? '?', classe: p?.classe ?? '?', especializacao: p?.especializacao ?? null, role: r.role, item_level: p?.item_level ?? 0, total_points: p?.total_points ?? 0, status: r.status, joined_at: r.joined_at });
+      }
+      return out;
+    },
+    async updateStatus(id, status) { const x = rows.find((r) => r.id === id); if (x) x.status = status; },
+    async deleteByRaidAndUser(raidId, usuarioId) { const i = rows.findIndex((r) => r.raid_id === raidId && r.usuario_id === usuarioId); if (i >= 0) rows.splice(i, 1); },
   };
 }

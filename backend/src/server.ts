@@ -10,6 +10,10 @@ import { createBossRepo } from './db/repositories/bossRepo';
 import { createCharacterBossRepo } from './db/repositories/characterBossRepo';
 import { createCharacterService } from './modules/characters/characters.service';
 import { createProgressionService } from './modules/progression/progression.service';
+import { createRaidRepo } from './db/repositories/raidRepo';
+import { createRaidPlayerRepo } from './db/repositories/raidPlayerRepo';
+import { createRaidService } from './modules/raids/raids.service';
+import { createRaidJoinService } from './modules/raids/raidJoin.service';
 import { createApp } from './app';
 import { logger } from './common/logger/logger';
 
@@ -30,5 +34,10 @@ const charBossRepo = createCharacterBossRepo(db);
 const characterService = createCharacterService({ personagemRepo });
 const progressionService = createProgressionService({ personagemRepo, bossRepo, charBossRepo });
 
-const app = createApp({ authService, userService, characterService, progressionService, bossRepo });
+const raidRepo = createRaidRepo(db);
+const raidPlayerRepo = createRaidPlayerRepo(db);
+const raidService = createRaidService({ raidRepo, raidPlayerRepo });
+const raidJoinService = createRaidJoinService({ raidRepo, raidPlayerRepo, personagemRepo });
+
+const app = createApp({ authService, userService, characterService, progressionService, bossRepo, raidService, raidJoinService });
 app.listen(cfg.PORT, () => logger.info(`RaidSync backend ouvindo em :${cfg.PORT}`));

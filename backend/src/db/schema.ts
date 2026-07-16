@@ -66,6 +66,37 @@ export interface CharacterBossesTable {
   completed_at: ColumnType<Date, Date | string, never>;
 }
 
+export interface RaidsTable {
+  id: Generated<number>;
+  codigo: string;
+  operation: string;
+  difficulty: 'SM' | 'HM' | 'NiM';
+  size: number;
+  faction: 'Republic' | 'Empire';
+  minimum_tier: number;
+  check_composition: number; // MySQL boolean = tinyint (0/1)
+  slots_tank: number;
+  slots_heal: number;
+  slots_dps: number;
+  notes: string | null;
+  start_at: ColumnType<Date, Date | string, Date | string>;
+  status: 'OPEN' | 'RUNNING' | 'FINISHED' | 'CANCELLED';
+  discord_message_id: string | null;
+  created_by: number;
+  created_at: Created;
+  updated_at: Updated;
+}
+
+export interface RaidPlayersTable {
+  id: Generated<number>;
+  raid_id: number;
+  usuario_id: number;
+  personagem_id: number;
+  role: 'Tank' | 'Healer' | 'DPS';
+  status: 'confirmed' | 'waitlist';
+  joined_at: ColumnType<Date, Date | string, never>;
+}
+
 export interface DB {
   usuarios: UsuariosTable;
   refresh_tokens: RefreshTokensTable;
@@ -73,4 +104,6 @@ export interface DB {
   personagens: PersonagensTable;
   bosses: BossesTable;
   character_bosses: CharacterBossesTable;
+  raids: RaidsTable;
+  raid_players: RaidPlayersTable;
 }
