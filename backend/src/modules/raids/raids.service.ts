@@ -8,6 +8,15 @@ export type Actor = { sub: number; role: 'user' | 'admin' };
 export type RaidDetail = RaidRecord & { roster: (RosterRow & { tier: number })[] };
 type CreateInput = Omit<NewRaid, 'codigo' | 'created_by'>;
 
+export function isRaidFull(detail: RaidDetail): boolean {
+  const confirmed = detail.roster.filter((r) => r.status === 'confirmed');
+  if (detail.check_composition) {
+    const byRole = (role: string) => confirmed.filter((r) => r.role === role).length;
+    return byRole('Tank') >= detail.slots_tank && byRole('Healer') >= detail.slots_heal && byRole('DPS') >= detail.slots_dps;
+  }
+  return confirmed.length >= detail.size;
+}
+
 const TRANSITIONS: Record<'start' | 'finish' | 'cancel', { from: RaidStatus[]; to: RaidStatus }> = {
   start: { from: ['OPEN'], to: 'RUNNING' },
   finish: { from: ['OPEN', 'RUNNING'], to: 'FINISHED' },
