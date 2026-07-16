@@ -1,4 +1,4 @@
-import { handleCreateRaid, handleSetRaidChannel, handleReportRaid, type CommandInteraction } from '../src/discord/commands';
+import { handleCreateRaid, handleSetRaidChannel, handleEditRaid, handleReportRaid, type CommandInteraction } from '../src/discord/commands';
 import { makeFakeGuildConfigRepo, makeFakeRaidRepo, makeFakeRaidPlayerRepo, makeFakePersonagemRepo, makeFakeUserRepo } from './fakes/fakeRepos';
 import { createRaidService } from '../src/modules/raids/raids.service';
 import type { RaidBroadcaster } from '../src/realtime/broadcaster';
@@ -118,5 +118,54 @@ describe('/report_raid', () => {
     const i = fakeInteraction({ opts: { code: 'nope' } });
     await handleReportRaid(i, d);
     expect(i.replies[0].content).toMatch(/not found/i);
+  });
+});
+
+describe('/edit_raid', () => {
+  async function ownedRaid(d: any, discordId = 'd123') {
+    const owner = await d.userRepo.upsertByDiscordId({ discord_id: discordId, username: 'diego', nickname: null, avatar: null, email: null, role: 'user' });
+    const raid = await d.raidService.create({ sub: owner.id, role: 'user' }, openRaidInput);
+    return { owner, raid };
+  }
+
+  it('líder edita notes e emite raidUpdated', async () => {
+    const { d, updated } = deps();
+    const { raid } = await ownedRaid(d);
+    const i = fakeInteraction({ opts: { code: raid.codigo, notes: 'bring pots' } });
+    await handleEditRaid(i, d);
+    expect(updated).toContain('raidUpdated');
+    expect(i.replies[0].content).toMatch(/updated/i);
+  });
+
+  it('código inexistente → not found', async () => {
+    const { d } = deps();
+    const i = fakeInteraction({ opts: { code: 'nope' } });
+    await handleEditRaid(i, d);
+    expect(i.replies[0].content).toMatch(/not found/i);
+  });
+
+  it('não-líder → recusa (403)', async () => {
+    const { d } = deps();
+    const { raid } = await ownedRaid(d, 'owner');
+    const i = fakeInteraction({ user: { id: 'intruder', username: 'intruder' }, opts: { code: raid.codigo, notes: 'hax' } });
+    await handleEditRaid(i, d);
+    expect(i.replies[0].content).toMatch(/your own/i);
+  });
+
+  it('raid não-OPEN → recusa (409)', async () => {
+    const { d } = deps();
+    const { owner, raid } = await ownedRaid(d);
+    await d.raidService.transition({ sub: owner.id, role: 'user' }, raid.id, 'start');
+    const i = fakeInteraction({ opts: { code: raid.codigo, notes: 'x' } });
+    await handleEditRaid(i, d);
+    expect(i.replies[0].content).toMatch(/no longer be edited/i);
+  });
+
+  it('date sem time → erro de validação', async () => {
+    const { d } = deps();
+    const { raid } = await ownedRaid(d);
+    const i = fakeInteraction({ opts: { code: raid.codigo, date: '2026-09-01' } });
+    await handleEditRaid(i, d);
+    expect(i.replies[0].content).toMatch(/both date.*and time/i);
   });
 });

@@ -87,3 +87,54 @@ export async function handleReportRaid(i: CommandInteraction, deps: CommandDeps)
       : "Couldn't post here — check my permissions.";
   await i.reply({ content: msg, ephemeral: true });
 }
+
+function mapUpdateError(err: unknown): string {
+  if (err instanceof AppError) {
+    switch (err.statusCode) {
+      case 403: return 'You can only edit your own raids.';
+      case 404: return 'Raid not found.';
+      case 409: return 'This raid can no longer be edited.';
+      case 422: return 'Invalid values. Check the fields.';
+    }
+  }
+  return 'Something went wrong.';
+}
+
+export async function handleEditRaid(i: CommandInteraction, deps: CommandDeps): Promise<void> {
+  const code = i.getString('code');
+  if (!code) { await i.reply({ content: 'Provide the raid code.', ephemeral: true }); return; }
+
+  let current: RaidDetail;
+  try { current = await deps.raidService.getByCodigo(code); }
+  catch { await i.reply({ content: 'Raid not found.', ephemeral: true }); return; }
+
+  const patch: Record<string, unknown> = {};
+  const minTier = i.getInteger('minimum_tier'); if (minTier !== null) patch.minimum_tier = minTier;
+  const notes = i.getString('notes'); if (notes !== null) patch.notes = notes;
+  const checkComp = i.getBoolean('check_composition'); if (checkComp !== null) patch.check_composition = checkComp;
+  const st = i.getInteger('slots_tank'); if (st !== null) patch.slots_tank = st;
+  const sh = i.getInteger('slots_heal'); if (sh !== null) patch.slots_heal = sh;
+  const sd = i.getInteger('slots_dps'); if (sd !== null) patch.slots_dps = sd;
+
+  const date = i.getString('date');
+  const time = i.getString('time');
+  if (date !== null || time !== null) {
+    const startAt = parseStartAt(date, time);
+    if (!startAt) { await i.reply({ content: 'Provide both date (YYYY-MM-DD) and time (HH:MM) in UTC.', ephemeral: true }); return; }
+    patch.start_at = startAt;
+  }
+
+  if (Object.keys(patch).length === 0) { await i.reply({ content: 'Nothing to update — provide at least one field.', ephemeral: true }); return; }
+
+  const parsed = raidUpdateSchema.safeParse(patch);
+  if (!parsed.success) { await i.reply({ content: 'Invalid values. Check the fields.', ephemeral: true }); return; }
+
+  const user = await deps.userRepo.upsertByDiscordId({ discord_id: i.user.id, username: i.user.username, nickname: null, avatar: null, email: null, role: 'user' });
+  try {
+    const updated = await deps.raidService.update({ sub: user.id, role: user.role }, current.id, parsed.data);
+    deps.bus.raidUpdated(updated, 'raidUpdated');
+    await i.reply({ content: `Raid updated: **${updated.operation}** (${updated.codigo}).`, ephemeral: true });
+  } catch (err) {
+    await i.reply({ content: mapUpdateError(err), ephemeral: true });
+  }
+}
