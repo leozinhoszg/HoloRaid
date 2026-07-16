@@ -2,7 +2,7 @@
 
 # Motion Design
 
-O RaidSync deve transmitir a sensação de uma interface futurista, inspirada em consoles holográficos e painéis de comando.
+O HoloRaid deve transmitir a sensação de uma interface futurista, inspirada em consoles holográficos e painéis de comando.
 
 As animações devem ser rápidas, suaves e discretas.
 
@@ -317,6 +317,6 @@ Todos os efeitos devem possuir fallback para dispositivos sem aceleração gráf
 
 # Filosofia
 
-O RaidSync deve transmitir a sensação de estar utilizando o console de comando de uma nave da República ou do Império.
+O HoloRaid deve transmitir a sensação de estar utilizando o console de comando de uma nave da República ou do Império.
 
 A interface deve parecer viva, mas nunca exagerada. Os efeitos visuais devem destacar informações importantes e enriquecer a experiência, sem distrair o usuário ou comprometer a usabilidade durante uma Operation.

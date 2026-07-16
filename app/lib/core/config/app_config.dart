@@ -5,5 +5,5 @@ class AppConfig {
   );
   static const discordClientId = String.fromEnvironment('DISCORD_CLIENT_ID');
   // Callback: Web usa a URL do SPA; mobile/desktop usam o scheme abaixo.
-  static const oauthCallbackScheme = 'raidsync';
+  static const oauthCallbackScheme = 'holoraid';
 }

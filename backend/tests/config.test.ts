@@ -4,7 +4,7 @@ const good = {
   DB_HOST: '127.0.0.1',
   DB_USER: 'root',
   DB_PASSWORD: 'secret',
-  DB_NAME: 'raidsync',
+  DB_NAME: 'holoraid',
   JWT_SECRET: 'x'.repeat(32),
   DISCORD_CLIENT_ID: 'cid',
   DISCORD_CLIENT_SECRET: 'secret',
@@ -28,7 +28,7 @@ describe('loadConfig', () => {
     expect(c.DB_PORT).toBe(3306);
     expect(c.DB_USER).toBe('root');
     expect(c.DB_PASSWORD).toBe('');
-    expect(c.DB_NAME).toBe('raidsync');
+    expect(c.DB_NAME).toBe('holoraid');
   });
 
   it('lança se JWT_SECRET é curto (fail-fast)', () => {

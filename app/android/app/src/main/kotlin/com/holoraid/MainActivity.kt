@@ -1,4 +1,4 @@
-package com.example.raidsync
+package com.holoraid
 
 import io.flutter.embedding.android.FlutterActivity
 

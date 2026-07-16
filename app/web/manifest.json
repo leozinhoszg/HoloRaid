@@ -1,6 +1,6 @@
 {
-    "name": "raidsync",
-    "short_name": "raidsync",
+    "name": "HoloRaid",
+    "short_name": "HoloRaid",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,4 +1,4 @@
-# raidsync
+# holoraid
 
 A new Flutter project.
 

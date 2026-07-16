@@ -34,7 +34,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('RaidSync', style: Theme.of(context).textTheme.headlineMedium),
+            Text('HoloRaid', style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 24),
             GestureDetector(
               onTapDown: (_) => setState(() => _pressed = true),

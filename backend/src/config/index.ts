@@ -12,7 +12,7 @@ const EnvSchema = z.object({
   DB_PORT: z.coerce.number().int().positive().default(3306),
   DB_USER: z.string().min(1).default('root'),
   DB_PASSWORD: z.string().default(''),
-  DB_NAME: z.string().min(1).default('raidsync'),
+  DB_NAME: z.string().min(1).default('holoraid'),
   JWT_SECRET: z.string().min(32),
   ACCESS_TOKEN_TTL: z.string().default('15m'),
   REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().positive().default(30),
