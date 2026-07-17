@@ -1,6 +1,7 @@
 import { createNotificationService } from '../src/push/notification.service';
 import { makeFakeUserRepo, makeFakeDeviceTokenRepo } from './fakes/fakeRepos';
 import { makeFakePushGateway } from './fakes/fakePush';
+import { makeFakeDmGateway } from './fakes/fakeDm';
 
 const detail = (roster: { usuario_id: number; status: string }[] = []) => ({
   id: 7, codigo: 'X7', operation: 'Dread Palace', difficulty: 'HM', size: 8, faction: 'Republic',
@@ -17,6 +18,17 @@ async function setup(gwOpts: { invalidTokens?: string[]; fail?: boolean } = {}) 
     userRepo.upsertByDiscordId({ discord_id, username: discord_id, nickname: null, avatar: null, email: null, role: 'user' });
   const notify = createNotificationService({ gateway, deviceTokenRepo, userRepo });
   return { notify, gateway, userRepo, deviceTokenRepo, mk };
+}
+
+async function setupDm(dmOpts: { fail?: boolean; failFor?: string[] } = {}) {
+  const userRepo = makeFakeUserRepo();
+  const deviceTokenRepo = makeFakeDeviceTokenRepo();
+  const gateway = makeFakePushGateway();
+  const dmGateway = makeFakeDmGateway(dmOpts);
+  const mk = async (discord_id: string) =>
+    userRepo.upsertByDiscordId({ discord_id, username: discord_id, nickname: null, avatar: null, email: null, role: 'user' });
+  const notify = createNotificationService({ gateway, dmGateway, deviceTokenRepo, userRepo });
+  return { notify, gateway, dmGateway, userRepo, deviceTokenRepo, mk };
 }
 
 describe('NotificationService', () => {
@@ -88,5 +100,68 @@ describe('NotificationService', () => {
     await deviceTokenRepo.upsert(a.id, 'tok-a', 'android');
     await notify.raidStarting(detail([{ usuario_id: a.id, status: 'confirmed' }]));
     expect(gateway.sends[0]!.msg.body).toContain('30 minutes');
+  });
+});
+
+describe('fallback por DM (#6b)', () => {
+  it('usuário SEM token → recebe DM, e nenhum push', async () => {
+    const { notify, gateway, dmGateway, mk } = await setupDm();
+    const a = await mk('disc-a');
+    await notify.slotConfirmed(a.id, detail([{ usuario_id: a.id, status: 'confirmed' }]));
+
+    expect(gateway.sends).toHaveLength(0);
+    expect(dmGateway.sends).toHaveLength(1);
+    expect(dmGateway.sends[0]!.discordIds).toEqual(['disc-a']);
+    expect(dmGateway.sends[0]!.msg.title).toBe("You're in!");
+  });
+
+  it('usuário COM token → recebe push, e nenhuma DM', async () => {
+    const { notify, gateway, dmGateway, deviceTokenRepo, mk } = await setupDm();
+    const a = await mk('disc-a');
+    await deviceTokenRepo.upsert(a.id, 'tok-a', 'android');
+    await notify.slotConfirmed(a.id, detail([{ usuario_id: a.id, status: 'confirmed' }]));
+
+    expect(gateway.sends).toHaveLength(1);
+    expect(dmGateway.sends).toHaveLength(0);
+  });
+
+  it('roster misto → 1 push + 1 DM, sem sobreposição', async () => {
+    const { notify, gateway, dmGateway, deviceTokenRepo, mk } = await setupDm();
+    const comApp = await mk('disc-app');
+    const semApp = await mk('disc-dm');
+    await deviceTokenRepo.upsert(comApp.id, 'tok-app', 'android');
+
+    await notify.raidCancelled(detail([
+      { usuario_id: comApp.id, status: 'confirmed' },
+      { usuario_id: semApp.id, status: 'waitlist' },
+    ]));
+
+    expect(gateway.sends).toHaveLength(1);
+    expect(gateway.sends[0]!.tokens).toEqual(['tok-app']);
+    expect(dmGateway.sends).toHaveLength(1);
+    expect(dmGateway.sends[0]!.discordIds).toEqual(['disc-dm']);
+  });
+
+  it('push_enabled=false → silêncio nos dois canais', async () => {
+    const { notify, gateway, dmGateway, userRepo, mk } = await setupDm();
+    const a = await mk('disc-a');
+    await userRepo.setPushEnabled(a.id, false);
+    await notify.raidStarting(detail([{ usuario_id: a.id, status: 'confirmed' }]));
+
+    expect(gateway.sends).toHaveLength(0);
+    expect(dmGateway.sends).toHaveLength(0);
+  });
+
+  it('dmGateway lançando não propaga (best-effort)', async () => {
+    const { notify, mk } = await setupDm({ fail: true });
+    const a = await mk('disc-a');
+    await expect(notify.raidStarting(detail([{ usuario_id: a.id, status: 'confirmed' }]))).resolves.toBeUndefined();
+  });
+
+  it('sem dmGateway (default no-op) → nada acontece, sem erro', async () => {
+    const { notify, gateway, mk } = await setup();
+    const a = await mk('a');
+    await expect(notify.slotConfirmed(a.id, detail([{ usuario_id: a.id, status: 'confirmed' }]))).resolves.toBeUndefined();
+    expect(gateway.sends).toHaveLength(0);
   });
 });
