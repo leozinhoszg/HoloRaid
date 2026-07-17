@@ -24,6 +24,19 @@ describe('RaidService', () => {
     expect(r.roster).toEqual([]);
   });
 
+  it('create persiste disable_mentions; ausente → false; duplicate copia', async () => {
+    const { svc } = setup();
+
+    const comFlag = await svc.create(user1, { ...baseInput, disable_mentions: true });
+    expect(comFlag.disable_mentions).toBe(true);
+
+    const copia = await svc.duplicate(user1, comFlag.id);
+    expect(copia.disable_mentions).toBe(true);
+
+    const semFlag = await svc.create(user1, baseInput);
+    expect(semFlag.disable_mentions).toBe(false);
+  });
+
   it('só líder ou admin edita/transiciona', async () => {
     const { svc } = setup();
     const r = await svc.create(user1, baseInput);

@@ -75,6 +75,7 @@ export interface RaidsTable {
   faction: 'Republic' | 'Empire';
   minimum_tier: number;
   check_composition: number; // MySQL boolean = tinyint (0/1)
+  disable_mentions: number; // MySQL boolean = tinyint (0/1)
   slots_tank: number;
   slots_heal: number;
   slots_dps: number;

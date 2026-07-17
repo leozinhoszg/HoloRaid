@@ -92,7 +92,7 @@ export function makeFakeRaidRepo(): RaidRepo {
   const rows: RaidRecord[] = [];
   let seq = 1;
   return {
-    async create(r: NewRaid) { const rec: RaidRecord = { id: seq++, status: 'OPEN', ...r }; rows.push(rec); return { ...rec }; },
+    async create(r: NewRaid) { const rec: RaidRecord = { id: seq++, status: 'OPEN', ...r, disable_mentions: r.disable_mentions ?? false }; rows.push(rec); return { ...rec }; },
     async findById(id) { return rows.find((x) => x.id === id) ?? null; },
     async findByCodigo(codigo) { return rows.find((x) => x.codigo === codigo) ?? null; },
     async list(f) {

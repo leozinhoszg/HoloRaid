@@ -87,6 +87,7 @@ export function createRaidService(deps: { raidRepo: RaidRepo; raidPlayerRepo: Ra
       const created = await deps.raidRepo.create({
         codigo: generateRaidCode(), operation: r.operation, difficulty: r.difficulty, size: r.size,
         faction: r.faction, minimum_tier: r.minimum_tier, check_composition: r.check_composition,
+        disable_mentions: r.disable_mentions,
         slots_tank: r.slots_tank, slots_heal: r.slots_heal, slots_dps: r.slots_dps, notes: r.notes,
         start_at: r.start_at, created_by: actor.sub,
       });
