@@ -11,6 +11,7 @@ export interface UsuariosTable {
   avatar: string | null;
   email: string | null;
   role: 'user' | 'admin';
+  push_enabled: Generated<number>; // tinyint (0/1); Generated = tem DEFAULT, opcional no insert
   created_at: Created;
   updated_at: Updated;
 }
@@ -83,6 +84,7 @@ export interface RaidsTable {
   start_at: ColumnType<Date, Date | string, Date | string>;
   status: 'OPEN' | 'RUNNING' | 'FINISHED' | 'CANCELLED';
   discord_message_id: string | null;
+  starting_notified_at: ColumnType<Date | null, Date | string | null | undefined, Date | string | null>;
   created_by: number;
   created_at: Created;
   updated_at: Updated;
@@ -114,6 +116,15 @@ export interface RaidDiscordMessagesTable {
   created_at: Created;
 }
 
+export interface DeviceTokensTable {
+  id: Generated<number>;
+  usuario_id: number;
+  token: string;
+  platform: 'android' | 'web';
+  created_at: Created;
+  updated_at: Updated;
+}
+
 export interface DB {
   usuarios: UsuariosTable;
   refresh_tokens: RefreshTokensTable;
@@ -125,4 +136,5 @@ export interface DB {
   raid_players: RaidPlayersTable;
   guild_config: GuildConfigTable;
   raid_discord_messages: RaidDiscordMessagesTable;
+  device_tokens: DeviceTokensTable;
 }

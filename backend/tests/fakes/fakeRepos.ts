@@ -7,6 +7,7 @@ import type { RaidRepo, RaidRecord, NewRaid } from '../../src/db/repositories/ra
 import type { RaidPlayerRepo, RaidPlayerRecord, RosterRow } from '../../src/db/repositories/raidPlayerRepo';
 import type { GuildConfigRepo, GuildConfig } from '../../src/db/repositories/guildConfigRepo';
 import type { RaidDiscordMessageRepo, RaidDiscordMessage, NewRaidDiscordMessage } from '../../src/db/repositories/raidDiscordMessageRepo';
+import type { DeviceTokenRepo, DeviceToken } from '../../src/db/repositories/deviceTokenRepo';
 import { BOSSES_SEED } from '../../src/reference/bossesSeed';
 
 export function makeFakeUserRepo(): UserRepo {
@@ -145,5 +146,20 @@ export function makeFakeRaidDiscordMessageRepo(): RaidDiscordMessageRepo {
     async create(row: NewRaidDiscordMessage) { rows.push({ id: seq++, ...row }); },
     async listByRaid(raid_id) { return rows.filter((r) => r.raid_id === raid_id).map((r) => ({ ...r })); },
     async deleteByRaid(raid_id) { for (let i = rows.length - 1; i >= 0; i--) if (rows[i]!.raid_id === raid_id) rows.splice(i, 1); },
+  };
+}
+
+export function makeFakeDeviceTokenRepo(): DeviceTokenRepo & { _rows: DeviceToken[] } {
+  const rows: DeviceToken[] = [];
+  let seq = 1;
+  return {
+    _rows: rows,
+    async upsert(usuario_id, token, platform) {
+      const x = rows.find((r) => r.token === token);
+      if (x) { x.usuario_id = usuario_id; x.platform = platform; }
+      else rows.push({ id: seq++, usuario_id, token, platform });
+    },
+    async listByUsuarios(ids) { return rows.filter((r) => ids.includes(r.usuario_id)).map((r) => ({ ...r })); },
+    async deleteByTokens(tokens) { for (let i = rows.length - 1; i >= 0; i--) if (tokens.includes(rows[i]!.token)) rows.splice(i, 1); },
   };
 }
