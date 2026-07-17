@@ -27,6 +27,9 @@ export function createUserService(deps: Deps) {
       await deps.userRepo.updateRole(targetId, 'user');
       await deps.auditLog({ actor_id: actorId, action: 'demote', target_id: targetId });
     },
+    async setPushEnabled(userId: number, enabled: boolean): Promise<void> {
+      await deps.userRepo.setPushEnabled(userId, enabled);
+    },
   };
 }
 

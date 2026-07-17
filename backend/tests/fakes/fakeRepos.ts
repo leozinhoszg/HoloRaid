@@ -20,12 +20,14 @@ export function makeFakeUserRepo(): UserRepo {
         Object.assign(existing, { username: p.username, nickname: p.nickname, avatar: p.avatar, email: p.email });
         return { ...existing };
       }
-      const rec: UserRecord = { id: seq++, ...p };
+      const rec: UserRecord = { id: seq++, ...p, push_enabled: true };
       users.push(rec);
       return { ...rec };
     },
     async findById(id) { return users.find((u) => u.id === id) ?? null; },
+    async findByIds(ids) { return users.filter((u) => ids.includes(u.id)).map((u) => ({ ...u })); },
     async updateRole(id, role) { const u = users.find((x) => x.id === id); if (u) u.role = role; },
+    async setPushEnabled(id, enabled) { const u = users.find((x) => x.id === id); if (u) u.push_enabled = enabled; },
     async list() { return users.map((u) => ({ ...u })); },
   };
 }

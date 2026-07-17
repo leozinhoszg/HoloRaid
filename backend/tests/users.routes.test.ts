@@ -27,7 +27,7 @@ async function build() {
   // cria dois usuários: id 1 (user) e id 2 (admin)
   const u1 = await userRepo.upsertByDiscordId({ discord_id: '1', username: 'user', nickname: null, avatar: null, email: null, role: 'user' });
   const u2 = await userRepo.upsertByDiscordId({ discord_id: '2', username: 'boss', nickname: null, avatar: null, email: null, role: 'admin' });
-  return { app: createApp({ authService, userService }), audits, u1, u2 };
+  return { app: createApp({ authService, userService }), audits, u1, u2, userRepo };
 }
 
 describe('rotas de usuários', () => {
@@ -63,5 +63,28 @@ describe('rotas de usuários', () => {
     const token = signAccessToken({ sub: u2.id, role: 'admin' });
     const res = await request(app).post(`/users/${u2.id}/demote`).set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(400);
+  });
+});
+
+describe('push_enabled (#6)', () => {
+  it('GET /me expõe push_enabled (default true)', async () => {
+    const { app, u1 } = await build();
+    const token = signAccessToken({ sub: u1.id, role: 'user' });
+    const res = await request(app).get('/me').set('Authorization', `Bearer ${token}`);
+    expect(res.status).toBe(200);
+    expect(res.body.push_enabled).toBe(true);
+  });
+
+  it('setPushEnabled desliga e findByIds reflete', async () => {
+    const { userRepo, u1 } = await build();
+    await userRepo.setPushEnabled(u1.id, false);
+    const found = await userRepo.findByIds([u1.id]);
+    expect(found).toHaveLength(1);
+    expect(found[0]!.push_enabled).toBe(false);
+  });
+
+  it('findByIds retorna vazio p/ lista vazia', async () => {
+    const { userRepo } = await build();
+    expect(await userRepo.findByIds([])).toEqual([]);
   });
 });
