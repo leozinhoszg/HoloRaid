@@ -58,6 +58,7 @@ class RaidDetailScreen extends ConsumerWidget {
                 if (raid.status == 'OPEN' && iAmIn) OutlinedButton.icon(onPressed: () => _leave(context, ref), icon: const Icon(Icons.logout), label: const Text('Sair')),
               ]),
               if (iAmLeader || iAmAdmin) Wrap(spacing: 8, children: [
+                if (raid.status == 'OPEN') TextButton(onPressed: () => context.push('/raids/${raid.id}/edit'), child: const Text('Editar')),
                 if (raid.status == 'OPEN') TextButton(onPressed: () => _transition(context, ref, 'start'), child: const Text('Iniciar')),
                 if (raid.status == 'OPEN' || raid.status == 'RUNNING') TextButton(onPressed: () => _transition(context, ref, 'finish'), child: const Text('Encerrar')),
                 if (raid.status == 'OPEN' || raid.status == 'RUNNING') TextButton(onPressed: () => _transition(context, ref, 'cancel'), child: const Text('Cancelar')),
