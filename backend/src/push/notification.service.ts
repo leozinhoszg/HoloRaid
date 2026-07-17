@@ -1,26 +1,41 @@
 import type { PushGateway, PushMessage } from './gateway';
+import type { DmGateway } from './dmGateway';
+import { noopDmGateway } from './dmGateway';
 import type { DeviceTokenRepo } from '../db/repositories/deviceTokenRepo';
 import type { UserRepo } from '../db/repositories/userRepo';
 import type { RaidDetail } from '../modules/raids/raids.service';
 import { logger } from '../common/logger/logger';
 
-type Deps = { gateway: PushGateway; deviceTokenRepo: DeviceTokenRepo; userRepo: UserRepo };
+type Deps = { gateway: PushGateway; deviceTokenRepo: DeviceTokenRepo; userRepo: UserRepo; dmGateway?: DmGateway };
 
 const DIFF: Record<string, string> = { SM: 'Story Mode', HM: 'Veteran', NiM: 'Master' };
 const label = (d: RaidDetail) => `${d.operation} (${DIFF[d.difficulty] ?? d.difficulty})`;
 const dataOf = (d: RaidDetail, event: string) => ({ raidId: String(d.id), codigo: d.codigo, event });
 
 export function createNotificationService(deps: Deps) {
-  // Resolve destinatários → filtra push_enabled → tokens → envia → limpa inválidos.
+  const dm = deps.dmGateway ?? noopDmGateway;
+
+  // Roteia por usuário: tem token FCM -> push; não tem -> DM.
+  // Os dois conjuntos são disjuntos por construção, então nunca duplica.
   async function sendTo(userIds: number[], msg: PushMessage): Promise<void> {
     if (!userIds.length) return;
     const users = await deps.userRepo.findByIds(userIds);
-    const enabled = users.filter((u) => u.push_enabled).map((u) => u.id);
+    const enabled = users.filter((u) => u.push_enabled);
     if (!enabled.length) return;
-    const tokens = (await deps.deviceTokenRepo.listByUsuarios(enabled)).map((t) => t.token);
-    if (!tokens.length) return;
-    const { invalidTokens } = await deps.gateway.send(tokens, msg);
-    if (invalidTokens.length) await deps.deviceTokenRepo.deleteByTokens(invalidTokens);
+
+    const deviceTokens = await deps.deviceTokenRepo.listByUsuarios(enabled.map((u) => u.id));
+    const comToken = new Set(deviceTokens.map((t) => t.usuario_id));
+
+    // canal 1 — FCM
+    const tokens = deviceTokens.map((t) => t.token);
+    if (tokens.length) {
+      const { invalidTokens } = await deps.gateway.send(tokens, msg);
+      if (invalidTokens.length) await deps.deviceTokenRepo.deleteByTokens(invalidTokens);
+    }
+
+    // canal 2 — DM para quem não tem app
+    const alvos = enabled.filter((u) => !comToken.has(u.id)).map((u) => u.discord_id);
+    if (alvos.length) await dm.send(alvos, msg);
   }
 
   const rosterIds = (d: RaidDetail) => [...new Set(d.roster.map((r) => r.usuario_id))];

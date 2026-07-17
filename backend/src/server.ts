@@ -27,6 +27,7 @@ import { createDiscordClient, attachBot } from './discord/bot';
 import { verifyAccessToken } from './common/security/jwt';
 import { createDeviceTokenRepo } from './db/repositories/deviceTokenRepo';
 import { noopPushGateway } from './push/gateway';
+import { noopDmGateway, createDiscordDmGateway } from './push/dmGateway';
 import { createFcmGateway } from './push/fcmGateway';
 import { createNotificationService } from './push/notification.service';
 import { startScheduler } from './push/scheduler';
@@ -75,7 +76,9 @@ const bus = createRaidEventBus(socketBroadcaster, discordSync);
 // Push opcional: sem FIREBASE_SERVICE_ACCOUNT, gateway no-op e agendador não sobe.
 const deviceTokenRepo = createDeviceTokenRepo(db);
 const pushGateway = cfg.FIREBASE_SERVICE_ACCOUNT ? createFcmGateway(cfg.FIREBASE_SERVICE_ACCOUNT) : noopPushGateway;
-const notify = createNotificationService({ gateway: pushGateway, deviceTokenRepo, userRepo });
+// DM opcional: reusa o Client do bot (#5a). Sem bot → no-op.
+const dmGateway = discordClient ? createDiscordDmGateway(discordClient, cfg.APP_PUBLIC_URL) : noopDmGateway;
+const notify = createNotificationService({ gateway: pushGateway, dmGateway, deviceTokenRepo, userRepo });
 
 const app = createApp({ authService, userService, characterService, progressionService, bossRepo, raidService, raidJoinService, broadcaster: bus, notificationService: notify, deviceTokenRepo });
 httpServer.on('request', app);
@@ -84,7 +87,8 @@ if (discordClient && cfg.DISCORD_BOT_TOKEN) {
   attachBot(discordClient, { token: cfg.DISCORD_BOT_TOKEN, clientId: cfg.DISCORD_CLIENT_ID, raidService, userRepo, guildConfigRepo, bus, report: discordSync.reportTo, personagemRepo, raidJoinService, appPublicUrl: cfg.APP_PUBLIC_URL, notify });
 }
 
-if (cfg.FIREBASE_SERVICE_ACCOUNT) {
+// O lembrete precisa do agendador em QUALQUER canal (FCM ou DM).
+if (cfg.FIREBASE_SERVICE_ACCOUNT || cfg.DISCORD_BOT_TOKEN) {
   startScheduler({ raidRepo, raidService, notify });
   logger.info('Push: agendador de lembretes ativo');
 }
