@@ -125,6 +125,7 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
                 padding: const EdgeInsets.all(16),
                 children: [
                   DropdownButtonFormField<String>(
+                    key: const ValueKey('f_operation'),
                     initialValue: _operation,
                     decoration: const InputDecoration(labelText: 'Operation'),
                     items: operations.map((o) => DropdownMenuItem(value: o, child: Text(o))).toList(),
@@ -132,6 +133,7 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
                   ),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String>(
+                    key: const ValueKey('f_difficulty'),
                     initialValue: _difficulty,
                     decoration: const InputDecoration(labelText: 'Difficulty'),
                     items: const [DropdownMenuItem(value: 'SM', child: Text('Story Mode')), DropdownMenuItem(value: 'HM', child: Text('Veteran (HM)')), DropdownMenuItem(value: 'NiM', child: Text('Master (NiM)'))],
@@ -139,6 +141,7 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
                   ),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<int>(
+                    key: const ValueKey('f_size'),
                     initialValue: _size,
                     decoration: const InputDecoration(labelText: 'Size'),
                     items: const [DropdownMenuItem(value: 8, child: Text('8 players')), DropdownMenuItem(value: 16, child: Text('16 players'))],
@@ -146,6 +149,7 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
                   ),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String>(
+                    key: const ValueKey('f_faction'),
                     initialValue: _faction,
                     decoration: const InputDecoration(labelText: 'Facção'),
                     items: const [DropdownMenuItem(value: 'Republic', child: Text('Republic')), DropdownMenuItem(value: 'Empire', child: Text('Empire'))],
