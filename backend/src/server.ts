@@ -31,6 +31,7 @@ import { noopDmGateway, createDiscordDmGateway } from './push/dmGateway';
 import { createFcmGateway } from './push/fcmGateway';
 import { createNotificationService } from './push/notification.service';
 import { startScheduler } from './push/scheduler';
+import { createDashboardService } from './modules/dashboard/dashboard.service';
 import { createApp } from './app';
 import { logger } from './common/logger/logger';
 
@@ -81,7 +82,9 @@ const pushGateway = cfg.FIREBASE_SERVICE_ACCOUNT ? createFcmGateway(cfg.FIREBASE
 const dmGateway = discordClient ? createDiscordDmGateway(discordClient, cfg.APP_PUBLIC_URL) : noopDmGateway;
 const notify = createNotificationService({ gateway: pushGateway, dmGateway, deviceTokenRepo, userRepo });
 
-const app = createApp({ authService, userService, characterService, progressionService, bossRepo, raidService, raidJoinService, broadcaster: bus, notificationService: notify, deviceTokenRepo });
+const dashboardService = createDashboardService({ db });
+
+const app = createApp({ authService, userService, characterService, progressionService, bossRepo, raidService, raidJoinService, broadcaster: bus, notificationService: notify, deviceTokenRepo, dashboardService });
 httpServer.on('request', app);
 
 if (discordClient && cfg.DISCORD_BOT_TOKEN) {
