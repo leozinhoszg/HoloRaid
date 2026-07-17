@@ -14,6 +14,8 @@ import { createReferenceRouter } from './modules/reference/reference.router';
 import { createCharactersRouter } from './modules/characters/characters.router';
 import { createProgressionRouter } from './modules/progression/progression.router';
 import { createRaidsRouter } from './modules/raids/raids.router';
+import { createDevicesRouter } from './modules/devices/devices.router';
+import type { DeviceTokenRepo } from './db/repositories/deviceTokenRepo';
 import type { AuthService } from './modules/auth/auth.service';
 import type { UserService } from './modules/users/users.service';
 import type { CharacterService } from './modules/characters/characters.service';
@@ -34,6 +36,7 @@ export function createApp(deps: {
   raidJoinService?: RaidJoinService;
   broadcaster?: RaidBroadcaster;
   notificationService?: NotificationService;
+  deviceTokenRepo?: DeviceTokenRepo;
 }): Express {
   const cfg = getConfig();
   const app = express();
@@ -55,6 +58,7 @@ export function createApp(deps: {
   app.get('/health', (_req, res) => res.json({ ok: true }));
   app.use('/auth', authLimiter, createAuthRouter(deps.authService));
   if (deps.userService) app.use('/', createUsersRouter(deps.userService));
+  if (deps.deviceTokenRepo) app.use('/', createDevicesRouter(deps.deviceTokenRepo));
   if (deps.bossRepo) app.use('/', createReferenceRouter(deps.bossRepo));
   if (deps.characterService && deps.progressionService) {
     app.use('/', createCharactersRouter(deps.characterService, deps.progressionService));
