@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { createApp } from '../src/app';
-import { makeFakePersonagemRepo, makeFakeBossRepo, makeFakeCharacterBossRepo } from './fakes/fakeRepos';
+import { makeFakePersonagemRepo, makeFakeBossRepo, makeFakeCharacterBossRepo, makeFakeRaidPlayerRepo } from './fakes/fakeRepos';
 import { createCharacterService } from '../src/modules/characters/characters.service';
 import { createProgressionService } from '../src/modules/progression/progression.service';
 import { signAccessToken } from '../src/common/security/jwt';
@@ -17,10 +17,11 @@ function build() {
   const personagemRepo = makeFakePersonagemRepo();
   const bossRepo = makeFakeBossRepo();
   const charBossRepo = makeFakeCharacterBossRepo(bossRepo);
-  const characterService = createCharacterService({ personagemRepo });
+  const raidPlayerRepo = makeFakeRaidPlayerRepo(personagemRepo);
+  const characterService = createCharacterService({ personagemRepo, raidPlayerRepo });
   const progressionService = createProgressionService({ personagemRepo, bossRepo, charBossRepo });
   const app = createApp({ authService: {} as any, characterService, progressionService, bossRepo });
-  return { app };
+  return { app, personagemRepo, raidPlayerRepo };
 }
 
 const tokenFor = (sub: number, role: 'user' | 'admin' = 'user') => signAccessToken({ sub, role });
@@ -80,5 +81,34 @@ describe('rotas de personagens', () => {
       .send({ nome: 'Kira', faccao: 'Republic', classe: 'Guardian', role: 'Tank', item_level: 340 });
     const res = await request(app).post(`/admin/characters/${created.body.id}/bosses`).set('Authorization', `Bearer ${tokenFor(1)}`).send({ bossIds: [1] });
     expect(res.status).toBe(403);
+  });
+});
+
+describe('apagar personagem inscrito (007)', () => {
+  it('personagem inscrito numa raid → 409 e NÃO apaga', async () => {
+    const { app, personagemRepo, raidPlayerRepo } = build();
+    const p = await personagemRepo.create({ usuario_id: 1, nome: 'Kira', faccao: 'Republic', classe: 'Guardian', especializacao: null, role: 'Tank', origin_story: null, item_level: 340 });
+    await raidPlayerRepo.create({ raid_id: 99, usuario_id: 1, personagem_id: p.id, role: 'Tank', status: 'confirmed', joined_at: new Date() });
+
+    const res = await request(app).delete(`/characters/${p.id}`).set('Authorization', `Bearer ${tokenFor(1)}`);
+    expect(res.status).toBe(409);
+    expect(await personagemRepo.findById(p.id)).not.toBeNull();
+  });
+
+  it('personagem livre → apaga normalmente', async () => {
+    const { app, personagemRepo } = build();
+    const p = await personagemRepo.create({ usuario_id: 1, nome: 'Solo', faccao: 'Republic', classe: 'Guardian', especializacao: null, role: 'Tank', origin_story: null, item_level: 340 });
+
+    const res = await request(app).delete(`/characters/${p.id}`).set('Authorization', `Bearer ${tokenFor(1)}`);
+    expect(res.status).toBe(204);
+    expect(await personagemRepo.findById(p.id)).toBeNull();
+  });
+
+  it('existsByPersonagem reflete a inscrição', async () => {
+    const { personagemRepo, raidPlayerRepo } = build();
+    const p = await personagemRepo.create({ usuario_id: 1, nome: 'X', faccao: 'Republic', classe: 'Guardian', especializacao: null, role: 'Tank', origin_story: null, item_level: 340 });
+    expect(await raidPlayerRepo.existsByPersonagem(p.id)).toBe(false);
+    await raidPlayerRepo.create({ raid_id: 99, usuario_id: 1, personagem_id: p.id, role: 'Tank', status: 'confirmed', joined_at: new Date() });
+    expect(await raidPlayerRepo.existsByPersonagem(p.id)).toBe(true);
   });
 });

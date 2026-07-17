@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { createApp } from '../src/app';
-import { makeFakePersonagemRepo, makeFakeBossRepo, makeFakeCharacterBossRepo } from './fakes/fakeRepos';
+import { makeFakePersonagemRepo, makeFakeBossRepo, makeFakeCharacterBossRepo, makeFakeRaidPlayerRepo } from './fakes/fakeRepos';
 import { createCharacterService } from '../src/modules/characters/characters.service';
 import { createProgressionService } from '../src/modules/progression/progression.service';
 import { signAccessToken } from '../src/common/security/jwt';
@@ -17,7 +17,8 @@ async function build() {
   const personagemRepo = makeFakePersonagemRepo();
   const bossRepo = makeFakeBossRepo();
   const charBossRepo = makeFakeCharacterBossRepo(bossRepo);
-  const characterService = createCharacterService({ personagemRepo });
+  const raidPlayerRepo = makeFakeRaidPlayerRepo(personagemRepo);
+  const characterService = createCharacterService({ personagemRepo, raidPlayerRepo });
   const progressionService = createProgressionService({ personagemRepo, bossRepo, charBossRepo });
   const app = createApp({ authService: {} as any, characterService, progressionService, bossRepo });
   const p = await personagemRepo.create({ usuario_id: 1, nome: 'Kira', faccao: 'Republic', classe: 'Guardian', especializacao: null, role: 'Tank', origin_story: null, item_level: 340 });

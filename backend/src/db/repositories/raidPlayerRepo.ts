@@ -18,6 +18,7 @@ export interface RaidPlayerRepo {
   findByRaidAndUser(raidId: number, usuarioId: number): Promise<RaidPlayerRecord | null>;
   listByRaid(raidId: number): Promise<RaidPlayerRecord[]>;
   listRoster(raidId: number): Promise<RosterRow[]>;
+  existsByPersonagem(personagemId: number): Promise<boolean>;
   updateStatus(id: number, status: PlayerStatus): Promise<void>;
   deleteByRaidAndUser(raidId: number, usuarioId: number): Promise<void>;
 }
@@ -50,6 +51,11 @@ export function createRaidPlayerRepo(db: Kysely<DB>): RaidPlayerRepo {
         ])
         .where('raid_players.raid_id', '=', raidId).orderBy('raid_players.joined_at').execute();
       return rows.map((r: any) => ({ ...r, joined_at: new Date(r.joined_at) })) as RosterRow[];
+    },
+    async existsByPersonagem(personagemId) {
+      const r = await db.selectFrom('raid_players').select('id')
+        .where('personagem_id', '=', personagemId).limit(1).executeTakeFirst();
+      return !!r;
     },
     async updateStatus(id, status) {
       await db.updateTable('raid_players').set({ status }).where('id', '=', id).execute();
