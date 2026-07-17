@@ -20,6 +20,8 @@ export interface RaidRepo {
   list(f: { status?: string; faction?: string; operation?: string }): Promise<RaidRecord[]>;
   update(id: number, patch: Partial<NewRaid>): Promise<void>;
   updateStatus(id: number, status: RaidStatus): Promise<void>;
+  listStartingSoon(withinMinutes: number): Promise<RaidRecord[]>;
+  markStartingNotified(id: number): Promise<void>;
   delete(id: number): Promise<void>;
 }
 
@@ -61,6 +63,21 @@ export function createRaidRepo(db: Kysely<DB>): RaidRepo {
     },
     async updateStatus(id, status) {
       await db.updateTable('raids').set({ status, updated_at: new Date() }).where('id', '=', id).execute();
+    },
+    // OPEN, ainda não notificada, começando entre agora e agora+withinMinutes.
+    async listStartingSoon(withinMinutes) {
+      const now = new Date();
+      const until = new Date(now.getTime() + withinMinutes * 60_000);
+      const rows = await db.selectFrom('raids').select(COLS)
+        .where('status', '=', 'OPEN')
+        .where('starting_notified_at', 'is', null)
+        .where('start_at', '>=', now)
+        .where('start_at', '<=', until)
+        .execute();
+      return rows.map(norm);
+    },
+    async markStartingNotified(id) {
+      await db.updateTable('raids').set({ starting_notified_at: new Date(), updated_at: new Date() }).where('id', '=', id).execute();
     },
     async delete(id) {
       await db.deleteFrom('raids').where('id', '=', id).execute();

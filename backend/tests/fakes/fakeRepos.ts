@@ -93,6 +93,7 @@ export function makeFakeCharacterBossRepo(bossRepo: BossRepo): CharacterBossRepo
 
 export function makeFakeRaidRepo(): RaidRepo {
   const rows: RaidRecord[] = [];
+  const notified = new Set<number>(); // espelha raids.starting_notified_at
   let seq = 1;
   return {
     async create(r: NewRaid) { const rec: RaidRecord = { id: seq++, status: 'OPEN', ...r, disable_mentions: r.disable_mentions ?? false }; rows.push(rec); return { ...rec }; },
@@ -101,6 +102,14 @@ export function makeFakeRaidRepo(): RaidRepo {
     async list(f) {
       return rows.filter((x) => (!f.status || x.status === f.status) && (!f.faction || x.faction === f.faction) && (!f.operation || x.operation === f.operation)).map((x) => ({ ...x }));
     },
+    async listStartingSoon(withinMinutes) {
+      const now = Date.now();
+      const until = now + withinMinutes * 60_000;
+      return rows
+        .filter((r) => r.status === 'OPEN' && !notified.has(r.id) && +r.start_at >= now && +r.start_at <= until)
+        .map((r) => ({ ...r }));
+    },
+    async markStartingNotified(id) { notified.add(id); },
     async update(id, patch) { const x = rows.find((r) => r.id === id); if (x) Object.assign(x, patch); },
     async updateStatus(id, status) { const x = rows.find((r) => r.id === id); if (x) x.status = status; },
     async delete(id) { const i = rows.findIndex((r) => r.id === id); if (i >= 0) rows.splice(i, 1); },
