@@ -55,6 +55,7 @@ export async function handleCreateRaid(i: CommandInteraction, deps: CommandDeps)
     faction: i.getString('faction'),
     minimum_tier: i.getInteger('minimum_tier') ?? 0,
     check_composition: i.getBoolean('check_composition') ?? false,
+    disable_mentions: i.getBoolean('disable_mentions') ?? false,
     ...defaultSlots(size),
     notes: i.getString('notes') ?? null,
     start_at: startAt,

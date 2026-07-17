@@ -1,11 +1,14 @@
 import { Client, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, type TextChannel } from 'discord.js';
 import type { RaidEmbed } from './embed';
 
+export type AllowedMentions = { parse?: ('everyone' | 'roles' | 'users')[]; roles?: string[]; users?: string[] };
+export type PostOpts = { content?: string; allowedMentions?: AllowedMentions };
+
 export interface DiscordGateway {
-  postEmbed(channelId: string, embed: RaidEmbed): Promise<string>;
+  postEmbed(channelId: string, embed: RaidEmbed, opts?: PostOpts): Promise<string>;
   editEmbed(channelId: string, messageId: string, embed: RaidEmbed): Promise<void>;
   deleteMessage(channelId: string, messageId: string): Promise<void>;
-  postMessage(channelId: string, content: string): Promise<void>;
+  postMessage(channelId: string, content: string, allowedMentions?: AllowedMentions): Promise<void>;
 }
 
 export const noopGateway: DiscordGateway = {
@@ -29,8 +32,8 @@ function render(embed: RaidEmbed) {
 export function createDiscordJsGateway(client: Client): DiscordGateway {
   const channel = async (id: string) => (await client.channels.fetch(id)) as TextChannel;
   return {
-    async postEmbed(channelId, embed) {
-      const msg = await (await channel(channelId)).send(render(embed));
+    async postEmbed(channelId, embed, opts) {
+      const msg = await (await channel(channelId)).send({ ...render(embed), content: opts?.content, allowedMentions: opts?.allowedMentions });
       return msg.id;
     },
     async editEmbed(channelId, messageId, embed) {
@@ -43,8 +46,8 @@ export function createDiscordJsGateway(client: Client): DiscordGateway {
       const msg = await ch.messages.fetch(messageId);
       await msg.delete();
     },
-    async postMessage(channelId, content) {
-      await (await channel(channelId)).send(content);
+    async postMessage(channelId, content, allowedMentions) {
+      await (await channel(channelId)).send({ content, allowedMentions });
     },
   };
 }

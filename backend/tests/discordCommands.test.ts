@@ -169,3 +169,25 @@ describe('/edit_raid', () => {
     expect(i.replies[0].content).toMatch(/both date.*and time/i);
   });
 });
+
+describe('/create_raid — disable_mentions (#5d)', () => {
+  const baseOpts = { operation: 'Dread Palace', difficulty: 'HM', size: 8, faction: 'Republic', date: '2026-08-01', time: '20:30' };
+
+  it('passa disable_mentions=true ao service', async () => {
+    const { d, raidRepo } = deps();
+    const i = fakeInteraction({ opts: { ...baseOpts, disable_mentions: true } });
+    await handleCreateRaid(i, d);
+    const raids = await raidRepo.list({});
+    expect(raids).toHaveLength(1);
+    expect(raids[0]!.disable_mentions).toBe(true);
+  });
+
+  it('sem a opção → disable_mentions false', async () => {
+    const { d, raidRepo } = deps();
+    const i = fakeInteraction({ opts: baseOpts });
+    await handleCreateRaid(i, d);
+    const raids = await raidRepo.list({});
+    expect(raids).toHaveLength(1);
+    expect(raids[0]!.disable_mentions).toBe(false);
+  });
+});

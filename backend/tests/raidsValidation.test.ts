@@ -20,6 +20,17 @@ describe('raidCreateSchema', () => {
   it('rejeita operation fora da lista', () => {
     expect(raidCreateSchema.safeParse({ ...base, operation: 'Inexistente' }).success).toBe(false);
   });
+  it('aceita disable_mentions e usa default false quando ausente', () => {
+    const comFlag = raidCreateSchema.safeParse({ ...base, disable_mentions: true });
+    expect(comFlag.success).toBe(true);
+    expect(comFlag.success && comFlag.data.disable_mentions).toBe(true);
+
+    const semFlag = raidCreateSchema.safeParse(base);
+    expect(semFlag.success && semFlag.data.disable_mentions).toBe(false);
+  });
+  it('rejeita disable_mentions não-booleano', () => {
+    expect(raidCreateSchema.safeParse({ ...base, disable_mentions: 'sim' }).success).toBe(false);
+  });
 });
 
 describe('utils', () => {

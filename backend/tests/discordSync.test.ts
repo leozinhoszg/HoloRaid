@@ -2,7 +2,7 @@ import { createDiscordSyncCore } from '../src/discord/discordSync';
 import { makeFakeGuildConfigRepo, makeFakeRaidDiscordMessageRepo } from './fakes/fakeRepos';
 import { makeFakeGateway } from './fakes/fakeDiscord';
 
-const detail = (over: any = {}) => ({ id: 7, codigo: 'X7', operation: 'Dread Palace', difficulty: 'HM', size: 8, faction: 'Republic', minimum_tier: 0, check_composition: false, slots_tank: 2, slots_heal: 2, slots_dps: 4, notes: null, start_at: new Date('2026-08-01T20:30:00Z'), status: 'OPEN', created_by: 1, roster: [], ...over } as any);
+const detail = (over: any = {}) => ({ id: 7, codigo: 'X7', operation: 'Dread Palace', difficulty: 'HM', size: 8, faction: 'Republic', minimum_tier: 0, check_composition: false, disable_mentions: false, slots_tank: 2, slots_heal: 2, slots_dps: 4, notes: null, start_at: new Date('2026-08-01T20:30:00Z'), status: 'OPEN', created_by: 1, roster: [], ...over } as any);
 
 async function setup(opts: { failChannels?: string[] } = {}) {
   const guildConfigRepo = makeFakeGuildConfigRepo();
@@ -72,5 +72,46 @@ describe('reportTo', () => {
     const r = await core.reportTo(detail(), 'g9', 'cbad');
     expect(r).toBe('failed');
     expect((await msgRepo.listByRaid(7)).some((m) => m.channel_id === 'cbad')).toBe(false);
+  });
+});
+
+describe('menções (#5d)', () => {
+  it('onCreated pinga @here no post inicial de cada servidor', async () => {
+    const { core, gateway } = await setup();
+    await core.onCreated(detail());
+    const posts = gateway.calls.filter((c) => c.kind === 'post') as any[];
+    expect(posts).toHaveLength(2);
+    for (const p of posts) {
+      expect(p.opts?.content).toBe('@here');
+      expect(p.opts?.allowedMentions).toEqual({ parse: ['everyone'] });
+    }
+  });
+
+  it('onCreated com disable_mentions não pinga', async () => {
+    const { core, gateway } = await setup();
+    await core.onCreated(detail({ disable_mentions: true }));
+    const posts = gateway.calls.filter((c) => c.kind === 'post') as any[];
+    expect(posts).toHaveLength(2);
+    for (const p of posts) {
+      expect(p.opts?.content).toBeUndefined();
+      expect(p.opts?.allowedMentions).toEqual({ parse: [] });
+    }
+  });
+
+  it('mensagem "raid full" nunca pinga', async () => {
+    const { core, gateway } = await setup();
+    await core.onCreated(detail());
+    await core.onUpdated(detail(), 'raidFull');
+    const msgs = gateway.calls.filter((c) => c.kind === 'message') as any[];
+    expect(msgs).toHaveLength(2);
+    for (const m of msgs) expect(m.allowedMentions).toEqual({ parse: [] });
+  });
+
+  it('reportTo não pinga', async () => {
+    const { core, gateway } = await setup();
+    await core.reportTo(detail(), 'g9', 'c9');
+    const posts = gateway.calls.filter((c) => c.kind === 'post') as any[];
+    expect(posts).toHaveLength(1);
+    expect(posts[0].opts?.content).toBeUndefined();
   });
 });

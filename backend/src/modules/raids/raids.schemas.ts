@@ -13,6 +13,7 @@ const commonFields = {
   slots_dps: z.number().int().min(0),
   notes: z.string().max(2000).nullish(),
   start_at: z.coerce.date(),
+  disable_mentions: z.boolean().default(false),
 };
 
 export const raidCreateSchema = z.object(commonFields).superRefine((d, ctx) => {

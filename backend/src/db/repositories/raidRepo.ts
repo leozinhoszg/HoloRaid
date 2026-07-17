@@ -7,11 +7,11 @@ export type RaidStatus = 'OPEN' | 'RUNNING' | 'FINISHED' | 'CANCELLED';
 
 export type RaidRecord = {
   id: number; codigo: string; operation: string; difficulty: Difficulty; size: number;
-  faction: Faction; minimum_tier: number; check_composition: boolean;
+  faction: Faction; minimum_tier: number; check_composition: boolean; disable_mentions: boolean;
   slots_tank: number; slots_heal: number; slots_dps: number; notes: string | null;
   start_at: Date; status: RaidStatus; created_by: number;
 };
-export type NewRaid = Omit<RaidRecord, 'id' | 'status'>;
+export type NewRaid = Omit<RaidRecord, 'id' | 'status' | 'disable_mentions'> & { disable_mentions?: boolean };
 
 export interface RaidRepo {
   create(r: NewRaid): Promise<RaidRecord>;
@@ -23,14 +23,14 @@ export interface RaidRepo {
   delete(id: number): Promise<void>;
 }
 
-const COLS = ['id', 'codigo', 'operation', 'difficulty', 'size', 'faction', 'minimum_tier', 'check_composition', 'slots_tank', 'slots_heal', 'slots_dps', 'notes', 'start_at', 'status', 'created_by'] as const;
+const COLS = ['id', 'codigo', 'operation', 'difficulty', 'size', 'faction', 'minimum_tier', 'check_composition', 'disable_mentions', 'slots_tank', 'slots_heal', 'slots_dps', 'notes', 'start_at', 'status', 'created_by'] as const;
 
-const norm = (row: any): RaidRecord => ({ ...row, check_composition: !!row.check_composition, start_at: new Date(row.start_at) });
+const norm = (row: any): RaidRecord => ({ ...row, check_composition: !!row.check_composition, disable_mentions: !!row.disable_mentions, start_at: new Date(row.start_at) });
 
 export function createRaidRepo(db: Kysely<DB>): RaidRepo {
   return {
     async create(r) {
-      const res = await db.insertInto('raids').values({ ...r, check_composition: r.check_composition ? 1 : 0, status: 'OPEN', updated_at: new Date() }).executeTakeFirstOrThrow();
+      const res = await db.insertInto('raids').values({ ...r, check_composition: r.check_composition ? 1 : 0, disable_mentions: r.disable_mentions ? 1 : 0, status: 'OPEN', updated_at: new Date() }).executeTakeFirstOrThrow();
       const row = await db.selectFrom('raids').select(COLS).where('id', '=', Number(res.insertId)).executeTakeFirstOrThrow();
       return norm(row);
     },
@@ -50,8 +50,13 @@ export function createRaidRepo(db: Kysely<DB>): RaidRepo {
       return (await q.execute()).map(norm);
     },
     async update(id, patch) {
-      const { check_composition, ...rest } = patch;
-      const set = { ...rest, updated_at: new Date(), ...(check_composition !== undefined ? { check_composition: check_composition ? 1 : 0 } : {}) };
+      const { check_composition, disable_mentions, ...rest } = patch;
+      const set = {
+        ...rest,
+        updated_at: new Date(),
+        ...(check_composition !== undefined ? { check_composition: check_composition ? 1 : 0 } : {}),
+        ...(disable_mentions !== undefined ? { disable_mentions: disable_mentions ? 1 : 0 } : {}),
+      };
       await db.updateTable('raids').set(set).where('id', '=', id).execute();
     },
     async updateStatus(id, status) {

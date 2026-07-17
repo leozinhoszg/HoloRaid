@@ -16,6 +16,7 @@ export function buildCommandDefs() {
     .addStringOption((o) => o.setName('time').setDescription('Time HH:MM (UTC)').setRequired(true))
     .addIntegerOption((o) => o.setName('minimum_tier').setDescription('Minimum Tier 0-6').setMinValue(0).setMaxValue(6))
     .addBooleanOption((o) => o.setName('check_composition').setDescription('Enforce role slots'))
+    .addBooleanOption((o) => o.setName('disable_mentions').setDescription('Prevent the bot from pinging @here in the initial message. Default = false'))
     .addStringOption((o) => o.setName('notes').setDescription('Notes'));
 
   const setChannel = new SlashCommandBuilder()
