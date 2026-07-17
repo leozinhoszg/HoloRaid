@@ -7,6 +7,7 @@ import type { RaidRepo, RaidRecord, NewRaid } from '../../src/db/repositories/ra
 import type { RaidPlayerRepo, RaidPlayerRecord, RosterRow } from '../../src/db/repositories/raidPlayerRepo';
 import type { GuildConfigRepo, GuildConfig } from '../../src/db/repositories/guildConfigRepo';
 import type { RaidDiscordMessageRepo, RaidDiscordMessage, NewRaidDiscordMessage } from '../../src/db/repositories/raidDiscordMessageRepo';
+import type { DeviceTokenRepo, DeviceToken } from '../../src/db/repositories/deviceTokenRepo';
 import { BOSSES_SEED } from '../../src/reference/bossesSeed';
 
 export function makeFakeUserRepo(): UserRepo {
@@ -19,12 +20,14 @@ export function makeFakeUserRepo(): UserRepo {
         Object.assign(existing, { username: p.username, nickname: p.nickname, avatar: p.avatar, email: p.email });
         return { ...existing };
       }
-      const rec: UserRecord = { id: seq++, ...p };
+      const rec: UserRecord = { id: seq++, ...p, push_enabled: true };
       users.push(rec);
       return { ...rec };
     },
     async findById(id) { return users.find((u) => u.id === id) ?? null; },
+    async findByIds(ids) { return users.filter((u) => ids.includes(u.id)).map((u) => ({ ...u })); },
     async updateRole(id, role) { const u = users.find((x) => x.id === id); if (u) u.role = role; },
+    async setPushEnabled(id, enabled) { const u = users.find((x) => x.id === id); if (u) u.push_enabled = enabled; },
     async list() { return users.map((u) => ({ ...u })); },
   };
 }
@@ -90,6 +93,7 @@ export function makeFakeCharacterBossRepo(bossRepo: BossRepo): CharacterBossRepo
 
 export function makeFakeRaidRepo(): RaidRepo {
   const rows: RaidRecord[] = [];
+  const notified = new Set<number>(); // espelha raids.starting_notified_at
   let seq = 1;
   return {
     async create(r: NewRaid) { const rec: RaidRecord = { id: seq++, status: 'OPEN', ...r, disable_mentions: r.disable_mentions ?? false }; rows.push(rec); return { ...rec }; },
@@ -98,6 +102,14 @@ export function makeFakeRaidRepo(): RaidRepo {
     async list(f) {
       return rows.filter((x) => (!f.status || x.status === f.status) && (!f.faction || x.faction === f.faction) && (!f.operation || x.operation === f.operation)).map((x) => ({ ...x }));
     },
+    async listStartingSoon(withinMinutes) {
+      const now = Date.now();
+      const until = now + withinMinutes * 60_000;
+      return rows
+        .filter((r) => r.status === 'OPEN' && !notified.has(r.id) && +r.start_at >= now && +r.start_at <= until)
+        .map((r) => ({ ...r }));
+    },
+    async markStartingNotified(id) { notified.add(id); },
     async update(id, patch) { const x = rows.find((r) => r.id === id); if (x) Object.assign(x, patch); },
     async updateStatus(id, status) { const x = rows.find((r) => r.id === id); if (x) x.status = status; },
     async delete(id) { const i = rows.findIndex((r) => r.id === id); if (i >= 0) rows.splice(i, 1); },
@@ -145,5 +157,20 @@ export function makeFakeRaidDiscordMessageRepo(): RaidDiscordMessageRepo {
     async create(row: NewRaidDiscordMessage) { rows.push({ id: seq++, ...row }); },
     async listByRaid(raid_id) { return rows.filter((r) => r.raid_id === raid_id).map((r) => ({ ...r })); },
     async deleteByRaid(raid_id) { for (let i = rows.length - 1; i >= 0; i--) if (rows[i]!.raid_id === raid_id) rows.splice(i, 1); },
+  };
+}
+
+export function makeFakeDeviceTokenRepo(): DeviceTokenRepo & { _rows: DeviceToken[] } {
+  const rows: DeviceToken[] = [];
+  let seq = 1;
+  return {
+    _rows: rows,
+    async upsert(usuario_id, token, platform) {
+      const x = rows.find((r) => r.token === token);
+      if (x) { x.usuario_id = usuario_id; x.platform = platform; }
+      else rows.push({ id: seq++, usuario_id, token, platform });
+    },
+    async listByUsuarios(ids) { return rows.filter((r) => ids.includes(r.usuario_id)).map((r) => ({ ...r })); },
+    async deleteByTokens(tokens) { for (let i = rows.length - 1; i >= 0; i--) if (tokens.includes(rows[i]!.token)) rows.splice(i, 1); },
   };
 }

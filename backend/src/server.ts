@@ -25,6 +25,11 @@ import { noopGateway, createDiscordJsGateway } from './discord/gateway';
 import { createDiscordSync } from './discord/discordSync';
 import { createDiscordClient, attachBot } from './discord/bot';
 import { verifyAccessToken } from './common/security/jwt';
+import { createDeviceTokenRepo } from './db/repositories/deviceTokenRepo';
+import { noopPushGateway } from './push/gateway';
+import { createFcmGateway } from './push/fcmGateway';
+import { createNotificationService } from './push/notification.service';
+import { startScheduler } from './push/scheduler';
 import { createApp } from './app';
 import { logger } from './common/logger/logger';
 
@@ -67,11 +72,21 @@ const gateway = discordClient ? createDiscordJsGateway(discordClient) : noopGate
 const discordSync = createDiscordSync({ gateway, guildConfigRepo, msgRepo: raidDiscordMessageRepo, appPublicUrl: cfg.APP_PUBLIC_URL });
 const bus = createRaidEventBus(socketBroadcaster, discordSync);
 
-const app = createApp({ authService, userService, characterService, progressionService, bossRepo, raidService, raidJoinService, broadcaster: bus });
+// Push opcional: sem FIREBASE_SERVICE_ACCOUNT, gateway no-op e agendador não sobe.
+const deviceTokenRepo = createDeviceTokenRepo(db);
+const pushGateway = cfg.FIREBASE_SERVICE_ACCOUNT ? createFcmGateway(cfg.FIREBASE_SERVICE_ACCOUNT) : noopPushGateway;
+const notify = createNotificationService({ gateway: pushGateway, deviceTokenRepo, userRepo });
+
+const app = createApp({ authService, userService, characterService, progressionService, bossRepo, raidService, raidJoinService, broadcaster: bus, notificationService: notify, deviceTokenRepo });
 httpServer.on('request', app);
 
 if (discordClient && cfg.DISCORD_BOT_TOKEN) {
-  attachBot(discordClient, { token: cfg.DISCORD_BOT_TOKEN, clientId: cfg.DISCORD_CLIENT_ID, raidService, userRepo, guildConfigRepo, bus, report: discordSync.reportTo, personagemRepo, raidJoinService, appPublicUrl: cfg.APP_PUBLIC_URL });
+  attachBot(discordClient, { token: cfg.DISCORD_BOT_TOKEN, clientId: cfg.DISCORD_CLIENT_ID, raidService, userRepo, guildConfigRepo, bus, report: discordSync.reportTo, personagemRepo, raidJoinService, appPublicUrl: cfg.APP_PUBLIC_URL, notify });
 }
 
-httpServer.listen(cfg.PORT, () => logger.info(`HoloRaid backend (HTTP+Socket.IO${discordClient ? '+Discord' : ''}) ouvindo em :${cfg.PORT}`));
+if (cfg.FIREBASE_SERVICE_ACCOUNT) {
+  startScheduler({ raidRepo, raidService, notify });
+  logger.info('Push: agendador de lembretes ativo');
+}
+
+httpServer.listen(cfg.PORT, () => logger.info(`HoloRaid backend (HTTP+Socket.IO${discordClient ? '+Discord' : ''}${cfg.FIREBASE_SERVICE_ACCOUNT ? '+Push' : ''}) ouvindo em :${cfg.PORT}`));

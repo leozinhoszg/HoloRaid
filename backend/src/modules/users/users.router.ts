@@ -9,11 +9,13 @@ const wrap = (fn: (req: any, res: any) => Promise<unknown> | unknown) =>
   (req: any, res: any, next: any) => Promise.resolve(fn(req, res)).catch(next);
 
 const idParam = z.object({ id: z.coerce.number().int().positive() });
+const pushBody = z.object({ enabled: z.boolean() });
 
 export function createUsersRouter(userService: UserService): Router {
   const c = createUsersController(userService);
   const r = Router();
   r.get('/me', requireAuth, wrap(c.me));
+  r.put('/me/push', requireAuth, validate({ body: pushBody }), wrap(c.setPush));
   r.get('/users', requireAuth, requireAdmin, wrap(c.list));
   r.post('/users/:id/promote', requireAuth, requireAdmin, validate({ params: idParam }), wrap(c.promote));
   r.post('/users/:id/demote', requireAuth, requireAdmin, validate({ params: idParam }), wrap(c.demote));

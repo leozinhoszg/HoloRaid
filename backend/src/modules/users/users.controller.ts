@@ -17,5 +17,10 @@ export function createUsersController(userService: UserService) {
       await userService.demote(req.user!.sub, Number(req.params.id));
       res.status(204).send();
     },
+    async setPush(req: Request, res: Response) {
+      const { enabled } = req.body as { enabled: boolean };
+      await userService.setPushEnabled(req.user!.sub, enabled);
+      res.status(204).send();
+    },
   };
 }

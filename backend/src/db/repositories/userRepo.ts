@@ -5,6 +5,7 @@ export type Role = 'user' | 'admin';
 export type UserRecord = {
   id: number; discord_id: string; username: string;
   nickname: string | null; avatar: string | null; email: string | null; role: Role;
+  push_enabled: boolean;
 };
 export type UpsertUser = {
   discord_id: string; username: string;
@@ -14,11 +15,15 @@ export type UpsertUser = {
 export interface UserRepo {
   upsertByDiscordId(p: UpsertUser): Promise<UserRecord>;
   findById(id: number): Promise<UserRecord | null>;
+  findByIds(ids: number[]): Promise<UserRecord[]>;
   updateRole(id: number, role: Role): Promise<void>;
+  setPushEnabled(id: number, enabled: boolean): Promise<void>;
   list(): Promise<UserRecord[]>;
 }
 
-const COLS = ['id', 'discord_id', 'username', 'nickname', 'avatar', 'email', 'role'] as const;
+const COLS = ['id', 'discord_id', 'username', 'nickname', 'avatar', 'email', 'role', 'push_enabled'] as const;
+
+const norm = (row: any): UserRecord => ({ ...row, push_enabled: !!row.push_enabled });
 
 export function createUserRepo(db: Kysely<DB>): UserRepo {
   return {
@@ -33,18 +38,26 @@ export function createUserRepo(db: Kysely<DB>): UserRepo {
         .execute();
       const row = await db.selectFrom('usuarios').select(COLS)
         .where('discord_id', '=', p.discord_id).executeTakeFirstOrThrow();
-      return row as UserRecord;
+      return norm(row);
     },
     async findById(id) {
       const row = await db.selectFrom('usuarios').select(COLS).where('id', '=', id).executeTakeFirst();
-      return (row as UserRecord) ?? null;
+      return row ? norm(row) : null;
+    },
+    async findByIds(ids) {
+      if (!ids.length) return [];
+      const rows = await db.selectFrom('usuarios').select(COLS).where('id', 'in', ids).execute();
+      return rows.map(norm);
     },
     async updateRole(id, role) {
       await db.updateTable('usuarios').set({ role, updated_at: new Date() }).where('id', '=', id).execute();
     },
+    async setPushEnabled(id, enabled) {
+      await db.updateTable('usuarios').set({ push_enabled: enabled ? 1 : 0, updated_at: new Date() }).where('id', '=', id).execute();
+    },
     async list() {
       const rows = await db.selectFrom('usuarios').select(COLS).orderBy('id').execute();
-      return rows as UserRecord[];
+      return rows.map(norm);
     },
   };
 }

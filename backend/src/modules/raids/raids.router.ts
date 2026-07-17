@@ -7,14 +7,15 @@ import { createRaidsController } from './raids.controller';
 import type { RaidService } from './raids.service';
 import type { RaidJoinService } from './raidJoin.service';
 import type { RaidBroadcaster } from '../../realtime/broadcaster';
+import type { NotificationService } from '../../push/notification.service';
 
 const wrap = (fn: (req: any, res: any) => Promise<unknown> | unknown) =>
   (req: any, res: any, next: any) => Promise.resolve(fn(req, res)).catch(next);
 const idParam = z.object({ id: z.coerce.number().int().positive() });
 const joinBody = z.object({ personagem_id: z.number().int().positive() });
 
-export function createRaidsRouter(raidService: RaidService, raidJoinService: RaidJoinService, broadcaster?: RaidBroadcaster): Router {
-  const c = createRaidsController(raidService, raidJoinService, broadcaster);
+export function createRaidsRouter(raidService: RaidService, raidJoinService: RaidJoinService, broadcaster?: RaidBroadcaster, notify?: NotificationService): Router {
+  const c = createRaidsController(raidService, raidJoinService, broadcaster, notify);
   const r = Router();
   r.get('/raids', requireAuth, wrap(c.list));
   r.post('/raids', requireAuth, validate({ body: raidCreateSchema }), wrap(c.create));
