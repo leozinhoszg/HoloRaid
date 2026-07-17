@@ -139,10 +139,21 @@ guarda, o banco recusa.
 
 ## Riscos e questões em aberto
 
-- **A migration falha se houver órfão.** O `ALTER TABLE ... ADD FOREIGN KEY` recusa se existir
-  linha filha sem pai. O banco de dev está **zerado** (recriado em 2026-07-17), então aplica
-  limpo. Num banco com dados sujos seria preciso limpar os órfãos antes — anotado, não tratado
-  (YAGNI).
+- **A migration falha se houver órfão** — e **isso aconteceu de verdade na execução.** O
+  `ALTER TABLE ... ADD FOREIGN KEY` recusa se existir linha filha sem pai. Eu havia afirmado
+  aqui que o banco de dev estava "zerado"; estava **errado**: `usuarios` tinha 0 linhas, mas
+  havia 2 `personagens` (`Smk1`/`Smk2`) e 1 `raid_players` órfãos — **detrito dos smokes do
+  #6/#6b**, que apagaram usuários e, justamente por não haver cascade, deixaram os filhos para
+  trás. O bug produziu a prova de si mesmo. Os 3 registros foram limpos manualmente (não
+  havia dado real: `usuarios` vazia).
+- **DDL no MySQL não é transacional.** Quando a migration falhou no meio, `fk_rt_usuario` e
+  `fk_aal_actor` já tinham sido criadas, mas a `007` **não** ficou registrada em
+  `kysely_migration` — re-rodar daria "Duplicate foreign key constraint name". Foi preciso
+  derrubá-las à mão antes de re-aplicar. Se esta migration for rodar num banco com dados,
+  **verifique órfãos antes** (as queries de diagnóstico estão no plano).
+- **A limpeza de órfãos ficou FORA da migration, de propósito.** Uma migration que apaga dados
+  sozinha para "fazer caber" é perigosa em produção. Ela deve falhar alto; a limpeza é decisão
+  humana, caso a caso.
 - **Usuário "indeletável"** — ver a nota de coerência na Seção 1. Consequência fiel das
   declarações originais; sem impacto prático hoje.
 - **Smokes futuros precisam respeitar a ordem** de exclusão (raid antes de usuário, etc.).
