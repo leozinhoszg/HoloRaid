@@ -52,3 +52,13 @@ describe('loadConfig', () => {
     expect(c.APP_PUBLIC_URL).toBe('https://x.test');
   });
 });
+
+describe('FIREBASE_SERVICE_ACCOUNT (#6)', () => {
+  it('é opcional — ausente carrega normalmente', () => {
+    expect(loadConfig(good as any).FIREBASE_SERVICE_ACCOUNT).toBeUndefined();
+  });
+  it('quando presente, é lido como string', () => {
+    const c = loadConfig({ ...good, FIREBASE_SERVICE_ACCOUNT: 'eyJhIjoxfQ==' } as any);
+    expect(c.FIREBASE_SERVICE_ACCOUNT).toBe('eyJhIjoxfQ==');
+  });
+});
