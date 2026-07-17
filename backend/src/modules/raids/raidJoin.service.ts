@@ -40,7 +40,7 @@ export function createRaidJoinService(deps: Deps) {
       return { status };
     },
 
-    async leave(actorId: number, raidId: number): Promise<void> {
+    async leave(actorId: number, raidId: number): Promise<{ promoted?: number }> {
       const raid = await deps.raidRepo.findById(raidId);
       if (!raid) throw new NotFoundError('Raid não encontrada');
       if (raid.status !== 'OPEN') throw new ConflictError('Só é possível sair de uma raid aberta');
@@ -54,8 +54,12 @@ export function createRaidJoinService(deps: Deps) {
       if (wasConfirmed) {
         const waitlist = (await deps.raidPlayerRepo.listByRaid(raidId)).filter((p) => p.status === 'waitlist'); // já ordenado por joined_at
         const candidate = raid.check_composition ? waitlist.find((p) => p.role === freedRole) : waitlist[0];
-        if (candidate) await deps.raidPlayerRepo.updateStatus(candidate.id, 'confirmed');
+        if (candidate) {
+          await deps.raidPlayerRepo.updateStatus(candidate.id, 'confirmed');
+          return { promoted: candidate.usuario_id };
+        }
       }
+      return {};
     },
   };
 }

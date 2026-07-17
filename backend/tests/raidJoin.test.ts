@@ -66,3 +66,23 @@ describe('RaidJoinService', () => {
     expect((await svc.join(4, raid.id, d1.id)).status).toBe('confirmed'); // dps ainda tem vaga
   });
 });
+
+describe('leave retorna o promovido (#6)', () => {
+  it('promove o primeiro da waitlist e retorna o usuario_id', async () => {
+    const { svc, raid, mkChar } = await setup({ size: 1 });
+    const c1 = await mkChar(10, 'DPS');
+    const c2 = await mkChar(20, 'DPS');
+    expect((await svc.join(10, raid.id, c1.id)).status).toBe('confirmed');
+    expect((await svc.join(20, raid.id, c2.id)).status).toBe('waitlist');
+
+    const res = await svc.leave(10, raid.id);
+    expect(res.promoted).toBe(20);
+  });
+
+  it('sem ninguém na waitlist → promoted undefined', async () => {
+    const { svc, raid, mkChar } = await setup({ size: 1 });
+    const c1 = await mkChar(10, 'DPS');
+    await svc.join(10, raid.id, c1.id);
+    expect((await svc.leave(10, raid.id)).promoted).toBeUndefined();
+  });
+});

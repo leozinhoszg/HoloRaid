@@ -22,6 +22,7 @@ import type { BossRepo } from './db/repositories/bossRepo';
 import type { RaidService } from './modules/raids/raids.service';
 import type { RaidJoinService } from './modules/raids/raidJoin.service';
 import type { RaidBroadcaster } from './realtime/broadcaster';
+import type { NotificationService } from './push/notification.service';
 
 export function createApp(deps: {
   authService: AuthService;
@@ -32,6 +33,7 @@ export function createApp(deps: {
   raidService?: RaidService;
   raidJoinService?: RaidJoinService;
   broadcaster?: RaidBroadcaster;
+  notificationService?: NotificationService;
 }): Express {
   const cfg = getConfig();
   const app = express();
@@ -59,7 +61,7 @@ export function createApp(deps: {
     app.use('/', createProgressionRouter(deps.progressionService));
   }
   if (deps.raidService && deps.raidJoinService) {
-    app.use('/', createRaidsRouter(deps.raidService, deps.raidJoinService, deps.broadcaster));
+    app.use('/', createRaidsRouter(deps.raidService, deps.raidJoinService, deps.broadcaster, deps.notificationService));
   }
 
   app.use(notFoundHandler);

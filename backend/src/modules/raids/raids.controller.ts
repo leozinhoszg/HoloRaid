@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { isRaidFull, type RaidService, type Actor } from './raids.service';
 import type { RaidJoinService } from './raidJoin.service';
 import { noopBroadcaster, type RaidBroadcaster } from '../../realtime/broadcaster';
+import type { NotificationService } from '../../push/notification.service';
 
 const actorOf = (req: Request): Actor => ({ sub: req.user!.sub, role: req.user!.role });
 
@@ -9,7 +10,7 @@ const EVENT: Record<'start' | 'finish' | 'cancel', string> = {
   start: 'raidStarted', finish: 'raidFinished', cancel: 'raidCancelled',
 };
 
-export function createRaidsController(raidService: RaidService, raidJoinService: RaidJoinService, broadcaster: RaidBroadcaster = noopBroadcaster) {
+export function createRaidsController(raidService: RaidService, raidJoinService: RaidJoinService, broadcaster: RaidBroadcaster = noopBroadcaster, notify?: NotificationService) {
   return {
     async create(req: Request, res: Response) {
       const detail = await raidService.create(actorOf(req), req.body as any);
@@ -46,6 +47,7 @@ export function createRaidsController(raidService: RaidService, raidJoinService:
       return async (req: Request, res: Response) => {
         const detail = await raidService.transition(actorOf(req), Number(req.params.id), action);
         broadcaster.raidUpdated(detail, EVENT[action]);
+        if (action === 'cancel') await notify?.raidCancelled(detail);
         res.json(detail);
       };
     },
@@ -60,8 +62,10 @@ export function createRaidsController(raidService: RaidService, raidJoinService:
     },
     async leave(req: Request, res: Response) {
       const id = Number(req.params.id);
-      await raidJoinService.leave(req.user!.sub, id);
-      broadcaster.raidUpdated(await raidService.getDetail(id), 'playerLeft');
+      const { promoted } = await raidJoinService.leave(req.user!.sub, id);
+      const detail = await raidService.getDetail(id);
+      broadcaster.raidUpdated(detail, 'playerLeft');
+      if (promoted) await notify?.slotConfirmed(promoted, detail);
       res.status(204).send();
     },
   };

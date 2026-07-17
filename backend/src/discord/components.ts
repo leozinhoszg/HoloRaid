@@ -4,6 +4,7 @@ import type { RaidJoinService } from '../modules/raids/raidJoin.service';
 import type { UserRepo } from '../db/repositories/userRepo';
 import type { PersonagemRepo } from '../db/repositories/personagemRepo';
 import type { RaidBroadcaster } from '../realtime/broadcaster';
+import type { NotificationService } from '../push/notification.service';
 import { calcularTier } from '../common/progression/tier';
 import { AppError } from '../common/errors/AppError';
 
@@ -24,6 +25,7 @@ export type ComponentDeps = {
   raidJoinService: RaidJoinService;
   bus: RaidBroadcaster;
   appPublicUrl: string;
+  notify?: NotificationService;
 };
 
 export function codeFromCustomId(customId: string): string {
@@ -109,8 +111,10 @@ export async function handleLeaveClick(i: ComponentInteraction, deps: ComponentD
 
   const user = await actorFor(i, deps);
   try {
-    await deps.raidJoinService.leave(user.id, detail.id);
-    deps.bus.raidUpdated(await deps.raidService.getDetail(detail.id), 'playerLeft');
+    const { promoted } = await deps.raidJoinService.leave(user.id, detail.id);
+    const fresh = await deps.raidService.getDetail(detail.id);
+    deps.bus.raidUpdated(fresh, 'playerLeft');
+    if (promoted) await deps.notify?.slotConfirmed(promoted, fresh);
     await i.reply({ content: 'You left the raid.', ephemeral: true });
   } catch (err) {
     await i.reply({ content: leaveErrorMessage(err), ephemeral: true });
