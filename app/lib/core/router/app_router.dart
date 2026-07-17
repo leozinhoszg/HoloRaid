@@ -11,6 +11,7 @@ import '../../features/raids/raids_list_screen.dart';
 import '../../features/raids/raid_form_screen.dart';
 import '../../features/raids/raid_detail_screen.dart';
 import '../../features/dashboard/dashboard_screen.dart';
+import '../../features/profile/profile_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -40,6 +41,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/raids/new', builder: (_, _) => const RaidFormScreen()),
       GoRoute(path: '/raids/:id', builder: (_, state) => RaidDetailScreen(id: int.parse(state.pathParameters['id']!))),
       GoRoute(path: '/dashboard', builder: (_, _) => const DashboardScreen()),
+      GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
     ],
   );
 });

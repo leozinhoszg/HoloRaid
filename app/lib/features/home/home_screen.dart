@@ -52,6 +52,12 @@ class HomeScreen extends ConsumerWidget {
                   icon: const Icon(Icons.bar_chart),
                   label: const Text('Dashboard'),
                 ),
+                const SizedBox(height: 12),
+                FilledButton.icon(
+                  onPressed: () => context.push('/profile'),
+                  icon: const Icon(Icons.person),
+                  label: const Text('Perfil'),
+                ),
               ],
             );
           },
