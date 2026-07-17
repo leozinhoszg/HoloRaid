@@ -18,6 +18,7 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
   String _faction = 'Republic';
   int _minTier = 0;
   bool _checkComp = false;
+  bool _disableMentions = false;
   int _tank = 2, _heal = 2, _dps = 4;
   final _notes = TextEditingController();
   DateTime _date = DateTime.now().add(const Duration(days: 1));
@@ -41,6 +42,7 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
       await ref.read(raidsRepositoryProvider).create({
         'operation': _operation, 'difficulty': _difficulty, 'size': _size, 'faction': _faction,
         'minimum_tier': _minTier, 'check_composition': _checkComp,
+        'disable_mentions': _disableMentions,
         'slots_tank': _tank, 'slots_heal': _heal, 'slots_dps': _dps,
         'notes': _notes.text.trim().isEmpty ? null : _notes.text.trim(),
         'start_at': startAt.toIso8601String(),
@@ -104,6 +106,12 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
               subtitle: const Text('Enforça vagas por role'),
               value: _checkComp,
               onChanged: (v) => setState(() => _checkComp = v),
+            ),
+            SwitchListTile(
+              title: const Text('Disable mentions'),
+              subtitle: const Text('Não pingar @here no Discord ao anunciar'),
+              value: _disableMentions,
+              onChanged: (v) => setState(() => _disableMentions = v),
             ),
             Row(children: [
               Expanded(child: _slotField('Tank', _tank, (v) => setState(() => _tank = v))),
