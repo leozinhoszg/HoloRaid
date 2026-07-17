@@ -58,6 +58,14 @@ class HomeScreen extends ConsumerWidget {
                   icon: const Icon(Icons.person),
                   label: const Text('Perfil'),
                 ),
+                if ((me['role'] as String?) == 'admin') ...[
+                  const SizedBox(height: 12),
+                  FilledButton.icon(
+                    onPressed: () => context.push('/admin/users'),
+                    icon: const Icon(Icons.admin_panel_settings),
+                    label: const Text('Admin'),
+                  ),
+                ],
               ],
             );
           },

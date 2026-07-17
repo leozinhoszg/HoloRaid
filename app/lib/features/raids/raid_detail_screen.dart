@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../core/auth/auth_providers.dart';
 import '../../core/config/app_config.dart';
@@ -27,6 +28,7 @@ class RaidDetailScreen extends ConsumerWidget {
           final waitlist = raid.roster.where((r) => r.status == 'waitlist').toList();
           final iAmIn = meId != null && raid.roster.any((r) => r.usuarioId == meId);
           final iAmLeader = meId != null && raid.createdBy == meId;
+          final iAmAdmin = auth is AuthSignedIn && (auth.user['role'] as String?) == 'admin';
           int confirmedByRole(String role) => raid.roster.where((r) => r.status == 'confirmed' && r.role == role).length;
           final isFull = raid.checkComposition
               ? (confirmedByRole('Tank') >= raid.slotsTank && confirmedByRole('Healer') >= raid.slotsHeal && confirmedByRole('DPS') >= raid.slotsDps)
@@ -55,10 +57,12 @@ class RaidDetailScreen extends ConsumerWidget {
                 if (raid.status == 'OPEN' && !iAmIn) FilledButton.icon(onPressed: () => _join(context, ref, raid), icon: const Icon(Icons.login), label: const Text('Entrar')),
                 if (raid.status == 'OPEN' && iAmIn) OutlinedButton.icon(onPressed: () => _leave(context, ref), icon: const Icon(Icons.logout), label: const Text('Sair')),
               ]),
-              if (iAmLeader) Wrap(spacing: 8, children: [
+              if (iAmLeader || iAmAdmin) Wrap(spacing: 8, children: [
                 if (raid.status == 'OPEN') TextButton(onPressed: () => _transition(context, ref, 'start'), child: const Text('Iniciar')),
                 if (raid.status == 'OPEN' || raid.status == 'RUNNING') TextButton(onPressed: () => _transition(context, ref, 'finish'), child: const Text('Encerrar')),
                 if (raid.status == 'OPEN' || raid.status == 'RUNNING') TextButton(onPressed: () => _transition(context, ref, 'cancel'), child: const Text('Cancelar')),
+                TextButton(onPressed: () => _duplicate(context, ref), child: const Text('Duplicar')),
+                TextButton(onPressed: () => _delete(context, ref), style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error), child: const Text('Excluir')),
               ]),
               const Divider(),
               Text('Confirmados (${confirmed.length}/${raid.size})', style: Theme.of(context).textTheme.titleMedium),
@@ -117,6 +121,41 @@ class RaidDetailScreen extends ConsumerWidget {
   Future<void> _transition(BuildContext context, WidgetRef ref, String action) async {
     await ref.read(raidsRepositoryProvider).transition(id, action);
     ref.invalidate(raidDetailProvider(id));
+  }
+
+  Future<void> _duplicate(BuildContext context, WidgetRef ref) async {
+    try {
+      final copy = await ref.read(raidsRepositoryProvider).duplicate(id);
+      ref.invalidate(raidsListProvider);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Raid duplicada (${copy.codigo}).')));
+        context.push('/raids/${copy.id}');
+      }
+    } catch (e) {
+      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Falha ao duplicar: $e')));
+    }
+  }
+
+  Future<void> _delete(BuildContext context, WidgetRef ref) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Excluir raid?'),
+        content: const Text('Esta ação não pode ser desfeita.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Excluir')),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    try {
+      await ref.read(raidsRepositoryProvider).remove(id);
+      ref.invalidate(raidsListProvider);
+      if (context.mounted) context.canPop() ? context.pop() : context.go('/raids');
+    } catch (e) {
+      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Falha ao excluir: $e')));
+    }
   }
 
   void _share(BuildContext context, Raid raid) {
