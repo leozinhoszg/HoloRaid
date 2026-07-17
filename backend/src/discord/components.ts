@@ -66,3 +66,61 @@ export async function handleJoinClick(i: ComponentInteraction, deps: ComponentDe
     })),
   });
 }
+
+export async function handleCharacterPick(i: ComponentInteraction, deps: ComponentDeps): Promise<void> {
+  const code = codeFromCustomId(i.customId);
+  const personagemId = Number(i.values[0]);
+  let detail: RaidDetail;
+  try { detail = await deps.raidService.getByCodigo(code); }
+  catch { await i.reply({ content: 'Raid not found.', ephemeral: true }); return; }
+
+  const user = await actorFor(i, deps);
+  try {
+    const result = await deps.raidJoinService.join(user.id, detail.id, personagemId);
+    const fresh = await deps.raidService.getDetail(detail.id);
+    deps.bus.raidUpdated(fresh, 'playerJoined');
+    if (result.status === 'confirmed' && isRaidFull(fresh)) deps.bus.raidUpdated(fresh, 'raidFull');
+    await i.reply({
+      content: result.status === 'confirmed' ? "You're signed up as **confirmed**." : "You've been added to the **waitlist**.",
+      ephemeral: true,
+    });
+  } catch (err) {
+    await i.reply({ content: joinErrorMessage(err), ephemeral: true });
+  }
+}
+
+function joinErrorMessage(err: unknown): string {
+  if (err instanceof AppError) {
+    switch (err.statusCode) {
+      case 409: return "Couldn't sign you up — you may already be in, or the raid changed.";
+      case 422: return "That character can't join this raid (faction or Tier).";
+      case 404: return 'Raid or character not found.';
+      case 403: return 'You can only sign up your own character.';
+    }
+  }
+  return 'Something went wrong.';
+}
+
+export async function handleLeaveClick(i: ComponentInteraction, deps: ComponentDeps): Promise<void> {
+  const code = codeFromCustomId(i.customId);
+  let detail: RaidDetail;
+  try { detail = await deps.raidService.getByCodigo(code); }
+  catch { await i.reply({ content: 'Raid not found.', ephemeral: true }); return; }
+
+  const user = await actorFor(i, deps);
+  try {
+    await deps.raidJoinService.leave(user.id, detail.id);
+    deps.bus.raidUpdated(await deps.raidService.getDetail(detail.id), 'playerLeft');
+    await i.reply({ content: 'You left the raid.', ephemeral: true });
+  } catch (err) {
+    await i.reply({ content: leaveErrorMessage(err), ephemeral: true });
+  }
+}
+
+function leaveErrorMessage(err: unknown): string {
+  if (err instanceof AppError) {
+    if (err.statusCode === 404) return "You weren't signed up.";
+    if (err.statusCode === 409) return "This raid isn't open for sign-ups.";
+  }
+  return 'Something went wrong.';
+}

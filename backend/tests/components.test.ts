@@ -1,4 +1,4 @@
-import { handleJoinClick, type ComponentInteraction, type ComponentDeps } from '../src/discord/components';
+import { handleJoinClick, handleCharacterPick, handleLeaveClick, type ComponentInteraction, type ComponentDeps } from '../src/discord/components';
 import { makeFakeUserRepo, makeFakePersonagemRepo, makeFakeRaidRepo, makeFakeRaidPlayerRepo } from './fakes/fakeRepos';
 import { createRaidService } from '../src/modules/raids/raids.service';
 import { createRaidJoinService } from '../src/modules/raids/raidJoin.service';
@@ -110,5 +110,68 @@ describe('/join (click)', () => {
     await handleJoinClick(i, d);
     expect(i.replies[0].content).toMatch(/isn't open/i);
     expect(i.selects).toHaveLength(0);
+  });
+});
+
+async function fillConfirmed(d: ComponentDeps, raidId: number, n: number) {
+  for (let k = 0; k < n; k++) {
+    const u = await d.userRepo.upsertByDiscordId({ discord_id: `f${k}`, username: `f${k}`, nickname: null, avatar: null, email: null, role: 'user' });
+    const p = await d.personagemRepo.create({ usuario_id: u.id, nome: `F${k}`, faccao: 'Republic', classe: 'X', especializacao: null, role: 'DPS', origin_story: null, item_level: 300 } as any);
+    await d.raidJoinService.join(u.id, raidId, p.id);
+  }
+}
+
+describe('/pick (escolha de personagem)', () => {
+  it('char elegível → inscreve confirmado e emite playerJoined', async () => {
+    const { d, events } = deps();
+    const raid = await seedRaid(d);
+    const { p } = await giveChar(d, 'd1');
+    const i = fakeInteraction({ customId: `hr:pick:${raid.codigo}`, values: [String(p.id)] });
+    await handleCharacterPick(i, d);
+    expect(i.replies[0].content).toMatch(/confirmed/i);
+    expect(events).toContain('playerJoined');
+    expect((await d.raidService.getDetail(raid.id)).roster).toHaveLength(1);
+  });
+
+  it('escolha que enche a raid → também emite raidFull', async () => {
+    const { d, events } = deps();
+    const raid = await seedRaid(d);
+    await fillConfirmed(d, raid.id, 7);
+    const { p } = await giveChar(d, 'd1');
+    const i = fakeInteraction({ customId: `hr:pick:${raid.codigo}`, values: [String(p.id)] });
+    await handleCharacterPick(i, d);
+    expect(events).toContain('raidFull');
+  });
+
+  it('raid cheia → vai para a waitlist', async () => {
+    const { d } = deps();
+    const raid = await seedRaid(d);
+    await fillConfirmed(d, raid.id, 8);
+    const { p } = await giveChar(d, 'd1');
+    const i = fakeInteraction({ customId: `hr:pick:${raid.codigo}`, values: [String(p.id)] });
+    await handleCharacterPick(i, d);
+    expect(i.replies[0].content).toMatch(/waitlist/i);
+  });
+});
+
+describe('/leave (click)', () => {
+  it('inscrito → sai e emite playerLeft', async () => {
+    const { d, events } = deps();
+    const raid = await seedRaid(d);
+    const { u, p } = await giveChar(d, 'd1');
+    await d.raidJoinService.join(u.id, raid.id, p.id);
+    const i = fakeInteraction({ customId: `hr:leave:${raid.codigo}` });
+    await handleLeaveClick(i, d);
+    expect(i.replies[0].content).toMatch(/left the raid/i);
+    expect(events).toContain('playerLeft');
+    expect((await d.raidService.getDetail(raid.id)).roster).toHaveLength(0);
+  });
+
+  it('não inscrito → mensagem clara', async () => {
+    const { d } = deps();
+    const raid = await seedRaid(d);
+    const i = fakeInteraction({ customId: `hr:leave:${raid.codigo}` });
+    await handleLeaveClick(i, d);
+    expect(i.replies[0].content).toMatch(/weren't signed up/i);
   });
 });
