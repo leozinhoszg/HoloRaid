@@ -102,6 +102,14 @@ export function makeFakeRaidRepo(): RaidRepo {
     async list(f) {
       return rows.filter((x) => (!f.status || x.status === f.status) && (!f.faction || x.faction === f.faction) && (!f.operation || x.operation === f.operation)).map((x) => ({ ...x }));
     },
+    // fake não conhece o roster: só o lado "criador". A união real é testada contra o MySQL.
+    async listForUser(userId) {
+      return rows.filter((r) => r.created_by === userId).map((r) => ({
+        id: r.id, codigo: r.codigo, operation: r.operation, difficulty: r.difficulty,
+        size: r.size, faction: r.faction, start_at: r.start_at, status: r.status,
+        created: true, myStatus: null as 'confirmed' | 'waitlist' | null,
+      }));
+    },
     async listStartingSoon(withinMinutes) {
       const now = Date.now();
       const until = now + withinMinutes * 60_000;
