@@ -12,6 +12,7 @@ describe('buildRaidEmbed', () => {
     const e = buildRaidEmbed(detail, 'https://holoraid.fun');
     expect(e.title).toContain('HoloRaid');
     expect(e.joinUrl).toBe('https://holoraid.fun/r/ABC123');
+    expect(e.codigo).toBe('ABC123');
     const f = Object.fromEntries(e.fields.map((x) => [x.name, x.value]));
     expect(f['Operation']).toBe('Dread Palace');
     expect(f['Difficulty']).toBe('Veteran');
