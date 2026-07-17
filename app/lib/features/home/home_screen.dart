@@ -46,6 +46,12 @@ class HomeScreen extends ConsumerWidget {
                   icon: const Icon(Icons.event),
                   label: const Text('Raids'),
                 ),
+                const SizedBox(height: 12),
+                FilledButton.icon(
+                  onPressed: () => context.push('/dashboard'),
+                  icon: const Icon(Icons.bar_chart),
+                  label: const Text('Dashboard'),
+                ),
               ],
             );
           },
