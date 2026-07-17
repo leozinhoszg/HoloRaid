@@ -1,4 +1,4 @@
-# RaidSync — Raids (Design)
+# HoloRaid — Raids (Design)
 
 - **Data:** 2026-07-14
 - **Subsistema:** #3 de 10 — Raids

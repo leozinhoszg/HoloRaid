@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Construir o esqueleto de autenticação (Discord OAuth2), autorização (RBAC user/admin) e hardening do RaidSync — um backend TypeScript + uma fatia fina de login Flutter que prova o fluxo fim-a-fim.
+**Goal:** Construir o esqueleto de autenticação (Discord OAuth2), autorização (RBAC user/admin) e hardening do HoloRaid — um backend TypeScript + uma fatia fina de login Flutter que prova o fluxo fim-a-fim.
 
 **Architecture:** Monólito modular Express + TypeScript, fatiado por feature (router → controller → service → repository). Services recebem repositórios por injeção; a app é montada por uma fábrica `createApp(deps)`, permitindo testar rotas com repos falsos sem MySQL. Acesso ao MySQL via Kysely (queries tipadas e parametrizadas). Tokens híbridos: access JWT curto + refresh rotativo revogável com detecção de reuso.
 
@@ -100,7 +100,7 @@ app/  (Flutter)
 
 ```json
 {
-  "name": "raidsync-backend",
+  "name": "holoraid-backend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -187,7 +187,7 @@ dist/
 ```
 NODE_ENV=development
 PORT=3000
-DATABASE_URL=mysql://raid:raid@127.0.0.1:3306/raidsync
+DATABASE_URL=mysql://raid:raid@127.0.0.1:3306/holoraid
 JWT_SECRET=troque-por-uma-string-aleatoria-de-32-ou-mais-caracteres
 ACCESS_TOKEN_TTL=15m
 REFRESH_TOKEN_TTL_DAYS=30
@@ -201,7 +201,7 @@ CORS_ORIGINS=http://localhost:8080
 - [ ] **Step 6: Criar stub `backend/src/server.ts`**
 
 ```ts
-console.log('RaidSync backend — bootstrap pendente');
+console.log('HoloRaid backend — bootstrap pendente');
 ```
 
 - [ ] **Step 7: Instalar e verificar**
@@ -1044,7 +1044,7 @@ Expected: compila sem erros de tipo.
 
 - [ ] **Step 6: (Integração — precisa de MySQL) rodar o migrate**
 
-Suba um MySQL local (ex.: `docker run --name raid-mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=raidsync -p 3306:3306 -d mysql:8`), ajuste `DATABASE_URL` no `.env`, então:
+Suba um MySQL local (ex.: `docker run --name raid-mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=holoraid -p 3306:3306 -d mysql:8`), ajuste `DATABASE_URL` no `.env`, então:
 Run: `cd backend && npm run migrate`
 Expected: `OK: 001_init` e as três tabelas criadas.
 
@@ -2119,7 +2119,7 @@ const authService = createAuthService({
 const userService = createUserService({ userRepo, auditLog: createAuditLog(db) });
 
 const app = createApp({ authService, userService });
-app.listen(cfg.PORT, () => logger.info(`RaidSync backend ouvindo em :${cfg.PORT}`));
+app.listen(cfg.PORT, () => logger.info(`HoloRaid backend ouvindo em :${cfg.PORT}`));
 ```
 
 - [ ] **Step 3: Verificar compilação**
@@ -2163,7 +2163,7 @@ git commit -m "feat(backend): bootstrap real com Kysely + smoke fim-a-fim"
 
 - [ ] **Step 1: Criar o projeto Flutter**
 
-Run: `cd app && flutter create . --platforms=android,windows,web --project-name raidsync`
+Run: `cd app && flutter create . --platforms=android,windows,web --project-name holoraid`
 Expected: estrutura Flutter criada.
 
 - [ ] **Step 2: Definir dependências em `app/pubspec.yaml`** (na seção `dependencies`)
@@ -2192,7 +2192,7 @@ class AppConfig {
   );
   static const discordClientId = String.fromEnvironment('DISCORD_CLIENT_ID');
   // Callback: Web usa a URL do SPA; mobile/desktop usam o scheme abaixo.
-  static const oauthCallbackScheme = 'raidsync';
+  static const oauthCallbackScheme = 'holoraid';
 }
 ```
 
@@ -2202,15 +2202,15 @@ class AppConfig {
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() => runApp(const ProviderScope(child: RaidSyncApp()));
+void main() => runApp(const ProviderScope(child: HoloRaidApp()));
 
-class RaidSyncApp extends StatelessWidget {
-  const RaidSyncApp({super.key});
+class HoloRaidApp extends StatelessWidget {
+  const HoloRaidApp({super.key});
   @override
   Widget build(BuildContext context) => MaterialApp(
-        title: 'RaidSync',
+        title: 'HoloRaid',
         theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
-        home: const Scaffold(body: Center(child: Text('RaidSync — bootstrap'))),
+        home: const Scaffold(body: Center(child: Text('HoloRaid — bootstrap'))),
       );
 }
 ```
@@ -2218,7 +2218,7 @@ class RaidSyncApp extends StatelessWidget {
 - [ ] **Step 5: Verificar execução**
 
 Run: `cd app && flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:3000`
-Expected: janela/aba abre mostrando "RaidSync — bootstrap".
+Expected: janela/aba abre mostrando "HoloRaid — bootstrap".
 
 - [ ] **Step 6: Commit**
 
@@ -2547,7 +2547,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('RaidSync', style: Theme.of(context).textTheme.headlineMedium),
+            Text('HoloRaid', style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 24),
             GestureDetector(
               onTapDown: (_) => setState(() => _pressed = true),
@@ -2592,7 +2592,7 @@ class HomeScreen extends ConsumerWidget {
     final user = state is AuthSignedIn ? state.user : const <String, dynamic>{};
     return Scaffold(
       appBar: AppBar(
-        title: const Text('RaidSync'),
+        title: const Text('HoloRaid'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -2662,15 +2662,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/router/app_router.dart';
 
-void main() => runApp(const ProviderScope(child: RaidSyncApp()));
+void main() => runApp(const ProviderScope(child: HoloRaidApp()));
 
-class RaidSyncApp extends ConsumerWidget {
-  const RaidSyncApp({super.key});
+class HoloRaidApp extends ConsumerWidget {
+  const HoloRaidApp({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
     return MaterialApp.router(
-      title: 'RaidSync',
+      title: 'HoloRaid',
       theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
       routerConfig: router,
     );
@@ -2683,7 +2683,7 @@ class RaidSyncApp extends ConsumerWidget {
 Run: `cd app && flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:3000 --dart-define=DISCORD_CLIENT_ID=<CID>`
 Expected: abre em `/login` → clicar "Entrar com Discord" (botão encolhe para 0.97) → consentimento Discord → volta autenticado em `/home` mostrando avatar + username + papel; botão de logout retorna para `/login`.
 
-> Para Android/Windows: registrar o redirect. Android — adicionar o intent-filter do scheme `raidsync` no `AndroidManifest.xml` (conforme README do `flutter_web_auth_2`). Windows/desktop — o `flutter_web_auth_2` usa loopback; configurar o redirect de loopback no app do Discord. Repetir o fluxo com `-d windows` / `-d android`.
+> Para Android/Windows: registrar o redirect. Android — adicionar o intent-filter do scheme `holoraid` no `AndroidManifest.xml` (conforme README do `flutter_web_auth_2`). Windows/desktop — o `flutter_web_auth_2` usa loopback; configurar o redirect de loopback no app do Discord. Repetir o fluxo com `-d windows` / `-d android`.
 
 - [ ] **Step 6: Commit**
 

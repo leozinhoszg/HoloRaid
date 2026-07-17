@@ -610,7 +610,7 @@ const broadcaster = createRaidBroadcaster(io);
 
 const app = createApp({ authService, userService, characterService, progressionService, bossRepo, raidService, raidJoinService, broadcaster });
 httpServer.on('request', app);
-httpServer.listen(cfg.PORT, () => logger.info(`RaidSync backend (HTTP+Socket.IO) ouvindo em :${cfg.PORT}`));
+httpServer.listen(cfg.PORT, () => logger.info(`HoloRaid backend (HTTP+Socket.IO) ouvindo em :${cfg.PORT}`));
 ```
 
 - [ ] **Step 4: Rodar o teste de integração + build**

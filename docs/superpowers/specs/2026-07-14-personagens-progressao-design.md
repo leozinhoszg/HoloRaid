@@ -1,4 +1,4 @@
-# RaidSync — Personagens & Progressão PvE (Design)
+# HoloRaid — Personagens & Progressão PvE (Design)
 
 - **Data:** 2026-07-14
 - **Subsistema:** #2 de 10 — Personagens & Progressão PvE / Tier

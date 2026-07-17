@@ -3,7 +3,7 @@
 - **Data:** 2026-07-14
 - **Tipo:** Foundation cross-cutting (não é um subsistema do roadmap; toca todo o app)
 - **Status:** Brief aprovado em conceito; **ainda não brainstormado/spec'ado a fundo**.
-- **Como retomar:** abra uma conversa nova e diga *"vamos fazer o i18n do HoloRaid — use o brief em `docs/superpowers/specs/2026-07-14-i18n-foundation-brief.md`"*. O fluxo é o de sempre: brainstorming → spec → plano → execução inline → branch → merge → push (commits só como Leonardo, sem Claude). Ver [[raidsync-dev-workflow]] e [[raidsync-project-state]].
+- **Como retomar:** abra uma conversa nova e diga *"vamos fazer o i18n do HoloRaid — use o brief em `docs/superpowers/specs/2026-07-14-i18n-foundation-brief.md`"*. O fluxo é o de sempre: brainstorming → spec → plano → execução inline → branch → merge → push (commits só como Leonardo, sem Claude). Ver [[holoraid-dev-workflow]] e [[holoraid-project-state]].
 
 ## Objetivo
 
@@ -89,7 +89,7 @@ Backend (`backend/src/`):
 - Fonte das traduções DE/ES/FR (humana vs. inicial automática a revisar).
 - Até onde migrar os erros do backend agora (só user-facing vs. todos).
 - Formatação de datas/números por locale (o `intl` já cobre; alinhar com o fuso do
-  [[raidsync-project-state]]).
+  [[holoraid-project-state]]).
 
 ## Não fazer aqui
 

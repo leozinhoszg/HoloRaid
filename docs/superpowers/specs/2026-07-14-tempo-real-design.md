@@ -1,4 +1,4 @@
-# RaidSync — Tempo Real (Socket.IO) — Design
+# HoloRaid — Tempo Real (Socket.IO) — Design
 
 - **Data:** 2026-07-14
 - **Subsistema:** #4 de 10 — Tempo real

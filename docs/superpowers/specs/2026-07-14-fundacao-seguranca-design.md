@@ -1,4 +1,4 @@
-# RaidSync — Fundação & Segurança (Design)
+# HoloRaid — Fundação & Segurança (Design)
 
 - **Data:** 2026-07-14
 - **Subsistema:** #1 de 10 — Fundação & Segurança
@@ -6,7 +6,7 @@
 
 ## Contexto
 
-RaidSync é uma plataforma multiplataforma (Flutter para Android/Windows/Web) para
+HoloRaid é uma plataforma multiplataforma (Flutter para Android/Windows/Web) para
 gerenciar Operations de SWTOR, com backend Node.js/Express, MySQL, Socket.IO e
 integração ao Discord. O escopo total é grande (~10 subsistemas independentes).
 
@@ -126,7 +126,7 @@ futuros — é onde "segurança desde a base" vira código concreto.
 | Plataforma | Redirect (recebe o `code`) | Refresh token |
 |-----------|----------------------------|---------------|
 | Web | rota do SPA `https://.../auth/callback` → SPA faz `POST /auth/callback` | Cookie `httpOnly` + `Secure` + `SameSite=Lax` |
-| Android | deep link `raidsync://auth` (`flutter_web_auth_2`) → app faz `POST /auth/callback` | Flutter Secure Storage |
+| Android | deep link `holoraid://auth` (`flutter_web_auth_2`) → app faz `POST /auth/callback` | Flutter Secure Storage |
 | Windows | loopback `http://127.0.0.1:<porta>` → app faz `POST /auth/callback` | Flutter Secure Storage |
 
 Em todas as plataformas o Discord redireciona para um destino que **recebe o `code`**;
@@ -258,7 +258,7 @@ ferramenta de migration (Kysely migrator).
 
 - **Callback desktop (loopback)**: exige registrar o redirect de loopback no app do
   Discord; validar porta dinâmica vs fixa na implementação.
-- **Deep link Android**: registrar o scheme `raidsync://` no manifest.
+- **Deep link Android**: registrar o scheme `holoraid://` no manifest.
 - **CSRF + CORS com credentials**: a allowlist precisa ser exata (sem `*`) porque
   usamos cookies com `credentials:true`.
 - **`ADMIN_DISCORD_IDS`**: bootstrap do primeiro admin depende dessa lista estar

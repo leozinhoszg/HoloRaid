@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Adicionar personagens (CRUD), progressão PvE idempotente e Tier derivado ao RaidSync, com telas Flutter, sobre a fundação do #1.
+**Goal:** Adicionar personagens (CRUD), progressão PvE idempotente e Tier derivado ao HoloRaid, com telas Flutter, sobre a fundação do #1.
 
 **Architecture:** Segue o padrão do #1 — módulos por feature (router → controller → service → repository), services com repositórios injetados, `createApp(deps)` estendida para montar os routers novos com repos falsos nos testes (sem MySQL). Dados de classe/disciplina/role como constantes TS; bosses seedados no DB. Tier puramente derivado de `total_points`.
 
