@@ -40,6 +40,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: '/raids', builder: (_, _) => const RaidsListScreen()),
       GoRoute(path: '/raids/new', builder: (_, _) => const RaidFormScreen()),
+      GoRoute(path: '/raids/:id/edit', builder: (_, state) => RaidFormScreen(editRaidId: int.parse(state.pathParameters['id']!))),
       GoRoute(path: '/raids/:id', builder: (_, state) => RaidDetailScreen(id: int.parse(state.pathParameters['id']!))),
       GoRoute(path: '/dashboard', builder: (_, _) => const DashboardScreen()),
       GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
