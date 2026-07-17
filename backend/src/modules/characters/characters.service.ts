@@ -1,7 +1,8 @@
 import type { PersonagemRepo, PersonagemRecord, PersonagemInput } from '../../db/repositories/personagemRepo';
+import type { RaidPlayerRepo } from '../../db/repositories/raidPlayerRepo';
 import { calcularTier, pointsToNextTier } from '../../common/progression/tier';
 import { combatStyleByName, disciplineByName } from '../../reference/swtor';
-import { NotFoundError, ForbiddenError, ValidationError } from '../../common/errors/AppError';
+import { NotFoundError, ForbiddenError, ValidationError, ConflictError } from '../../common/errors/AppError';
 
 export type CharacterView = PersonagemRecord & { tier: number; pointsToNextTier: number | null };
 
@@ -22,7 +23,7 @@ function assertCoerente(p: Pick<PersonagemRecord, 'faccao' | 'classe' | 'role' |
   }
 }
 
-export function createCharacterService(deps: { personagemRepo: PersonagemRepo }) {
+export function createCharacterService(deps: { personagemRepo: PersonagemRepo; raidPlayerRepo: RaidPlayerRepo }) {
   async function owned(actorId: number, id: number): Promise<PersonagemRecord> {
     const p = await deps.personagemRepo.findById(id);
     if (!p) throw new NotFoundError('Personagem não encontrado');
@@ -52,6 +53,10 @@ export function createCharacterService(deps: { personagemRepo: PersonagemRepo })
     },
     async remove(actorId: number, id: number): Promise<void> {
       await owned(actorId, id);
+      // A FK fk_rp_personagem (007) recusaria isso no banco; aqui viramos um 409 de domínio.
+      if (await deps.raidPlayerRepo.existsByPersonagem(id)) {
+        throw new ConflictError('Este personagem está inscrito em uma raid. Saia da raid antes de apagá-lo.');
+      }
       await deps.personagemRepo.delete(id);
     },
     async assertOwner(actorId: number, id: number): Promise<void> {

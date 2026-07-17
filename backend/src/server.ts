@@ -48,11 +48,12 @@ const userService = createUserService({ userRepo, auditLog: createAuditLog(db) }
 const personagemRepo = createPersonagemRepo(db);
 const bossRepo = createBossRepo(db);
 const charBossRepo = createCharacterBossRepo(db);
-const characterService = createCharacterService({ personagemRepo });
+const raidRepo = createRaidRepo(db);
+// raidPlayerRepo vem antes do characterService: o remove() consulta o roster (007).
+const raidPlayerRepo = createRaidPlayerRepo(db);
+const characterService = createCharacterService({ personagemRepo, raidPlayerRepo });
 const progressionService = createProgressionService({ personagemRepo, bossRepo, charBossRepo });
 
-const raidRepo = createRaidRepo(db);
-const raidPlayerRepo = createRaidPlayerRepo(db);
 const raidService = createRaidService({ raidRepo, raidPlayerRepo });
 const raidJoinService = createRaidJoinService({ raidRepo, raidPlayerRepo, personagemRepo });
 

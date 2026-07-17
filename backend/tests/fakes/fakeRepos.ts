@@ -133,6 +133,7 @@ export function makeFakeRaidPlayerRepo(personagemRepo: PersonagemRepo): RaidPlay
       }
       return out;
     },
+    async existsByPersonagem(personagemId) { return rows.some((r) => r.personagem_id === personagemId); },
     async updateStatus(id, status) { const x = rows.find((r) => r.id === id); if (x) x.status = status; },
     async deleteByRaidAndUser(raidId, usuarioId) { const i = rows.findIndex((r) => r.raid_id === raidId && r.usuario_id === usuarioId); if (i >= 0) rows.splice(i, 1); },
   };
