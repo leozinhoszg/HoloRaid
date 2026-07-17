@@ -19,7 +19,9 @@ function render(embed: RaidEmbed) {
   const e = new EmbedBuilder().setTitle(embed.title);
   for (const f of embed.fields) e.addFields({ name: f.name, value: f.value, inline: true });
   const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-    new ButtonBuilder().setLabel('Join').setStyle(ButtonStyle.Link).setURL(embed.joinUrl),
+    new ButtonBuilder().setCustomId(`hr:join:${embed.codigo}`).setLabel('Join').setStyle(ButtonStyle.Primary),
+    new ButtonBuilder().setCustomId(`hr:leave:${embed.codigo}`).setLabel('Leave').setStyle(ButtonStyle.Secondary),
+    new ButtonBuilder().setLabel('View on web').setStyle(ButtonStyle.Link).setURL(embed.joinUrl),
   );
   return { embeds: [e], components: [row] };
 }

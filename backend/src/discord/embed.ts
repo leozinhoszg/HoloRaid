@@ -4,6 +4,7 @@ export interface RaidEmbed {
   title: string;
   fields: { name: string; value: string }[];
   joinUrl: string;
+  codigo: string;
 }
 
 const DIFF: Record<string, string> = { SM: 'Story Mode', HM: 'Veteran', NiM: 'Master' };
@@ -24,5 +25,6 @@ export function buildRaidEmbed(detail: RaidDetail, appPublicUrl: string): RaidEm
       { name: 'Status', value: detail.status },
     ],
     joinUrl: `${appPublicUrl}/r/${detail.codigo}`,
+    codigo: detail.codigo,
   };
 }

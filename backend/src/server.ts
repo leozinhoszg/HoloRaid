@@ -71,7 +71,7 @@ const app = createApp({ authService, userService, characterService, progressionS
 httpServer.on('request', app);
 
 if (discordClient && cfg.DISCORD_BOT_TOKEN) {
-  attachBot(discordClient, { token: cfg.DISCORD_BOT_TOKEN, clientId: cfg.DISCORD_CLIENT_ID, raidService, userRepo, guildConfigRepo, bus, report: discordSync.reportTo });
+  attachBot(discordClient, { token: cfg.DISCORD_BOT_TOKEN, clientId: cfg.DISCORD_CLIENT_ID, raidService, userRepo, guildConfigRepo, bus, report: discordSync.reportTo, personagemRepo, raidJoinService, appPublicUrl: cfg.APP_PUBLIC_URL });
 }
 
 httpServer.listen(cfg.PORT, () => logger.info(`HoloRaid backend (HTTP+Socket.IO${discordClient ? '+Discord' : ''}) ouvindo em :${cfg.PORT}`));

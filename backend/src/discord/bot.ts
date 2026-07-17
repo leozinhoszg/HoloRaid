@@ -1,6 +1,7 @@
-import { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder, PermissionFlagsBits, Events, type ChatInputCommandInteraction } from 'discord.js';
+import { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder, PermissionFlagsBits, Events, StringSelectMenuBuilder, ActionRowBuilder, type ChatInputCommandInteraction, type ButtonInteraction, type StringSelectMenuInteraction } from 'discord.js';
 import { OPERATIONS } from '../reference/operations';
 import { handleCreateRaid, handleSetRaidChannel, handleEditRaid, handleReportRaid, type CommandDeps, type CommandInteraction } from './commands';
+import { handleJoinClick, handleLeaveClick, handleCharacterPick, type ComponentDeps, type ComponentInteraction } from './components';
 import { logger } from '../common/logger/logger';
 
 export function buildCommandDefs() {
@@ -59,7 +60,25 @@ function adapt(interaction: ChatInputCommandInteraction): CommandInteraction {
   };
 }
 
-export function attachBot(client: Client, deps: { token: string; clientId: string } & CommandDeps): void {
+// Adapta button/select interactions para a superfície mínima dos handlers de componente.
+function adaptComponent(interaction: ButtonInteraction | StringSelectMenuInteraction): ComponentInteraction {
+  return {
+    user: { id: interaction.user.id, username: interaction.user.username },
+    guildId: interaction.guildId,
+    channelId: interaction.channelId,
+    customId: interaction.customId,
+    values: interaction.isStringSelectMenu() ? interaction.values : [],
+    reply: async (m) => { await interaction.reply({ content: m.content, ephemeral: m.ephemeral ?? true }); },
+    replySelect: async (m) => {
+      const menu = new StringSelectMenuBuilder().setCustomId(m.customId).setPlaceholder(m.placeholder)
+        .addOptions(m.options.map((o) => ({ label: o.label, value: o.value })));
+      const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(menu);
+      await interaction.reply({ content: 'Choose a character to sign up:', components: [row], ephemeral: true });
+    },
+  };
+}
+
+export function attachBot(client: Client, deps: { token: string; clientId: string } & CommandDeps & ComponentDeps): void {
   // Registra os slash commands via REST (independe do gateway estar "ready").
   new REST({ version: '10' }).setToken(deps.token)
     .put(Routes.applicationCommands(deps.clientId), { body: buildCommandDefs() })
@@ -67,16 +86,24 @@ export function attachBot(client: Client, deps: { token: string; clientId: strin
     .catch((err) => logger.error({ err }, 'Discord: falha ao registrar commands'));
 
   client.on(Events.InteractionCreate, async (interaction) => {
-    if (!interaction.isChatInputCommand()) return;
-    const i = adapt(interaction);
     try {
-      if (interaction.commandName === 'create_raid') await handleCreateRaid(i, deps);
-      else if (interaction.commandName === 'set_raid_channel') await handleSetRaidChannel(i, deps);
-      else if (interaction.commandName === 'edit_raid') await handleEditRaid(i, deps);
-      else if (interaction.commandName === 'report_raid') await handleReportRaid(i, deps);
+      if (interaction.isChatInputCommand()) {
+        const i = adapt(interaction);
+        if (interaction.commandName === 'create_raid') await handleCreateRaid(i, deps);
+        else if (interaction.commandName === 'set_raid_channel') await handleSetRaidChannel(i, deps);
+        else if (interaction.commandName === 'edit_raid') await handleEditRaid(i, deps);
+        else if (interaction.commandName === 'report_raid') await handleReportRaid(i, deps);
+      } else if (interaction.isButton() || interaction.isStringSelectMenu()) {
+        const i = adaptComponent(interaction);
+        if (i.customId.startsWith('hr:join:')) await handleJoinClick(i, deps);
+        else if (i.customId.startsWith('hr:leave:')) await handleLeaveClick(i, deps);
+        else if (i.customId.startsWith('hr:pick:')) await handleCharacterPick(i, deps);
+      }
     } catch (err) {
-      logger.error({ err, cmd: interaction.commandName }, 'Discord: erro no comando');
-      if (!interaction.replied) await interaction.reply({ content: 'Something went wrong.', ephemeral: true }).catch(() => {});
+      logger.error({ err, cmd: interaction.isCommand() ? interaction.commandName : (interaction as any).customId }, 'Discord: erro na interação');
+      if (interaction.isRepliable() && !interaction.replied) {
+        await interaction.reply({ content: 'Something went wrong.', ephemeral: true }).catch(() => {});
+      }
     }
   });
 
