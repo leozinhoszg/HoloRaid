@@ -84,7 +84,7 @@ const notify = createNotificationService({ gateway: pushGateway, dmGateway, devi
 
 const dashboardService = createDashboardService({ db });
 
-const app = createApp({ authService, userService, characterService, progressionService, bossRepo, raidService, raidJoinService, broadcaster: bus, notificationService: notify, deviceTokenRepo, dashboardService });
+const app = createApp({ authService, userService, characterService, progressionService, bossRepo, raidService, raidJoinService, broadcaster: bus, notificationService: notify, deviceTokenRepo, dashboardService, profileRaidRepo: raidRepo });
 httpServer.on('request', app);
 
 if (discordClient && cfg.DISCORD_BOT_TOKEN) {

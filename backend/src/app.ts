@@ -18,6 +18,8 @@ import { createDevicesRouter } from './modules/devices/devices.router';
 import type { DeviceTokenRepo } from './db/repositories/deviceTokenRepo';
 import { createDashboardRouter } from './modules/dashboard/dashboard.router';
 import type { DashboardService } from './modules/dashboard/dashboard.service';
+import { createProfileRouter } from './modules/profile/profile.router';
+import type { RaidRepo } from './db/repositories/raidRepo';
 import type { AuthService } from './modules/auth/auth.service';
 import type { UserService } from './modules/users/users.service';
 import type { CharacterService } from './modules/characters/characters.service';
@@ -40,6 +42,7 @@ export function createApp(deps: {
   notificationService?: NotificationService;
   deviceTokenRepo?: DeviceTokenRepo;
   dashboardService?: DashboardService;
+  profileRaidRepo?: RaidRepo;
 }): Express {
   const cfg = getConfig();
   const app = express();
@@ -63,6 +66,7 @@ export function createApp(deps: {
   if (deps.userService) app.use('/', createUsersRouter(deps.userService));
   if (deps.deviceTokenRepo) app.use('/', createDevicesRouter(deps.deviceTokenRepo));
   if (deps.dashboardService) app.use('/', createDashboardRouter(deps.dashboardService));
+  if (deps.profileRaidRepo) app.use('/', createProfileRouter(deps.profileRaidRepo));
   if (deps.bossRepo) app.use('/', createReferenceRouter(deps.bossRepo));
   if (deps.characterService && deps.progressionService) {
     app.use('/', createCharactersRouter(deps.characterService, deps.progressionService));
