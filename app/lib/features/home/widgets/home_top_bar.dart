@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/ui/holo_avatar.dart';
 import '../../../core/ui/holo_palette.dart';
 import '../../../core/ui/holo_wordmark.dart';
 
@@ -30,7 +31,7 @@ class HomeTopBar extends StatelessWidget {
             borderRadius: BorderRadius.circular(40),
           ),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
-            _Avatar(url: url, name: name, size: compact ? 34 : 40),
+            HoloAvatar(url: url, label: name, size: compact ? 34 : 40),
             const SizedBox(width: 9),
             Flexible(
               child: Column(
@@ -66,38 +67,3 @@ class HomeTopBar extends StatelessWidget {
   }
 }
 
-class _Avatar extends StatelessWidget {
-  const _Avatar({required this.url, required this.name, required this.size});
-  final String? url;
-  final String name;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    final clean = name.replaceAll('.', '');
-    final initial = clean.isEmpty ? '?' : clean.substring(0, 1).toUpperCase();
-    final fallback = Text(initial,
-        style: const TextStyle(fontFamily: 'Orbitron', fontWeight: FontWeight.w700, color: HoloPalette.blue));
-    return Container(
-      width: size,
-      height: size,
-      padding: const EdgeInsets.all(2),
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: SweepGradient(colors: [
-          HoloPalette.blue, HoloPalette.indigo, HoloPalette.heal, HoloPalette.dps, HoloPalette.red, HoloPalette.blue,
-        ]),
-      ),
-      child: ClipOval(
-        child: Container(
-          color: const Color(0xFF0D1024),
-          alignment: Alignment.center,
-          child: url == null
-              ? fallback
-              : Image.network(url!, fit: BoxFit.cover, width: size, height: size,
-                  errorBuilder: (_, _, _) => fallback),
-        ),
-      ),
-    );
-  }
-}

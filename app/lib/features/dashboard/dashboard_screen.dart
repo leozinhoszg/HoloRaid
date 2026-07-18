@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/auth/auth_providers.dart';
+import '../../core/ui/holo_palette.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -46,7 +47,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           final players = (d['topPlayers'] as List).cast<dynamic>();
           return RefreshIndicator(
             onRefresh: () async { setState(() { _stats = _load(); }); await _stats; },
-            child: ListView(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 820),
+                child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
                 Wrap(spacing: 12, runSpacing: 12, children: [
@@ -77,6 +81,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 )),
               ],
             ),
+              ),
+            ),
           );
         },
       ),
@@ -84,12 +90,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   Widget _statCard(BuildContext context, String label, Object? value) => Container(
-    width: 150,
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerHighest, borderRadius: BorderRadius.circular(12)),
+    width: 170,
+    padding: const EdgeInsets.all(18),
+    decoration: BoxDecoration(
+      color: HoloPalette.glassFill,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: HoloPalette.glassBorder),
+    ),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text('${value ?? 0}', style: Theme.of(context).textTheme.headlineMedium),
-      Text(label, style: Theme.of(context).textTheme.bodySmall),
+      Text(label.toUpperCase(), style: const TextStyle(fontFamily: 'Aldrich', fontSize: 10, letterSpacing: 2, color: HoloPalette.faint)),
+      const SizedBox(height: 10),
+      Text('${value ?? 0}', style: const TextStyle(fontFamily: 'Orbitron', fontWeight: FontWeight.w700, fontSize: 26, color: HoloPalette.blue)),
     ]),
   );
 }

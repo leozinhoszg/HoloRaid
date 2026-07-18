@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/reference/reference_providers.dart';
 import '../../core/reference/reference_models.dart';
+import '../../core/ui/holo_button.dart';
 import 'characters_providers.dart';
 
 class CharacterFormScreen extends ConsumerStatefulWidget {
@@ -56,8 +57,11 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
           final style = _classe == null ? null : data.combatStyles.firstWhere((c) => c.name == _classe);
           final discs = _classe == null ? <Discipline>[] : data.disciplinesOfStyle(_classe!);
           final roleOptions = style?.allowedRoles ?? <String>[];
-          return ListView(
-            padding: const EdgeInsets.all(16),
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
             children: [
               TextField(
                 controller: _nome,
@@ -123,13 +127,16 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
                   padding: const EdgeInsets.only(bottom: 12),
                   child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
                 ),
-              FilledButton(
-                onPressed: (_saving || _nome.text.trim().isEmpty || _faccao == null || _classe == null || _role == null)
+              HoloButton(
+                label: 'Criar personagem',
+                loading: _saving,
+                onPressed: (_nome.text.trim().isEmpty || _faccao == null || _classe == null || _role == null)
                     ? null
                     : _save,
-                child: Text(_saving ? 'Salvando...' : 'Criar personagem'),
               ),
             ],
+          ),
+            ),
           );
         },
       ),

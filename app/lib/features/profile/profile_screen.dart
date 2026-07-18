@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/auth/auth_providers.dart';
+import '../../core/ui/holo_avatar.dart';
+import '../../core/ui/holo_palette.dart';
 import '../characters/characters_providers.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -36,16 +38,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         builder: (context, meSnap) {
           if (!meSnap.hasData) return const Center(child: CircularProgressIndicator());
           final me = meSnap.data!;
-          return ListView(
+          final discordId = me['discord_id']?.toString();
+          final avatar = me['avatar'] as String?;
+          final avatarUrl = (discordId != null && avatar != null && avatar.isNotEmpty)
+              ? 'https://cdn.discordapp.com/avatars/$discordId/$avatar.png'
+              : null;
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 680),
+              child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
               Row(children: [
-                CircleAvatar(radius: 28, child: Text((me['username'] as String? ?? '?').substring(0, 1).toUpperCase())),
-                const SizedBox(width: 12),
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(me['username'] as String? ?? '—', style: Theme.of(context).textTheme.titleLarge),
-                  Text('Papel: ${me['role'] ?? '-'}', style: Theme.of(context).textTheme.bodySmall),
-                ]),
+                HoloAvatar(url: avatarUrl, label: me['username'] as String? ?? '?', size: 60),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(me['username'] as String? ?? '—', style: Theme.of(context).textTheme.titleLarge),
+                    Text('Papel: ${me['role'] ?? '-'}', style: Theme.of(context).textTheme.bodySmall),
+                  ]),
+                ),
               ]),
               const SizedBox(height: 20),
               chars.when(
@@ -90,6 +102,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 },
               ),
             ],
+          ),
+            ),
           );
         },
       ),
@@ -97,7 +111,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _mini(String label, String value) => Column(children: [
-    Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-    Text(label, style: const TextStyle(fontSize: 12)),
+    Text(value, style: const TextStyle(fontFamily: 'Orbitron', fontWeight: FontWeight.w700, fontSize: 22, color: HoloPalette.blue)),
+    const SizedBox(height: 4),
+    Text(label, style: const TextStyle(fontFamily: 'Aldrich', fontSize: 10, letterSpacing: 1.5, color: HoloPalette.faint)),
   ]);
 }
