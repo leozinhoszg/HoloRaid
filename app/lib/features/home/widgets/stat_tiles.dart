@@ -29,12 +29,14 @@ class StatTiles extends StatelessWidget {
         ],
       ]);
     }
-    return Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      for (var i = 0; i < tiles.length; i++) ...[
-        if (i > 0) const SizedBox(width: 14),
-        Expanded(child: tiles[i]),
-      ],
-    ]);
+    return IntrinsicHeight(
+      child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        for (var i = 0; i < tiles.length; i++) ...[
+          if (i > 0) const SizedBox(width: 14),
+          Expanded(child: tiles[i]),
+        ],
+      ]),
+    );
   }
 
   Widget _tile(String k, String v, Color c) => GlassCard(
