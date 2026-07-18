@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+/// Campo de estrelas estático (seed fixa → determinístico, sem piscar).
 class Starfield extends StatelessWidget {
   const Starfield({super.key, this.starCount = 90});
   final int starCount;

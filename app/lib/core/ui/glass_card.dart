@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../login_theme.dart';
+import 'holo_palette.dart';
 
+/// Card glassmorphism (blur + fill translúcido + borda). Usado em cards especiais.
 class GlassCard extends StatelessWidget {
   const GlassCard({super.key, required this.child, this.padding = const EdgeInsets.all(16)});
   final Widget child;
@@ -16,9 +17,9 @@ class GlassCard extends StatelessWidget {
         child: Container(
           padding: padding,
           decoration: BoxDecoration(
-            color: LoginPalette.glassFill,
+            color: HoloPalette.glassFill,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: LoginPalette.glassBorder),
+            border: Border.all(color: HoloPalette.glassBorder),
           ),
           child: child,
         ),

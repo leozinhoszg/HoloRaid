@@ -3,10 +3,10 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/auth/auth_providers.dart';
+import '../../core/ui/glass_card.dart';
+import '../../core/ui/starfield.dart';
 import 'login_theme.dart';
-import 'widgets/glass_card.dart';
 import 'widgets/holo_emblem.dart';
-import 'widgets/starfield.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
