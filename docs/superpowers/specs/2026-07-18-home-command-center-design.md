@@ -79,10 +79,26 @@ Mover de `features/login/widgets` e generalizar:
 - Erro: mensagem inline discreta + retry, sem quebrar o layout.
 - Empty (sem raids): empty-state do hero descrito acima.
 
+## Responsividade (Android / iOS / web)
+
+O app **buildará para Android e iOS** — a Home precisa ser mobile-first, sem overflow horizontal (a verificação do mockup HTML mostrou que layout com tamanhos fixos estoura em ~≤420px). Regra: **nada de largura fixa que exceda a tela**; tudo flui por constraints.
+
+**Breakpoint único** via `LayoutBuilder` na Home: `compact = maxWidth < 720`.
+
+Comportamento por bloco:
+- **TopBar:** `compact` → wordmark menor (~26 vs ~34), chip do usuário mostra avatar + username truncado (`TextOverflow.ellipsis`, `Flexible`) e **oculta o papel**; logout permanece. Usar `Row` com `Expanded`/`Flexible` para o wordmark não empurrar o chip.
+- **NextRaidHero:** wide → duas colunas (`Row` com `Expanded`); compact → **uma coluna** (`Column`): detalhes em cima, countdown/slots/CTA embaixo. Título da operation com `maxLines: 2` + `TextOverflow.ellipsis`. Chips num `Wrap` (nunca `Row` sem wrap). CTA `width: double.infinity` no compact.
+- **StatTiles:** wide → 3 colunas; compact → coluna única empilhada (ou 1 por linha). Números em Orbitron com `FittedBox` se necessário. Sparkline pode ocultar no compact.
+- **NavGrid:** `GridView`/`Wrap` responsivo — wide 5 col, tablet 3, phone **2 col** (`crossAxisCount` por breakpoint); largura mínima do tile respeitando `minmax(0,1fr)` equivalente (usar `Expanded`/`childAspectRatio`, nunca largura fixa).
+- Tudo dentro de `SafeArea` + `SingleChildScrollView` (notch/gestos iOS/Android). Respeitar `MediaQuery.textScaler` (acessibilidade) sem quebrar — preferir `Flexible`/`FittedBox` a alturas fixas.
+
+**Verificação obrigatória:** rodar/checar em tamanho de celular (≈390–430 de largura) **e** desktop, sem corte horizontal em nenhum bloco. Widget test cobre um viewport estreito.
+
 ## Testes
 - Widget test `home_screen_test.dart` com `ProviderScope` overrides:
   - Com próxima raid → renderiza wordmark, operation, countdown, 3 tiles, 5 tiles de nav (Admin oculto p/ user).
   - Sem raid futura → empty-state visível.
+  - **Viewport estreito** (ex.: 390×840) → renderiza sem exceção de overflow (o teste falha se houver `RenderFlex overflow`).
   - Drena timers de `flutter_animate`/starfield (`pump(2s)`), como nos testes existentes.
 - `flutter analyze` limpo; `flutter test` verde.
 
