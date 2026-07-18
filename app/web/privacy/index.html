@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index,follow" />
+  <title>Política de Privacidade — HoloRaid</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 50% -10%, #1b1e3a 0%, #0b0d1a 55%, #070810 100%);
+      color: #e7e9f5; line-height: 1.65;
+    }
+    .wrap { max-width: 820px; margin: 0 auto; padding: 48px 20px 80px; }
+    header { border-bottom: 1px solid #2a2e52; padding-bottom: 20px; margin-bottom: 28px; }
+    .brand { font-weight: 800; letter-spacing: .5px; font-size: 20px; color: #a5b4ff;
+      text-shadow: 0 0 12px rgba(120,140,255,.5); text-decoration: none; }
+    h1 { font-size: 30px; margin: 14px 0 6px; }
+    .updated { color: #9aa0c3; font-size: 14px; }
+    h2 { font-size: 20px; margin: 34px 0 10px; color: #c7ccf5; }
+    p, li { color: #cdd2ee; }
+    a { color: #8ea2ff; }
+    code { background: #171a30; padding: 2px 6px; border-radius: 6px; color: #b9c2ff; }
+    ul { padding-left: 22px; }
+    .note { background: #14172b; border: 1px solid #2a2e52; border-radius: 12px;
+      padding: 14px 16px; margin: 22px 0; color: #b9bfe0; font-size: 14px; }
+    footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid #2a2e52;
+      color: #8b90b5; font-size: 14px; }
+    footer a { margin-right: 16px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="https://holoraid.fun">HoloRaid</a>
+      <h1>Política de Privacidade</h1>
+      <div class="updated">Última atualização: 17 de julho de 2026</div>
+    </header>
+
+    <p>Esta Política descreve como o <strong>HoloRaid</strong> (“nós”, “aplicativo”, “serviço”)
+    coleta, usa e compartilha informações quando você utiliza o site, o aplicativo e o bot do
+    Discord. Ao usar o HoloRaid, você concorda com as práticas descritas aqui.</p>
+
+    <p>O HoloRaid é uma ferramenta de fãs para organizar Operations (raids) de
+    <em>Star Wars: The Old Republic</em>, integrada ao Discord. Não é afiliado, patrocinado ou
+    endossado pela BioWare, Electronic Arts, Lucasfilm ou Disney.</p>
+
+    <h2>1. Informações que coletamos</h2>
+    <ul>
+      <li><strong>Conta Discord (via OAuth2):</strong> seu ID do Discord, nome de usuário,
+      apelido, avatar e, quando disponível, e-mail. Você autoriza esse acesso ao entrar com o
+      Discord.</li>
+      <li><strong>Personagens do jogo:</strong> nome, facção, classe/estilo de combate,
+      disciplina, função (Tank/Healer/DPS), nível de item e sua progressão PvE (bosses
+      derrotados e pontuação de Tier) — informados por você.</li>
+      <li><strong>Raids:</strong> raids que você cria ou nas quais se inscreve, sua função e
+      status (confirmado/lista de espera).</li>
+      <li><strong>Notificações:</strong> se você habilitar notificações push no aplicativo,
+      guardamos o token do dispositivo (Android/Web) para entregá-las.</li>
+      <li><strong>Autenticação:</strong> tokens de sessão (JWT e refresh) para manter você
+      conectado.</li>
+      <li><strong>Configuração do bot:</strong> quando um servidor do Discord instala o bot,
+      guardamos o ID do servidor e do canal de anúncios, e referências às mensagens de raid
+      publicadas.</li>
+      <li><strong>Registros administrativos:</strong> ações de administração (ex.: promover um
+      usuário) são registradas para auditoria.</li>
+    </ul>
+
+    <h2>2. Como usamos as informações</h2>
+    <ul>
+      <li>Autenticar você e manter sua sessão.</li>
+      <li>Exibir seus personagens, sua progressão PvE e seu Tier.</li>
+      <li>Organizar raids, montar o roster, validar elegibilidade (facção/Tier) e gerenciar a
+      lista de espera.</li>
+      <li>Publicar e atualizar anúncios de raid nos canais do Discord configurados e enviar
+      notificações (push no app e/ou mensagem direta do bot).</li>
+      <li>Mostrar estatísticas agregadas da comunidade (ex.: operations mais jogadas,
+      jogadores mais ativos).</li>
+    </ul>
+
+    <h2>3. Compartilhamento e visibilidade</h2>
+    <p><strong>Não vendemos suas informações.</strong> Algumas informações são visíveis a
+    outros usuários por natureza do serviço:</p>
+    <ul>
+      <li>Seu nome de usuário, avatar e os dados dos personagens inscritos aparecem no
+      <strong>roster</strong> das raids e nos <strong>anúncios do Discord</strong>.</li>
+      <li>Seu nome de usuário e avatar podem aparecer em <strong>rankings</strong> agregados
+      (dashboard da comunidade).</li>
+    </ul>
+    <p>Compartilhamos dados com prestadores estritamente para operar o serviço:</p>
+    <ul>
+      <li><strong>Discord</strong> — para login (OAuth2) e para o funcionamento do bot
+      (comandos, embeds, mensagens diretas). O uso do Discord segue a política de privacidade
+      do próprio Discord.</li>
+      <li><strong>Firebase Cloud Messaging (Google)</strong> — apenas se as notificações push
+      pelo aplicativo estiverem habilitadas, para entregar as mensagens ao seu dispositivo.</li>
+      <li><strong>Provedor de hospedagem e banco de dados</strong> — para armazenar e servir os
+      dados do serviço.</li>
+    </ul>
+    <p>Também podemos divulgar informações se exigido por lei.</p>
+
+    <h2>4. Retenção e exclusão</h2>
+    <p>Mantemos suas informações enquanto sua conta existir. Você pode solicitar a exclusão da
+    sua conta e dos dados associados (personagens, inscrições e tokens) pelo contato abaixo; ao
+    excluir a conta, os dados vinculados são removidos.</p>
+
+    <h2>5. Segurança</h2>
+    <p>Adotamos medidas razoáveis para proteger suas informações (por exemplo, tokens de sessão
+    de curta duração com rotação e segredos mantidos fora do código). Nenhum sistema é 100%
+    seguro; não podemos garantir segurança absoluta.</p>
+
+    <h2>6. Crianças</h2>
+    <p>O HoloRaid não se destina a menores de 13 anos (ou da idade mínima exigida pelo Discord na
+    sua região). Não coletamos intencionalmente dados de crianças abaixo dessa idade.</p>
+
+    <h2>7. Alterações nesta Política</h2>
+    <p>Podemos atualizar esta Política periodicamente. A data de “Última atualização” no topo
+    indica a versão vigente. O uso continuado do serviço após mudanças significa aceitação da
+    versão atualizada.</p>
+
+    <h2>8. Contato</h2>
+    <p>Dúvidas sobre esta Política ou pedidos relativos aos seus dados:
+    <a href="mailto:contato@holoraid.fun">contato@holoraid.fun</a>.</p>
+
+    <div class="note">Este documento é um modelo inicial de boa-fé, elaborado para refletir as
+    práticas atuais do HoloRaid. Ele não constitui aconselhamento jurídico — recomenda-se revisão
+    por um profissional antes de uso em produção, especialmente se houver adequação a LGPD/GDPR.</div>
+
+    <footer>
+      <a href="https://holoraid.fun">Início</a>
+      <a href="/terms">Termos de Serviço</a>
+    </footer>
+  </div>
+</body>
+</html>
