@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/auth/auth_providers.dart';
-import '../../core/ui/holo_background.dart';
 import '../../core/ui/holo_palette.dart';
 import '../characters/characters_providers.dart';
 import 'home_providers.dart';
@@ -22,9 +21,7 @@ class HomeScreen extends ConsumerWidget {
     final raids = ref.watch(myRaidsProvider);
     final chars = ref.watch(charactersProvider);
     return Scaffold(
-      backgroundColor: HoloPalette.bgMid,
-      body: HoloBackground(
-        child: SafeArea(
+      body: SafeArea(
           child: LayoutBuilder(builder: (context, c) {
             final compact = c.maxWidth < 720;
             return SingleChildScrollView(
@@ -80,7 +77,6 @@ class HomeScreen extends ConsumerWidget {
             );
           }),
         ),
-      ),
     );
   }
 
