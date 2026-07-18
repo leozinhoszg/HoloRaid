@@ -18,7 +18,6 @@ export function buildAuthUrl(state: string, codeChallenge: string): string {
     state,
     code_challenge: codeChallenge,
     code_challenge_method: 'S256',
-    prompt: 'none',
   });
   return `${AUTH_URL}?${params.toString()}`;
 }
