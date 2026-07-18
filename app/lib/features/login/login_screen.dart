@@ -69,7 +69,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 520),
-                      child: _content(context),
+                      child: _content(context, portrait),
                     ),
                   ),
                 ),
@@ -81,7 +81,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  Widget _content(BuildContext context) {
+  Widget _content(BuildContext context, bool compact) {
     int i = 0;
     Widget stagger(Widget w) {
       final d = (i++ * 80).ms;
@@ -92,14 +92,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        stagger(const HoloEmblem(size: 116)),
-        const SizedBox(height: 20),
-        stagger(const Text(
+        stagger(HoloEmblem(size: compact ? 92 : 116)),
+        SizedBox(height: compact ? 14 : 20),
+        stagger(Text(
           'HoloRaid',
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 44, fontWeight: FontWeight.w800, letterSpacing: 1.5, color: Colors.white,
-            shadows: [Shadow(color: Color.fromRGBO(140, 150, 255, 0.7), blurRadius: 24)],
+            fontSize: compact ? 38 : 44, fontWeight: FontWeight.w800, letterSpacing: 1.5, color: Colors.white,
+            shadows: const [Shadow(color: Color.fromRGBO(140, 150, 255, 0.7), blurRadius: 24)],
           ),
         )),
         const SizedBox(height: 10),
@@ -114,15 +114,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, height: 1.5, color: LoginPalette.textDim),
         )),
-        const SizedBox(height: 28),
+        SizedBox(height: compact ? 22 : 28),
         stagger(_cta(context)),
         if (_error != null) ...[
           const SizedBox(height: 12),
           Text(_error!, style: const TextStyle(color: Color(0xFFFF8A8A), fontSize: 13)),
         ],
-        const SizedBox(height: 32),
+        SizedBox(height: compact ? 22 : 32),
         stagger(_highlights(context)),
-        const SizedBox(height: 28),
+        SizedBox(height: compact ? 20 : 28),
         stagger(_footer(context)),
       ],
     );
