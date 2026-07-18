@@ -16,6 +16,23 @@
   -->
   <base href="$FLUTTER_BASE_HREF">
 
+  <!--
+    Ponte de callback OAuth (flutter_web_auth_2, fluxo popup no web).
+    O Discord redireciona o POPUP para /?code=... . Este script roda ANTES do
+    Flutter carregar: sinaliza a aba principal (que faz polling do localStorage)
+    e fecha o popup. Funciona em dev (localhost) e prod sem alterar o redirect_uri.
+  -->
+  <script>
+    (function () {
+      var s = window.location.search || '';
+      if (s.indexOf('code=') !== -1 || s.indexOf('error=') !== -1) {
+        try { window.localStorage.setItem('flutter-web-auth-2', window.location.href); } catch (e) {}
+        try { if (window.opener) window.opener.postMessage({ 'flutter-web-auth-2': window.location.href }, window.location.origin); } catch (e) {}
+        window.close();
+      }
+    })();
+  </script>
+
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">

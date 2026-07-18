@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../auth/auth_providers.dart';
@@ -15,8 +16,15 @@ import '../../features/profile/profile_screen.dart';
 import '../../features/admin/users_admin_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
+  // Sem isto o go_router não reavalia o redirect quando o login muda o estado
+  // de AuthSignedOut→AuthSignedIn, e o app fica preso no /login.
+  final refresh = ValueNotifier<AuthState>(ref.read(authStateProvider));
+  ref.onDispose(refresh.dispose);
+  ref.listen<AuthState>(authStateProvider, (_, next) => refresh.value = next);
+
   return GoRouter(
     initialLocation: '/home',
+    refreshListenable: refresh,
     redirect: (context, state) {
       final auth = ref.read(authStateProvider);
       final signedIn = auth is AuthSignedIn;
