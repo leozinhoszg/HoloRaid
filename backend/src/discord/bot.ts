@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder, PermissionFlagsBits, Events, StringSelectMenuBuilder, ActionRowBuilder, type ChatInputCommandInteraction, type ButtonInteraction, type StringSelectMenuInteraction } from 'discord.js';
+import { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder, PermissionFlagsBits, Events, MessageFlags, StringSelectMenuBuilder, ActionRowBuilder, type ChatInputCommandInteraction, type ButtonInteraction, type StringSelectMenuInteraction } from 'discord.js';
 import { OPERATIONS } from '../reference/operations';
 import { handleCreateRaid, handleSetRaidChannel, handleEditRaid, handleReportRaid, type CommandDeps, type CommandInteraction } from './commands';
 import { handleJoinClick, handleLeaveClick, handleCharacterPick, type ComponentDeps, type ComponentInteraction } from './components';
@@ -57,7 +57,8 @@ function adapt(interaction: ChatInputCommandInteraction): CommandInteraction {
     getString: (n) => interaction.options.getString(n),
     getInteger: (n) => interaction.options.getInteger(n),
     getBoolean: (n) => interaction.options.getBoolean(n),
-    reply: async (m) => { await interaction.reply({ content: m.content, ephemeral: m.ephemeral ?? false }); },
+    // A interação já foi deferida (ephemeral) no roteamento — respondemos via editReply.
+    reply: async (m) => { await interaction.editReply({ content: m.content }); },
   };
 }
 
@@ -69,12 +70,13 @@ function adaptComponent(interaction: ButtonInteraction | StringSelectMenuInterac
     channelId: interaction.channelId,
     customId: interaction.customId,
     values: interaction.isStringSelectMenu() ? interaction.values : [],
-    reply: async (m) => { await interaction.reply({ content: m.content, ephemeral: m.ephemeral ?? true }); },
+    // A interação já foi deferida (ephemeral) no roteamento — respondemos via editReply.
+    reply: async (m) => { await interaction.editReply({ content: m.content }); },
     replySelect: async (m) => {
       const menu = new StringSelectMenuBuilder().setCustomId(m.customId).setPlaceholder(m.placeholder)
         .addOptions(m.options.map((o) => ({ label: o.label, value: o.value })));
       const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(menu);
-      await interaction.reply({ content: 'Choose a character to sign up:', components: [row], ephemeral: true });
+      await interaction.editReply({ content: 'Choose a character to sign up:', components: [row] });
     },
   };
 }
@@ -89,12 +91,19 @@ export function attachBot(client: Client, deps: { token: string; clientId: strin
   client.on(Events.InteractionCreate, async (interaction) => {
     try {
       if (interaction.isChatInputCommand()) {
+        const known = ['create_raid', 'set_raid_channel', 'edit_raid', 'report_raid'].includes(interaction.commandName);
+        if (!known) return;
+        // ACK em <3s (defer) antes de qualquer I/O — os handlers respondem via editReply.
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const i = adapt(interaction);
         if (interaction.commandName === 'create_raid') await handleCreateRaid(i, deps);
         else if (interaction.commandName === 'set_raid_channel') await handleSetRaidChannel(i, deps);
         else if (interaction.commandName === 'edit_raid') await handleEditRaid(i, deps);
         else if (interaction.commandName === 'report_raid') await handleReportRaid(i, deps);
       } else if (interaction.isButton() || interaction.isStringSelectMenu()) {
+        const known = interaction.customId.startsWith('hr:join:') || interaction.customId.startsWith('hr:leave:') || interaction.customId.startsWith('hr:pick:');
+        if (!known) return;
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const i = adaptComponent(interaction);
         if (i.customId.startsWith('hr:join:')) await handleJoinClick(i, deps);
         else if (i.customId.startsWith('hr:leave:')) await handleLeaveClick(i, deps);
@@ -102,8 +111,11 @@ export function attachBot(client: Client, deps: { token: string; clientId: strin
       }
     } catch (err) {
       logger.error({ err, cmd: interaction.isCommand() ? interaction.commandName : (interaction as any).customId }, 'Discord: erro na interação');
-      if (interaction.isRepliable() && !interaction.replied) {
-        await interaction.reply({ content: 'Something went wrong.', ephemeral: true }).catch(() => {});
+      if (interaction.isRepliable()) {
+        // Se já deferimos/respondemos, o reply falharia ("already acknowledged") — usar followUp.
+        const payload = { content: 'Something went wrong.', flags: MessageFlags.Ephemeral } as const;
+        const p = (interaction.deferred || interaction.replied) ? interaction.followUp(payload) : interaction.reply(payload);
+        await p.catch(() => {});
       }
     }
   });
