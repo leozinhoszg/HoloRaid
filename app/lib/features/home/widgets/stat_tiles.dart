@@ -22,7 +22,7 @@ class StatTiles extends StatelessWidget {
       _tile('CONFIRMAÇÕES', '$confirmed', HoloPalette.dps),
     ];
     if (compact) {
-      return Column(children: [
+      return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         for (var i = 0; i < tiles.length; i++) ...[
           if (i > 0) const SizedBox(height: 12),
           tiles[i],
