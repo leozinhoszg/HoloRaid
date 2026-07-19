@@ -11,6 +11,7 @@ class NavDestination {
 List<NavDestination> navDestinations({required bool isAdmin}) => [
       const NavDestination(route: '/home', label: 'Início', icon: Icons.dashboard_outlined, color: HoloPalette.indigo),
       const NavDestination(route: '/characters', label: 'Personagens', icon: Icons.people_alt_outlined, color: HoloPalette.indigo),
+      const NavDestination(route: '/progression', label: 'Progressão', icon: Icons.checklist, color: HoloPalette.gold),
       const NavDestination(route: '/raids', label: 'Raids', icon: Icons.calendar_month_outlined, color: HoloPalette.blue),
       const NavDestination(route: '/dashboard', label: 'Dashboard', icon: Icons.bar_chart, color: HoloPalette.heal),
       if (isAdmin) const NavDestination(route: '/admin/users', label: 'Admin', icon: Icons.shield_outlined, color: HoloPalette.red),

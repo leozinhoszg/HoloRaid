@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/auth/auth_providers.dart';
 import '../../core/ui/holo_avatar.dart';
-import '../../core/ui/holo_palette.dart';
-import '../characters/characters_providers.dart';
+import '../../core/ui/tier_badge.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -30,7 +29,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final chars = ref.watch(charactersProvider);
     return Scaffold(
       appBar: AppBar(title: const Text('Perfil')),
       body: FutureBuilder<Map<String, dynamic>>(
@@ -60,22 +58,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ]),
               const SizedBox(height: 20),
-              chars.when(
-                loading: () => const LinearProgressIndicator(),
-                error: (e, _) => Text('Erro nos personagens: $e'),
-                data: (list) {
-                  final totalPontos = list.fold<int>(0, (s, c) => s + c.totalPoints);
-                  final maiorTier = list.fold<int>(0, (m, c) => c.tier > m ? c.tier : m);
-                  return Card(child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                      _mini('Personagens', '${list.length}'),
-                      _mini('Pontos PvE', '$totalPontos'),
-                      _mini('Maior Tier', maiorTier == 0 ? '—' : 'T$maiorTier'),
+              Builder(builder: (context) {
+                final pts = (me['total_points'] as int?) ?? 0;
+                final tier = (me['tier'] as int?) ?? 0;
+                final next = me['pointsToNextTier'] as int?;
+                final progress = next == null ? 1.0 : (pts / (pts + next)).clamp(0.0, 1.0);
+                return Card(child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Row(children: [
+                      TierBadge(tier: tier),
+                      const Spacer(),
+                      Text('$pts pontos', style: Theme.of(context).textTheme.bodyMedium),
                     ]),
-                  ));
-                },
-              ),
+                    const SizedBox(height: 10),
+                    LinearProgressIndicator(value: progress),
+                    const SizedBox(height: 6),
+                    Text(next != null ? 'faltam $next para o próximo Tier' : 'Tier máximo!',
+                        style: Theme.of(context).textTheme.bodySmall),
+                  ]),
+                ));
+              }),
               const SizedBox(height: 20),
               Text('Minhas raids', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
@@ -109,10 +112,4 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
     );
   }
-
-  Widget _mini(String label, String value) => Column(children: [
-    Text(value, style: const TextStyle(fontFamily: 'Orbitron', fontWeight: FontWeight.w700, fontSize: 22, color: HoloPalette.blue)),
-    const SizedBox(height: 4),
-    Text(label, style: const TextStyle(fontFamily: 'Aldrich', fontSize: 10, letterSpacing: 1.5, color: HoloPalette.faint)),
-  ]);
 }

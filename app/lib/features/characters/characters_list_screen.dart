@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/ui/tier_badge.dart';
 import 'characters_providers.dart';
 
 class CharactersListScreen extends ConsumerWidget {
@@ -26,14 +27,7 @@ class CharactersListScreen extends ConsumerWidget {
                         leading: CircleAvatar(child: Text(c.role[0])),
                         title: Text(c.nome),
                         subtitle: Text('${c.classe} · ${c.role} · iLvl ${c.itemLevel}'),
-                        trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Chip(label: Text(c.tier == 0 ? 'Sem Tier' : 'Tier ${c.tier}')),
-                            Text('${c.totalPoints} pts', style: Theme.of(context).textTheme.bodySmall),
-                          ],
-                        ),
+                        trailing: TierBadge(tier: c.tier, compact: true),
                       ),
                     );
                   },
