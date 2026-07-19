@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="256" height="256" role="img" aria-label="HoloRaid emblem">
+  <title>HoloRaid — Tank · Heal · DPS</title>
+  <defs>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#76C8FF"/><stop offset="20%" stop-color="#7E7BFF"/><stop offset="46%" stop-color="#8CFFB7"/><stop offset="70%" stop-color="#FFF29A"/><stop offset="86%" stop-color="#FF8B5B"/><stop offset="100%" stop-color="#FF5555"/>
+    </linearGradient>
+    <filter id="gTank" x="-70%" y="-70%" width="240%" height="240%"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#7E7BFF" flood-opacity="0.55"/></filter>
+    <filter id="gHeal" x="-70%" y="-70%" width="240%" height="240%"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#8CFFB7" flood-opacity="0.55"/></filter>
+    <filter id="gDps"  x="-70%" y="-70%" width="240%" height="240%"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#FF8B5B" flood-opacity="0.55"/></filter>
+    <filter id="gRing" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#8C96FF" flood-opacity="0.45"/></filter>
+  </defs>
+  <circle cx="256" cy="256" r="230" fill="none" stroke="url(#ring)" stroke-width="8" filter="url(#gRing)"/>
+  <g filter="url(#gTank)" transform="translate(256 176) scale(1.18)"><path d="M -46 -48 L -12 -48 L 0 -34 L 12 -48 L 46 -48 L 46 -2 Q 46 32 0 58 Q -46 32 -46 -2 Z" fill="none" stroke="#7E7BFF" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/></g>
+  <g filter="url(#gHeal)" transform="translate(196 322) scale(1.18)"><path d="M 0 -50 L 40 -6 L -40 -6 Z" fill="none" stroke="#8CFFB7" stroke-width="9" stroke-linejoin="round"/><rect x="-40" y="6" width="80" height="13" rx="6" fill="#8CFFB7"/><rect x="-40" y="27" width="80" height="13" rx="6" fill="#8CFFB7"/></g>
+  <g filter="url(#gDps)" transform="translate(316 322) scale(1.12)"><circle r="50" fill="none" stroke="#FF8B5B" stroke-width="7" stroke-dasharray="24 20" stroke-linecap="round"/><circle r="12" fill="#FF8B5B"/><line x1="16.0" y1="0.0" x2="30.0" y2="0.0" stroke="#FF8B5B" stroke-width="8" stroke-linecap="round"/><line x1="0.0" y1="16.0" x2="0.0" y2="30.0" stroke="#FF8B5B" stroke-width="8" stroke-linecap="round"/><line x1="-16.0" y1="0.0" x2="-30.0" y2="0.0" stroke="#FF8B5B" stroke-width="8" stroke-linecap="round"/><line x1="-0.0" y1="-16.0" x2="-0.0" y2="-30.0" stroke="#FF8B5B" stroke-width="8" stroke-linecap="round"/><path d="M 41.0 41.0 L 26.8 17.4 L 17.4 26.8 ZM -41.0 41.0 L -17.4 26.8 L -26.8 17.4 ZM -41.0 -41.0 L -26.8 -17.4 L -17.4 -26.8 ZM 41.0 -41.0 L 17.4 -26.8 L 26.8 -17.4 Z" fill="#FF8B5B"/></g>
+</svg>

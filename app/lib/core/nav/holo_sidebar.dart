@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../ui/holo_emblem.dart';
 import '../ui/holo_palette.dart';
 import '../ui/holo_wordmark.dart';
 import '../../features/home/home_providers.dart';
@@ -23,7 +24,16 @@ class HoloSidebar extends ConsumerWidget {
         border: Border(right: BorderSide(color: HoloPalette.glassBorder)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        const Padding(padding: EdgeInsets.fromLTRB(20, 24, 20, 24), child: HoloWordmark(size: 26)),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(20, 24, 20, 24),
+          child: Row(
+            children: [
+              HoloEmblem(size: 32),
+              SizedBox(width: 10),
+              HoloWordmark(size: 26),
+            ],
+          ),
+        ),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.only(top: 4),

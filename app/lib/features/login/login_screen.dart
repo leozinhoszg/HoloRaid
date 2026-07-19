@@ -9,7 +9,7 @@ import '../../core/ui/glass_card.dart';
 import '../../core/ui/holo_wordmark.dart';
 import '../../core/ui/starfield.dart';
 import 'login_theme.dart';
-import 'widgets/holo_emblem.dart';
+import '../../core/ui/holo_emblem.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
