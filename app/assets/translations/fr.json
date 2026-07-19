@@ -5,7 +5,15 @@
     "profile": "Profil",
     "logout": "Déconnexion",
     "no_data": "Aucune donnée.",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "error": "Erreur : {error}",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "close": "Fermer",
+    "edit": "Modifier",
+    "no_tier": "Aucun Tier",
+    "tier": "Tier {n}"
   },
   "nav": {
     "home": "Accueil",
@@ -57,5 +65,65 @@
     "in_progress": "EN COURS",
     "starts_in": "COMMENCE DANS",
     "view_raid": "VOIR LE RAID"
+  },
+  "raid_status": {
+    "open": "Ouverte",
+    "running": "En cours",
+    "finished": "Terminée",
+    "cancelled": "Annulée"
+  },
+  "raids": {
+    "empty": "Aucun raid pour l'instant.",
+    "list_subtitle": "{faction} · {size} joueurs · Tier min. {tier}\n{date}"
+  },
+  "raid_detail": {
+    "title": "Raid",
+    "starts_at": "Début : {date}",
+    "meta_line": "{faction} · {size} joueurs · Tier min. {tier} · {status}",
+    "full_starting": "Raid complet — ça va commencer !",
+    "share": "Partager",
+    "join": "Rejoindre",
+    "leave": "Quitter",
+    "start": "Démarrer",
+    "finish": "Terminer",
+    "duplicate": "Dupliquer",
+    "confirmed_count": "Confirmés ({n}/{total})",
+    "waitlist_count": "Liste d'attente ({n})",
+    "player_subtitle": "{role} · iLvl {ilvl}",
+    "no_eligible": "Aucun personnage éligible (faction/Tier).",
+    "joined_confirmed": "Confirmé !",
+    "joined_waitlist": "Vous êtes sur la liste d'attente.",
+    "duplicated": "Raid dupliqué ({code}).",
+    "duplicate_failed": "Échec de la duplication : {error}",
+    "delete_title": "Supprimer le raid ?",
+    "delete_body": "Cette action est irréversible.",
+    "delete_failed": "Échec de la suppression : {error}",
+    "share_title": "Partager le raid"
+  },
+  "raid_form": {
+    "title_edit": "Modifier le raid",
+    "title_create": "Créer un raid",
+    "load_failed": "Échec du chargement du raid : {error}",
+    "not_open_edit": "Le raid n'est plus ouvert à la modification.",
+    "invalid_slots": "Places invalides (vérifiez la somme et les confirmés).",
+    "save_failed": "Échec : {error}",
+    "f_operation": "Operation",
+    "f_difficulty": "Difficulté",
+    "diff_sm": "Story Mode",
+    "diff_hm": "Veteran (HM)",
+    "diff_nim": "Master (NiM)",
+    "f_size": "Taille",
+    "size_8": "8 joueurs",
+    "size_16": "16 joueurs",
+    "f_faction": "Faction",
+    "f_min_tier": "Tier minimum",
+    "check_comp": "Check Composition",
+    "check_comp_sub": "Imposer les places par rôle",
+    "disable_mentions": "Désactiver les mentions",
+    "disable_mentions_sub": "Ne pas pinger @here sur Discord lors de l'annonce",
+    "date": "DATE",
+    "time": "HEURE",
+    "notes": "Notes",
+    "slots_per_role": "PLACES PAR RÔLE"
   }
 }

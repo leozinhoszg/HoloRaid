@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -63,7 +64,7 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
         _loading = false;
       });
     } catch (e) {
-      if (mounted) setState(() { _loading = false; _error = 'Falha ao carregar a raid: $e'; });
+      if (mounted) setState(() { _loading = false; _error = 'raid_form.load_failed'.tr(namedArgs: {'error': '$e'}); });
     }
   }
 
@@ -105,10 +106,10 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
     } on DioException catch (e) {
       final code = e.response?.statusCode;
       setState(() => _error = code == 409
-          ? 'A raid não está mais aberta para edição.'
+          ? 'raid_form.not_open_edit'.tr()
           : code == 422
-              ? 'Vagas inválidas (confira a soma e os já confirmados).'
-              : 'Falha: ${e.message}');
+              ? 'raid_form.invalid_slots'.tr()
+              : 'raid_form.save_failed'.tr(namedArgs: {'error': '${e.message}'}));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -118,12 +119,12 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
   Widget build(BuildContext context) {
     final ops = ref.watch(operationsProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(_isEdit ? 'Editar raid' : 'Criar raid')),
+      appBar: AppBar(title: Text(_isEdit ? 'raid_form.title_edit'.tr() : 'raid_form.title_create'.tr())),
       body: (_isEdit && _loading)
           ? const Center(child: CircularProgressIndicator())
           : ops.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text('Erro: $e')),
+              error: (e, _) => Center(child: Text('common.error'.tr(namedArgs: {'error': '$e'}))),
               data: (operations) => Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 560),
@@ -132,7 +133,7 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
                 children: [
                   HoloDropdown<String>(
                     key: const ValueKey('f_operation'),
-                    label: 'Operation',
+                    label: 'raid_form.f_operation'.tr(),
                     value: _operation,
                     items: operations.map((o) => HoloDropdownItem(o, o)).toList(),
                     onChanged: _isEdit ? null : (v) => setState(() => _operation = v),
@@ -140,45 +141,45 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
                   const SizedBox(height: 12),
                   HoloDropdown<String>(
                     key: const ValueKey('f_difficulty'),
-                    label: 'Difficulty',
+                    label: 'raid_form.f_difficulty'.tr(),
                     value: _difficulty,
-                    items: const [HoloDropdownItem('SM', 'Story Mode'), HoloDropdownItem('HM', 'Veteran (HM)'), HoloDropdownItem('NiM', 'Master (NiM)')],
+                    items: [HoloDropdownItem('SM', 'raid_form.diff_sm'.tr()), HoloDropdownItem('HM', 'raid_form.diff_hm'.tr()), HoloDropdownItem('NiM', 'raid_form.diff_nim'.tr())],
                     onChanged: _isEdit ? null : (v) => setState(() => _difficulty = v!),
                   ),
                   const SizedBox(height: 12),
                   HoloDropdown<int>(
                     key: const ValueKey('f_size'),
-                    label: 'Size',
+                    label: 'raid_form.f_size'.tr(),
                     value: _size,
-                    items: const [HoloDropdownItem(8, '8 players'), HoloDropdownItem(16, '16 players')],
+                    items: [HoloDropdownItem(8, 'raid_form.size_8'.tr()), HoloDropdownItem(16, 'raid_form.size_16'.tr())],
                     onChanged: _isEdit ? null : (v) => _applyDefaults(v!),
                   ),
                   const SizedBox(height: 12),
                   HoloDropdown<String>(
                     key: const ValueKey('f_faction'),
-                    label: 'Facção',
+                    label: 'raid_form.f_faction'.tr(),
                     value: _faction,
                     items: const [HoloDropdownItem('Republic', 'Republic'), HoloDropdownItem('Empire', 'Empire')],
                     onChanged: _isEdit ? null : (v) => setState(() => _faction = v!),
                   ),
                   const SizedBox(height: 12),
                   HoloDropdown<int>(
-                    label: 'Tier mínimo',
+                    label: 'raid_form.f_min_tier'.tr(),
                     value: _minTier,
-                    items: List.generate(7, (i) => HoloDropdownItem(i, i == 0 ? 'Sem Tier' : 'Tier $i')),
+                    items: List.generate(7, (i) => HoloDropdownItem(i, i == 0 ? 'common.no_tier'.tr() : 'common.tier'.tr(namedArgs: {'n': '$i'}))),
                     onChanged: (v) => setState(() => _minTier = v!),
                   ),
                   const SizedBox(height: 4),
                   SwitchListTile(
-                    title: const Text('Check Composition'),
-                    subtitle: const Text('Enforça vagas por role'),
+                    title: Text('raid_form.check_comp'.tr()),
+                    subtitle: Text('raid_form.check_comp_sub'.tr()),
                     value: _checkComp,
                     onChanged: (v) => setState(() => _checkComp = v),
                   ),
                   if (!_isEdit)
                     SwitchListTile(
-                      title: const Text('Disable mentions'),
-                      subtitle: const Text('Não pingar @here no Discord ao anunciar'),
+                      title: Text('raid_form.disable_mentions'.tr()),
+                      subtitle: Text('raid_form.disable_mentions_sub'.tr()),
                       value: _disableMentions,
                       onChanged: (v) => setState(() => _disableMentions = v),
                     ),
@@ -187,7 +188,7 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
                   const SizedBox(height: 12),
                   _pickerTile(
                     icon: Icons.calendar_today,
-                    label: 'DATA',
+                    label: 'raid_form.date'.tr(),
                     value: _date.toLocal().toString().split(' ').first,
                     onTap: () async {
                       final d = await showDatePicker(context: context, initialDate: _date, firstDate: DateTime(2020), lastDate: DateTime(2030));
@@ -197,7 +198,7 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
                   const SizedBox(height: 10),
                   _pickerTile(
                     icon: Icons.access_time,
-                    label: 'HORA',
+                    label: 'raid_form.time'.tr(),
                     value: _time.format(context),
                     onTap: () async {
                       final t = await showTimePicker(context: context, initialTime: _time);
@@ -205,11 +206,11 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
                     },
                   ),
                   const SizedBox(height: 12),
-                  TextField(controller: _notes, decoration: const InputDecoration(labelText: 'Observações'), maxLines: 2),
+                  TextField(controller: _notes, decoration: InputDecoration(labelText: 'raid_form.notes'.tr()), maxLines: 2),
                   const SizedBox(height: 20),
                   if (_error != null) Padding(padding: const EdgeInsets.only(bottom: 12), child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error))),
                   HoloButton(
-                    label: _isEdit ? 'Salvar' : 'Criar raid',
+                    label: _isEdit ? 'common.save'.tr() : 'raid_form.title_create'.tr(),
                     loading: _saving,
                     onPressed: (_operation == null || _slotsSum != _size) ? null : _save,
                   ),
@@ -232,7 +233,7 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          const Text('VAGAS POR ROLE', style: TextStyle(fontFamily: 'Aldrich', fontSize: 11, letterSpacing: 2, color: HoloPalette.faint)),
+          Text('raid_form.slots_per_role'.tr(), style: const TextStyle(fontFamily: 'Aldrich', fontSize: 11, letterSpacing: 2, color: HoloPalette.faint)),
           Text('$_slotsSum / $_size',
               style: TextStyle(fontFamily: 'Orbitron', fontWeight: FontWeight.w700, fontSize: 13, color: ok ? HoloPalette.heal : HoloPalette.red)),
         ]),

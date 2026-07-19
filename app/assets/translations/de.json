@@ -5,7 +5,15 @@
     "profile": "Profil",
     "logout": "Abmelden",
     "no_data": "Noch keine Daten.",
-    "retry": "Erneut versuchen"
+    "retry": "Erneut versuchen",
+    "error": "Fehler: {error}",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "close": "Schließen",
+    "edit": "Bearbeiten",
+    "no_tier": "Kein Tier",
+    "tier": "Tier {n}"
   },
   "nav": {
     "home": "Start",
@@ -57,5 +65,65 @@
     "in_progress": "LÄUFT",
     "starts_in": "BEGINNT IN",
     "view_raid": "RAID ANZEIGEN"
+  },
+  "raid_status": {
+    "open": "Offen",
+    "running": "Läuft",
+    "finished": "Beendet",
+    "cancelled": "Abgebrochen"
+  },
+  "raids": {
+    "empty": "Noch keine Raids.",
+    "list_subtitle": "{faction} · {size} Spieler · Min. Tier {tier}\n{date}"
+  },
+  "raid_detail": {
+    "title": "Raid",
+    "starts_at": "Start: {date}",
+    "meta_line": "{faction} · {size} Spieler · Min. Tier {tier} · {status}",
+    "full_starting": "Raid voll — startet gleich!",
+    "share": "Teilen",
+    "join": "Beitreten",
+    "leave": "Verlassen",
+    "start": "Starten",
+    "finish": "Beenden",
+    "duplicate": "Duplizieren",
+    "confirmed_count": "Bestätigt ({n}/{total})",
+    "waitlist_count": "Warteliste ({n})",
+    "player_subtitle": "{role} · iLvl {ilvl}",
+    "no_eligible": "Kein geeigneter Charakter (Fraktion/Tier).",
+    "joined_confirmed": "Bestätigt!",
+    "joined_waitlist": "Du bist auf der Warteliste.",
+    "duplicated": "Raid dupliziert ({code}).",
+    "duplicate_failed": "Duplizieren fehlgeschlagen: {error}",
+    "delete_title": "Raid löschen?",
+    "delete_body": "Diese Aktion kann nicht rückgängig gemacht werden.",
+    "delete_failed": "Löschen fehlgeschlagen: {error}",
+    "share_title": "Raid teilen"
+  },
+  "raid_form": {
+    "title_edit": "Raid bearbeiten",
+    "title_create": "Raid erstellen",
+    "load_failed": "Raid konnte nicht geladen werden: {error}",
+    "not_open_edit": "Der Raid ist nicht mehr zur Bearbeitung offen.",
+    "invalid_slots": "Ungültige Slots (Summe und bereits Bestätigte prüfen).",
+    "save_failed": "Fehlgeschlagen: {error}",
+    "f_operation": "Operation",
+    "f_difficulty": "Schwierigkeit",
+    "diff_sm": "Story Mode",
+    "diff_hm": "Veteran (HM)",
+    "diff_nim": "Master (NiM)",
+    "f_size": "Größe",
+    "size_8": "8 Spieler",
+    "size_16": "16 Spieler",
+    "f_faction": "Fraktion",
+    "f_min_tier": "Mindest-Tier",
+    "check_comp": "Check Composition",
+    "check_comp_sub": "Slots pro Rolle erzwingen",
+    "disable_mentions": "Erwähnungen deaktivieren",
+    "disable_mentions_sub": "Beim Ankündigen kein @here auf Discord pingen",
+    "date": "DATUM",
+    "time": "UHRZEIT",
+    "notes": "Notizen",
+    "slots_per_role": "SLOTS PRO ROLLE"
   }
 }

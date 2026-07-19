@@ -5,7 +5,15 @@
     "profile": "Profile",
     "logout": "Logout",
     "no_data": "No data yet.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "error": "Error: {error}",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "close": "Close",
+    "edit": "Edit",
+    "no_tier": "No Tier",
+    "tier": "Tier {n}"
   },
   "nav": {
     "home": "Home",
@@ -57,5 +65,65 @@
     "in_progress": "IN PROGRESS",
     "starts_in": "STARTS IN",
     "view_raid": "VIEW RAID"
+  },
+  "raid_status": {
+    "open": "Open",
+    "running": "Running",
+    "finished": "Finished",
+    "cancelled": "Cancelled"
+  },
+  "raids": {
+    "empty": "No raids yet.",
+    "list_subtitle": "{faction} · {size} players · Min. Tier {tier}\n{date}"
+  },
+  "raid_detail": {
+    "title": "Raid",
+    "starts_at": "Start: {date}",
+    "meta_line": "{faction} · {size} players · Min. Tier {tier} · {status}",
+    "full_starting": "Raid full — starting soon!",
+    "share": "Share",
+    "join": "Join",
+    "leave": "Leave",
+    "start": "Start",
+    "finish": "Finish",
+    "duplicate": "Duplicate",
+    "confirmed_count": "Confirmed ({n}/{total})",
+    "waitlist_count": "Waitlist ({n})",
+    "player_subtitle": "{role} · iLvl {ilvl}",
+    "no_eligible": "No eligible character (faction/Tier).",
+    "joined_confirmed": "Confirmed!",
+    "joined_waitlist": "You joined the waitlist.",
+    "duplicated": "Raid duplicated ({code}).",
+    "duplicate_failed": "Failed to duplicate: {error}",
+    "delete_title": "Delete raid?",
+    "delete_body": "This action cannot be undone.",
+    "delete_failed": "Failed to delete: {error}",
+    "share_title": "Share raid"
+  },
+  "raid_form": {
+    "title_edit": "Edit raid",
+    "title_create": "Create raid",
+    "load_failed": "Failed to load the raid: {error}",
+    "not_open_edit": "The raid is no longer open for editing.",
+    "invalid_slots": "Invalid slots (check the sum and already confirmed).",
+    "save_failed": "Failed: {error}",
+    "f_operation": "Operation",
+    "f_difficulty": "Difficulty",
+    "diff_sm": "Story Mode",
+    "diff_hm": "Veteran (HM)",
+    "diff_nim": "Master (NiM)",
+    "f_size": "Size",
+    "size_8": "8 players",
+    "size_16": "16 players",
+    "f_faction": "Faction",
+    "f_min_tier": "Minimum Tier",
+    "check_comp": "Check Composition",
+    "check_comp_sub": "Enforce slots per role",
+    "disable_mentions": "Disable mentions",
+    "disable_mentions_sub": "Don't ping @here on Discord when announcing",
+    "date": "DATE",
+    "time": "TIME",
+    "notes": "Notes",
+    "slots_per_role": "SLOTS PER ROLE"
   }
 }
