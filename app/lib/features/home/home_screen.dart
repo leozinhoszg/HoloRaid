@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,15 +70,15 @@ class HomeScreen extends ConsumerWidget {
   Widget _error(BuildContext context, WidgetRef ref) => Padding(
         padding: const EdgeInsets.all(40),
         child: Column(children: [
-          const Text('Não foi possível carregar seus dados.',
-              style: TextStyle(fontFamily: 'Jura', color: HoloPalette.dim)),
+          Text('home.error_load'.tr(),
+              style: const TextStyle(fontFamily: 'Jura', color: HoloPalette.dim)),
           const SizedBox(height: 12),
           TextButton(
             onPressed: () {
               ref.invalidate(meProvider);
               ref.invalidate(myRaidsProvider);
             },
-            child: const Text('Tentar de novo'),
+            child: Text('common.retry'.tr()),
           ),
         ]),
       );
@@ -86,11 +87,11 @@ class HomeScreen extends ConsumerWidget {
 class _Eyebrow extends StatelessWidget {
   const _Eyebrow();
   @override
-  Widget build(BuildContext context) => const Text.rich(
+  Widget build(BuildContext context) => Text.rich(
         TextSpan(children: [
-          TextSpan(text: 'CENTRO DE '),
-          TextSpan(text: 'COMANDO', style: TextStyle(color: HoloPalette.blue)),
+          TextSpan(text: 'home.eyebrow_prefix'.tr()),
+          TextSpan(text: 'home.eyebrow_accent'.tr(), style: const TextStyle(color: HoloPalette.blue)),
         ]),
-        style: TextStyle(fontFamily: 'Aldrich', fontSize: 11, letterSpacing: 5, color: HoloPalette.faint),
+        style: const TextStyle(fontFamily: 'Aldrich', fontSize: 11, letterSpacing: 5, color: HoloPalette.faint),
       );
 }

@@ -3,7 +3,9 @@
     "app_name": "HoloRaid",
     "language": "Idioma",
     "profile": "Perfil",
-    "logout": "Sair"
+    "logout": "Sair",
+    "no_data": "Sem dados ainda.",
+    "retry": "Tentar de novo"
   },
   "nav": {
     "home": "Início",
@@ -28,5 +30,32 @@
     "terms": "Termos",
     "privacy": "Privacidade",
     "not_affiliated": "Sem afiliação com a BioWare ou a EA."
+  },
+  "dashboard": {
+    "load_error": "Erro ao carregar: {error}",
+    "today": "Hoje",
+    "this_week": "Semana",
+    "this_month": "Mês",
+    "participants_month": "Participantes (mês)",
+    "most_played_ops": "Operations mais jogadas",
+    "most_active_players": "Jogadores mais ativos",
+    "player_raids": "{n} raids"
+  },
+  "home": {
+    "eyebrow_prefix": "CENTRO DE ",
+    "eyebrow_accent": "COMANDO",
+    "error_load": "Não foi possível carregar seus dados.",
+    "no_op_eyebrow": "SEM OPERATION AGENDADA",
+    "no_op_title": "Nenhuma operation na sua agenda",
+    "no_op_body": "Crie uma raid ou entre em uma para vê-la aqui.",
+    "view_raids": "VER RAIDS",
+    "next_operation": "PRÓXIMA OPERATION",
+    "raid_code": "RAID #{code}",
+    "man_size": "{n}-MAN",
+    "status_confirmed": "Você está confirmado",
+    "status_waitlist": "Você está na waitlist",
+    "in_progress": "EM ANDAMENTO",
+    "starts_in": "COMEÇA EM",
+    "view_raid": "VER RAID"
   }
 }

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/auth/auth_providers.dart';
@@ -38,7 +39,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         future: _stats,
         builder: (context, snap) {
           if (snap.connectionState != ConnectionState.done) return const Center(child: CircularProgressIndicator());
-          if (snap.hasError) return Center(child: Text('Erro ao carregar: ${snap.error}'));
+          if (snap.hasError) return Center(child: Text('dashboard.load_error'.tr(namedArgs: {'error': '${snap.error}'})));
           final d = snap.data!;
           final raids = (d['raids'] as Map).cast<String, dynamic>();
           final ops = (d['topOperations'] as List).cast<dynamic>();
@@ -52,15 +53,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               padding: const EdgeInsets.all(16),
               children: [
                 Wrap(spacing: 12, runSpacing: 12, children: [
-                  _statCard(context, 'Hoje', raids['today']),
-                  _statCard(context, 'Semana', raids['week']),
-                  _statCard(context, 'Mês', raids['month']),
-                  _statCard(context, 'Participantes (mês)', d['participantsThisMonth']),
+                  _statCard(context, 'dashboard.today'.tr(), raids['today']),
+                  _statCard(context, 'dashboard.this_week'.tr(), raids['week']),
+                  _statCard(context, 'dashboard.this_month'.tr(), raids['month']),
+                  _statCard(context, 'dashboard.participants_month'.tr(), d['participantsThisMonth']),
                 ]),
                 const SizedBox(height: 24),
-                Text('Operations mais jogadas', style: Theme.of(context).textTheme.titleMedium),
+                Text('dashboard.most_played_ops'.tr(), style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
-                if (ops.isEmpty) const Text('Sem dados ainda.'),
+                if (ops.isEmpty) Text('common.no_data'.tr()),
                 ...ops.map((o) => ListTile(
                   dense: true,
                   leading: const Icon(Icons.public),
@@ -68,14 +69,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   trailing: Text('${o['count']}'),
                 )),
                 const SizedBox(height: 16),
-                Text('Jogadores mais ativos', style: Theme.of(context).textTheme.titleMedium),
+                Text('dashboard.most_active_players'.tr(), style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
-                if (players.isEmpty) const Text('Sem dados ainda.'),
+                if (players.isEmpty) Text('common.no_data'.tr()),
                 ...players.map((p) => ListTile(
                   dense: true,
                   leading: CircleAvatar(child: Text(((p['username'] as String?) ?? '?').substring(0, 1).toUpperCase())),
                   title: Text(p['username'] as String? ?? '—'),
-                  trailing: Text('${p['raids']} raids'),
+                  trailing: Text('dashboard.player_raids'.tr(namedArgs: {'n': '${p['raids']}'})),
                 )),
               ],
             ),

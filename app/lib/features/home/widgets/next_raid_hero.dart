@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/ui/holo_palette.dart';
@@ -32,15 +33,15 @@ class NextRaidHero extends StatelessWidget {
   Widget _empty(BuildContext context) => Padding(
         padding: const EdgeInsets.all(28),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-          const Text('SEM OPERATION AGENDADA',
-              style: TextStyle(fontFamily: 'Aldrich', fontSize: 10, letterSpacing: 3, color: HoloPalette.faint)),
+          Text('home.no_op_eyebrow'.tr(),
+              style: const TextStyle(fontFamily: 'Aldrich', fontSize: 10, letterSpacing: 3, color: HoloPalette.faint)),
           const SizedBox(height: 12),
-          Text('Nenhuma operation na sua agenda', style: Theme.of(context).textTheme.headlineSmall),
+          Text('home.no_op_title'.tr(), style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 8),
-          const Text('Crie uma raid ou entre em uma para vê-la aqui.',
-              style: TextStyle(fontFamily: 'Jura', color: HoloPalette.dim)),
+          Text('home.no_op_body'.tr(),
+              style: const TextStyle(fontFamily: 'Jura', color: HoloPalette.dim)),
           const SizedBox(height: 20),
-          _CtaButton(label: 'VER RAIDS', onTap: () => context.push('/raids')),
+          _CtaButton(label: 'home.view_raids'.tr(), onTap: () => context.push('/raids')),
         ]),
       );
 
@@ -88,11 +89,11 @@ class _Details extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-        const Row(children: [
-          _Pulse(),
-          SizedBox(width: 7),
-          Text('PRÓXIMA OPERATION',
-              style: TextStyle(fontFamily: 'Aldrich', fontSize: 10, letterSpacing: 3, color: HoloPalette.heal)),
+        Row(children: [
+          const _Pulse(),
+          const SizedBox(width: 7),
+          Text('home.next_operation'.tr(),
+              style: const TextStyle(fontFamily: 'Aldrich', fontSize: 10, letterSpacing: 3, color: HoloPalette.heal)),
         ]),
         const SizedBox(height: 14),
         Text(raid.operation,
@@ -100,11 +101,11 @@ class _Details extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(fontFamily: 'Orbitron', fontWeight: FontWeight.w700, fontSize: 26, color: HoloPalette.ink)),
         const SizedBox(height: 6),
-        Text('RAID #${raid.codigo}', style: const TextStyle(fontFamily: 'Jura', fontSize: 13, color: HoloPalette.faint)),
+        Text('home.raid_code'.tr(namedArgs: {'code': raid.codigo}), style: const TextStyle(fontFamily: 'Jura', fontSize: 13, color: HoloPalette.faint)),
         const SizedBox(height: 16),
         Wrap(spacing: 8, runSpacing: 8, children: [
           _chip(raid.difficulty.toUpperCase(), on: true),
-          _chip('${raid.size}-MAN'),
+          _chip('home.man_size'.tr(namedArgs: {'n': '${raid.size}'})),
           _chip(raid.faction.toUpperCase()),
         ]),
         if (raid.myStatus != null) ...[
@@ -112,7 +113,7 @@ class _Details extends StatelessWidget {
           Row(children: [
             Container(width: 9, height: 9, decoration: const BoxDecoration(color: HoloPalette.dps, borderRadius: BorderRadius.all(Radius.circular(2)))),
             const SizedBox(width: 9),
-            Text(raid.myStatus == 'confirmed' ? 'Você está confirmado' : 'Você está na waitlist',
+            Text(raid.myStatus == 'confirmed' ? 'home.status_confirmed'.tr() : 'home.status_waitlist'.tr(),
                 style: const TextStyle(fontFamily: 'Jura', fontWeight: FontWeight.w600, color: HoloPalette.ink)),
           ]),
         ],
@@ -161,7 +162,7 @@ class _CountdownState extends State<_Countdown> {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-        Text(neg ? 'EM ANDAMENTO' : 'COMEÇA EM',
+        Text(neg ? 'home.in_progress'.tr() : 'home.starts_in'.tr(),
             style: const TextStyle(fontFamily: 'Aldrich', fontSize: 10, letterSpacing: 4, color: HoloPalette.faint)),
         const SizedBox(height: 8),
         FittedBox(
@@ -176,7 +177,7 @@ class _CountdownState extends State<_Countdown> {
                   shadows: [Shadow(color: Color(0x5976C8FF), blurRadius: 22)])),
         ),
         const SizedBox(height: 20),
-        _CtaButton(label: 'VER RAID', onTap: () => context.push('/raids/${widget.raid.id}')),
+        _CtaButton(label: 'home.view_raid'.tr(), onTap: () => context.push('/raids/${widget.raid.id}')),
       ]),
     );
   }
