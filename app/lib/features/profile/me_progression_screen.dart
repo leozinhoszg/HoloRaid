@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../core/auth/auth_providers.dart';
+import '../../core/ui/holo_button.dart';
 
+/// Progressão PvE da conta (destino do app shell — body-only).
 class MeProgressionScreen extends ConsumerStatefulWidget {
   const MeProgressionScreen({super.key});
   @override
@@ -40,33 +41,50 @@ class _State extends ConsumerState<MeProgressionScreen> {
     setState(() => _saving = true);
     final api = ref.read(apiClientProvider);
     await api.dio.put('/me/bosses', data: {'bossIds': _checked.toList()});
-    if (mounted) { setState(() => _saving = false); context.pop(); }
+    if (!mounted) return;
+    setState(() => _saving = false);
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Progressão salva')));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Minha progressão PvE'),
-        actions: [TextButton(onPressed: _saving ? null : _save, child: Text(_saving ? '...' : 'Salvar'))],
-      ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              children: _byOp.entries.map((entry) => ExpansionTile(
-                title: Text(entry.key),
-                children: entry.value.map((b) {
-                  final bid = b['id'] as int;
-                  final diff = b['difficulty'] ?? b['type'];
-                  return CheckboxListTile(
-                    dense: true,
-                    value: _checked.contains(bid),
-                    title: Text('${b['boss']} · $diff'),
-                    onChanged: (v) => setState(() => v == true ? _checked.add(bid) : _checked.remove(bid)),
-                  );
-                }).toList(),
-              )).toList(),
+    if (_loading) return const Center(child: CircularProgressIndicator());
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 680),
+        child: Column(children: [
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.only(top: 4, bottom: 8),
+              children: _byOp.entries
+                  .map((entry) => Card(
+                        clipBehavior: Clip.antiAlias,
+                        child: ExpansionTile(
+                          title: Text(entry.key, style: const TextStyle(fontFamily: 'Orbitron', fontSize: 15)),
+                          children: entry.value.map((b) {
+                            final bid = b['id'] as int;
+                            final diff = b['difficulty'] ?? b['type'];
+                            return CheckboxListTile(
+                              dense: true,
+                              value: _checked.contains(bid),
+                              title: Text('${b['boss']} · $diff'),
+                              onChanged: (v) => setState(() => v == true ? _checked.add(bid) : _checked.remove(bid)),
+                            );
+                          }).toList(),
+                        ),
+                      ))
+                  .toList(),
             ),
+          ),
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+              child: HoloButton(label: 'Salvar progressão', loading: _saving, onPressed: _save),
+            ),
+          ),
+        ]),
+      ),
     );
   }
 }

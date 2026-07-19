@@ -36,14 +36,12 @@ List<Override> _overrides({required bool withRaid}) => [
     ];
 
 void main() {
-  testWidgets('Home com raid renderiza wordmark, operation e navegação', (tester) async {
+  testWidgets('Home com raid renderiza a próxima operation e os tiles', (tester) async {
     await tester.pumpWidget(_app(_overrides(withRaid: true)));
     await tester.pump();
     await tester.pump(const Duration(seconds: 2));
-    expect(find.text('HoloRaid'), findsOneWidget);
     expect(find.text('The Dread Fortress'), findsOneWidget);
-    expect(find.text('Raids'), findsOneWidget);
-    expect(find.text('Admin'), findsNothing);
+    expect(find.text('RAIDS ATIVAS'), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
   });
 
