@@ -37,7 +37,21 @@ final authStateProvider =
 
 class AuthNotifier extends StateNotifier<AuthState> {
   final Ref ref;
-  AuthNotifier(this.ref) : super(const AuthUnknown());
+  AuthNotifier(this.ref) : super(const AuthUnknown()) {
+    restore();
+  }
+
+  /// Restaura a sessão no boot: tenta `GET /me`. Sem access token (web recarrega
+  /// e perde o token de memória) dá 401 e o interceptor do ApiClient refaz via
+  /// cookie de refresh (web) / token guardado (mobile). Sucesso → logado.
+  Future<void> restore() async {
+    try {
+      final user = await ref.read(authServiceProvider).loadMe();
+      state = AuthSignedIn(user);
+    } catch (_) {
+      state = const AuthSignedOut();
+    }
+  }
 
   Future<void> login() async {
     final user = await ref.read(authServiceProvider).login();

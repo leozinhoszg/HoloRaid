@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../auth/auth_providers.dart';
 import '../nav/app_shell.dart';
 import '../../features/login/login_screen.dart';
+import '../../features/splash/splash_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/characters/characters_list_screen.dart';
 import '../../features/characters/character_form_screen.dart';
@@ -28,13 +29,17 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable: refresh,
     redirect: (context, state) {
       final auth = ref.read(authStateProvider);
+      final loc = state.matchedLocation;
+      // Restaurando a sessão no boot: mostra o splash (não joga pro login ainda).
+      if (auth is AuthUnknown) return loc == '/splash' ? null : '/splash';
       final signedIn = auth is AuthSignedIn;
-      final onLogin = state.matchedLocation == '/login';
-      if (!signedIn && !onLogin) return '/login';
-      if (signedIn && onLogin) return '/home';
+      if (!signedIn) return loc == '/login' ? null : '/login';
+      // Logado: tira do splash/login.
+      if (loc == '/login' || loc == '/splash') return '/home';
       return null;
     },
     routes: [
+      GoRoute(path: '/splash', builder: (_, _) => const SplashScreen()),
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
       // Destinos principais dentro do app shell (sidebar/drawer + user menu).
       ShellRoute(
