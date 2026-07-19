@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/reference/reference_providers.dart';
 import '../../core/reference/reference_models.dart';
 import '../../core/ui/holo_button.dart';
+import '../../core/ui/holo_dropdown.dart';
 import 'characters_providers.dart';
 
 class CharacterFormScreen extends ConsumerStatefulWidget {
@@ -69,10 +70,10 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
                 onChanged: (_) => setState(() {}),
               ),
               const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                initialValue: _faccao,
-                decoration: const InputDecoration(labelText: 'Facção'),
-                items: data.factions.map((f) => DropdownMenuItem(value: f, child: Text(f))).toList(),
+              HoloDropdown<String>(
+                label: 'Facção',
+                value: _faccao,
+                items: data.factions.map((f) => HoloDropdownItem(f, f)).toList(),
                 onChanged: (v) => setState(() {
                   _faccao = v;
                   _classe = null;
@@ -81,10 +82,10 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
                 }),
               ),
               const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                initialValue: _classe,
-                decoration: const InputDecoration(labelText: 'Combat Style'),
-                items: styles.map((c) => DropdownMenuItem(value: c.name, child: Text(c.name))).toList(),
+              HoloDropdown<String>(
+                label: 'Combat Style',
+                value: _classe,
+                items: styles.map((c) => HoloDropdownItem(c.name, c.name)).toList(),
                 onChanged: _faccao == null
                     ? null
                     : (v) => setState(() {
@@ -94,12 +95,12 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
                         }),
               ),
               const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                initialValue: _disciplina,
-                decoration: const InputDecoration(labelText: 'Disciplina (opcional)'),
+              HoloDropdown<String?>(
+                label: 'Disciplina (opcional)',
+                value: _disciplina,
                 items: [
-                  const DropdownMenuItem(value: null, child: Text('— nenhuma —')),
-                  ...discs.map((d) => DropdownMenuItem(value: d.name, child: Text('${d.name} (${d.role})'))),
+                  const HoloDropdownItem<String?>(null, '— nenhuma —'),
+                  ...discs.map((d) => HoloDropdownItem<String?>(d.name, '${d.name} (${d.role})')),
                 ],
                 onChanged: _classe == null
                     ? null
@@ -109,10 +110,10 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
                         }),
               ),
               const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                initialValue: _role,
-                decoration: const InputDecoration(labelText: 'Role'),
-                items: roleOptions.map((r) => DropdownMenuItem(value: r, child: Text(r))).toList(),
+              HoloDropdown<String>(
+                label: 'Role',
+                value: _role,
+                items: roleOptions.map((r) => HoloDropdownItem(r, r)).toList(),
                 onChanged: (_classe == null || _disciplina != null) ? null : (v) => setState(() => _role = v),
               ),
               const SizedBox(height: 12),

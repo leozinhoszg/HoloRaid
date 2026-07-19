@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/reference/reference_providers.dart';
 import '../../core/ui/holo_button.dart';
+import '../../core/ui/holo_dropdown.dart';
 import '../../core/ui/holo_palette.dart';
 import 'raids_providers.dart';
 
@@ -129,44 +130,45 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
                   child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
                 children: [
-                  DropdownButtonFormField<String>(
+                  HoloDropdown<String>(
                     key: const ValueKey('f_operation'),
-                    initialValue: _operation,
-                    decoration: const InputDecoration(labelText: 'Operation'),
-                    items: operations.map((o) => DropdownMenuItem(value: o, child: Text(o))).toList(),
+                    label: 'Operation',
+                    value: _operation,
+                    items: operations.map((o) => HoloDropdownItem(o, o)).toList(),
                     onChanged: _isEdit ? null : (v) => setState(() => _operation = v),
                   ),
                   const SizedBox(height: 12),
-                  DropdownButtonFormField<String>(
+                  HoloDropdown<String>(
                     key: const ValueKey('f_difficulty'),
-                    initialValue: _difficulty,
-                    decoration: const InputDecoration(labelText: 'Difficulty'),
-                    items: const [DropdownMenuItem(value: 'SM', child: Text('Story Mode')), DropdownMenuItem(value: 'HM', child: Text('Veteran (HM)')), DropdownMenuItem(value: 'NiM', child: Text('Master (NiM)'))],
+                    label: 'Difficulty',
+                    value: _difficulty,
+                    items: const [HoloDropdownItem('SM', 'Story Mode'), HoloDropdownItem('HM', 'Veteran (HM)'), HoloDropdownItem('NiM', 'Master (NiM)')],
                     onChanged: _isEdit ? null : (v) => setState(() => _difficulty = v!),
                   ),
                   const SizedBox(height: 12),
-                  DropdownButtonFormField<int>(
+                  HoloDropdown<int>(
                     key: const ValueKey('f_size'),
-                    initialValue: _size,
-                    decoration: const InputDecoration(labelText: 'Size'),
-                    items: const [DropdownMenuItem(value: 8, child: Text('8 players')), DropdownMenuItem(value: 16, child: Text('16 players'))],
+                    label: 'Size',
+                    value: _size,
+                    items: const [HoloDropdownItem(8, '8 players'), HoloDropdownItem(16, '16 players')],
                     onChanged: _isEdit ? null : (v) => _applyDefaults(v!),
                   ),
                   const SizedBox(height: 12),
-                  DropdownButtonFormField<String>(
+                  HoloDropdown<String>(
                     key: const ValueKey('f_faction'),
-                    initialValue: _faction,
-                    decoration: const InputDecoration(labelText: 'Facção'),
-                    items: const [DropdownMenuItem(value: 'Republic', child: Text('Republic')), DropdownMenuItem(value: 'Empire', child: Text('Empire'))],
+                    label: 'Facção',
+                    value: _faction,
+                    items: const [HoloDropdownItem('Republic', 'Republic'), HoloDropdownItem('Empire', 'Empire')],
                     onChanged: _isEdit ? null : (v) => setState(() => _faction = v!),
                   ),
                   const SizedBox(height: 12),
-                  DropdownButtonFormField<int>(
-                    initialValue: _minTier,
-                    decoration: const InputDecoration(labelText: 'Tier mínimo'),
-                    items: List.generate(7, (i) => DropdownMenuItem(value: i, child: Text(i == 0 ? 'Sem Tier' : 'Tier $i'))),
+                  HoloDropdown<int>(
+                    label: 'Tier mínimo',
+                    value: _minTier,
+                    items: List.generate(7, (i) => HoloDropdownItem(i, i == 0 ? 'Sem Tier' : 'Tier $i')),
                     onChanged: (v) => setState(() => _minTier = v!),
                   ),
+                  const SizedBox(height: 4),
                   SwitchListTile(
                     title: const Text('Check Composition'),
                     subtitle: const Text('Enforça vagas por role'),

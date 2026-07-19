@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:holoraid/core/ui/holo_dropdown.dart';
 import 'package:holoraid/features/raids/raid_model.dart';
 import '../../support/pump_raid_form.dart';
 
@@ -54,7 +55,7 @@ void main() {
     expect(find.widgetWithText(FilledButton, 'Salvar'), findsOneWidget);
     expect(find.text('lockme'), findsOneWidget); // notes prefilled
     expect(find.widgetWithText(SwitchListTile, 'Disable mentions'), findsNothing);
-    final op = tester.widget<DropdownButtonFormField<String>>(find.byKey(const ValueKey('f_operation')));
+    final op = tester.widget<HoloDropdown<String>>(find.byKey(const ValueKey('f_operation')));
     expect(op.onChanged, isNull); // imutável travado
   });
 
