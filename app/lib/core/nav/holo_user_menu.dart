@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -70,11 +71,11 @@ class HoloUserMenu extends ConsumerWidget {
               ),
       ),
       menuChildren: [
-        _item(Icons.person_outline, 'Perfil', () => context.push('/profile')),
+        _item(Icons.person_outline, 'common.profile'.tr(), () => context.push('/profile')),
         const _ReduceMotionItem(),
-        if (isAdmin) _item(Icons.shield_outlined, 'Admin', () => context.push('/admin/users')),
+        if (isAdmin) _item(Icons.shield_outlined, 'nav.admin'.tr(), () => context.push('/admin/users')),
         const Divider(height: 8, color: HoloPalette.glassBorder),
-        _item(Icons.logout, 'Sair', () => ref.read(authStateProvider.notifier).logout(), danger: true),
+        _item(Icons.logout, 'common.logout'.tr(), () => ref.read(authStateProvider.notifier).logout(), danger: true),
       ],
     );
   }
@@ -109,8 +110,8 @@ class _ReduceMotionItem extends ConsumerWidget {
         child: Row(children: [
           const Icon(Icons.motion_photos_pause_outlined, size: 18, color: HoloPalette.dim),
           const SizedBox(width: 12),
-          const Expanded(
-              child: Text('Reduzir animações', style: TextStyle(fontFamily: 'Jura', fontSize: 14, color: HoloPalette.ink))),
+          Expanded(
+              child: Text('nav.reduce_motion'.tr(), style: const TextStyle(fontFamily: 'Jura', fontSize: 14, color: HoloPalette.ink))),
           Switch(value: on, onChanged: (v) => ref.read(reduceMotionProvider.notifier).state = v),
         ]),
       ),

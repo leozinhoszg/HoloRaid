@@ -1,7 +1,20 @@
 {
   "common": {
     "app_name": "HoloRaid",
-    "language": "Idioma"
+    "language": "Idioma",
+    "profile": "Perfil",
+    "logout": "Sair"
+  },
+  "nav": {
+    "home": "Início",
+    "characters": "Personagens",
+    "progression": "Progressão",
+    "raids": "Raids",
+    "dashboard": "Dashboard",
+    "admin": "Admin",
+    "fab_new": "Novo",
+    "fab_create_raid": "Criar raid",
+    "reduce_motion": "Reduzir animações"
   },
   "login": {
     "tagline": "Comande suas Operations de SWTOR.",

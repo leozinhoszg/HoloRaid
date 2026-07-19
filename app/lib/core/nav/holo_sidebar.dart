@@ -25,12 +25,19 @@ class HoloSidebar extends ConsumerWidget {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         const Padding(
-          padding: EdgeInsets.fromLTRB(20, 24, 20, 24),
+          padding: EdgeInsets.fromLTRB(18, 24, 18, 24),
           child: Row(
             children: [
-              HoloEmblem(size: 32),
+              HoloEmblem(size: 30),
               SizedBox(width: 10),
-              HoloWordmark(size: 26),
+              // encolhe o wordmark só se faltar espaço (evita overflow na largura fixa da sidebar)
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: HoloWordmark(size: 26),
+                ),
+              ),
             ],
           ),
         ),

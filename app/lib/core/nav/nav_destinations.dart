@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../ui/holo_palette.dart';
 
@@ -9,12 +10,12 @@ class NavDestination {
 }
 
 List<NavDestination> navDestinations({required bool isAdmin}) => [
-      const NavDestination(route: '/home', label: 'Início', icon: Icons.dashboard_outlined, color: HoloPalette.indigo),
-      const NavDestination(route: '/characters', label: 'Personagens', icon: Icons.people_alt_outlined, color: HoloPalette.indigo),
-      const NavDestination(route: '/progression', label: 'Progressão', icon: Icons.checklist, color: HoloPalette.gold),
-      const NavDestination(route: '/raids', label: 'Raids', icon: Icons.calendar_month_outlined, color: HoloPalette.blue),
-      const NavDestination(route: '/dashboard', label: 'Dashboard', icon: Icons.bar_chart, color: HoloPalette.heal),
-      if (isAdmin) const NavDestination(route: '/admin/users', label: 'Admin', icon: Icons.shield_outlined, color: HoloPalette.red),
+      NavDestination(route: '/home', label: 'nav.home'.tr(), icon: Icons.dashboard_outlined, color: HoloPalette.indigo),
+      NavDestination(route: '/characters', label: 'nav.characters'.tr(), icon: Icons.people_alt_outlined, color: HoloPalette.indigo),
+      NavDestination(route: '/progression', label: 'nav.progression'.tr(), icon: Icons.checklist, color: HoloPalette.gold),
+      NavDestination(route: '/raids', label: 'nav.raids'.tr(), icon: Icons.calendar_month_outlined, color: HoloPalette.blue),
+      NavDestination(route: '/dashboard', label: 'nav.dashboard'.tr(), icon: Icons.bar_chart, color: HoloPalette.heal),
+      if (isAdmin) NavDestination(route: '/admin/users', label: 'nav.admin'.tr(), icon: Icons.shield_outlined, color: HoloPalette.red),
     ];
 
 bool isDestinationActive(String route, String location) =>
@@ -28,8 +29,8 @@ class NavFab {
 }
 
 NavFab? fabForLocation(String location) {
-  if (location == '/characters') return const NavFab('Novo', Icons.add, '/characters/new');
-  if (location == '/raids') return const NavFab('Criar raid', Icons.add, '/raids/new');
+  if (location == '/characters') return NavFab('nav.fab_new'.tr(), Icons.add, '/characters/new');
+  if (location == '/raids') return NavFab('nav.fab_create_raid'.tr(), Icons.add, '/raids/new');
   return null;
 }
 
