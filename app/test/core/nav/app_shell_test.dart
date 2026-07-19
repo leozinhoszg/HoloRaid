@@ -30,6 +30,7 @@ void main() {
     addTearDown(tester.view.reset);
     await tester.pumpWidget(_app(_ov(role: 'user')));
     await tester.pump();
+    await tester.pump(const Duration(seconds: 1)); // drena o fade de entrada (flutter_animate)
     expect(find.text('Personagens'), findsOneWidget);
     expect(find.text('Raids'), findsOneWidget);
     expect(find.text('Admin'), findsNothing);
@@ -42,6 +43,7 @@ void main() {
     addTearDown(tester.view.reset);
     await tester.pumpWidget(_app(_ov(role: 'admin')));
     await tester.pump();
+    await tester.pump(const Duration(seconds: 1)); // drena o fade de entrada
     expect(find.text('Admin'), findsOneWidget);
   });
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../settings/settings_providers.dart';
 import '../ui/holo_palette.dart';
 import 'holo_drawer.dart';
 import 'holo_sidebar.dart';
@@ -18,6 +20,23 @@ class AppShell extends ConsumerWidget {
     final location = GoRouterState.of(context).matchedLocation;
     final title = titleForLocation(location);
     final fab = fabForLocation(location);
+    final reduce = ref.watch(reduceMotionProvider) || MediaQuery.of(context).disableAnimations;
+
+    // Entrada suave e barata do conteúdo ao trocar de destino: fade + slide
+    // sutil (não desliza toda a tela → não re-borra o glass como o cross-fade).
+    // A `key` por location faz o efeito rerodar a cada navegação.
+    Widget content = child;
+    if (!reduce) {
+      content = Animate(
+        key: ValueKey(location),
+        effects: const [
+          FadeEffect(duration: Duration(milliseconds: 220), curve: Curves.easeOut),
+          SlideEffect(
+              begin: Offset(0, .025), end: Offset.zero, duration: Duration(milliseconds: 260), curve: Curves.easeOutCubic),
+        ],
+        child: child,
+      );
+    }
     final fabWidget = fab == null
         ? null
         : FloatingActionButton.extended(
@@ -37,7 +56,7 @@ class AppShell extends ConsumerWidget {
               Expanded(
                 child: Column(children: [
                   _TopBar(title: title),
-                  Expanded(child: child),
+                  Expanded(child: content),
                 ]),
               ),
             ]),
@@ -55,7 +74,7 @@ class AppShell extends ConsumerWidget {
         ),
         drawer: const HoloDrawer(),
         floatingActionButton: fabWidget,
-        body: SafeArea(child: child),
+        body: SafeArea(child: content),
       );
     });
   }
