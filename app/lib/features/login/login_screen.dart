@@ -1,9 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/auth/auth_providers.dart';
+import '../../core/config/app_config.dart';
 import '../../core/ui/glass_card.dart';
+import '../../core/ui/holo_wordmark.dart';
 import '../../core/ui/starfield.dart';
 import 'login_theme.dart';
 import 'widgets/holo_emblem.dart';
@@ -94,14 +97,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       children: [
         stagger(HoloEmblem(size: compact ? 92 : 116)),
         SizedBox(height: compact ? 14 : 20),
-        stagger(Text(
-          'HoloRaid',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: compact ? 38 : 44, fontWeight: FontWeight.w800, letterSpacing: 1.5, color: Colors.white,
-            shadows: const [Shadow(color: Color.fromRGBO(140, 150, 255, 0.7), blurRadius: 24)],
-          ),
-        )),
+        stagger(HoloWordmark(size: compact ? 38 : 44)),
         const SizedBox(height: 10),
         stagger(const Text(
           'Command your SWTOR Operations.',
@@ -185,13 +181,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     const link = TextStyle(color: LoginPalette.indigo, fontSize: 12, decoration: TextDecoration.underline);
     return Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        GestureDetector(onTap: () => context.push('/terms'), child: const Text('Terms', style: link)),
+        GestureDetector(onTap: () => _openLegal('terms'), child: const Text('Terms', style: link)),
         const Text('  ·  ', style: TextStyle(color: LoginPalette.textDim, fontSize: 12)),
-        GestureDetector(onTap: () => context.push('/privacy'), child: const Text('Privacy', style: link)),
+        GestureDetector(onTap: () => _openLegal('privacy'), child: const Text('Privacy', style: link)),
       ]),
       const SizedBox(height: 8),
       const Text('Not affiliated with BioWare or EA.',
           style: TextStyle(color: LoginPalette.textDim, fontSize: 11)),
     ]);
+  }
+
+  /// Termos/Privacidade são páginas HTML estáticas (app/web/{terms,privacy}) —
+  /// abre em nova aba (web) ou no navegador externo (mobile).
+  Future<void> _openLegal(String page) async {
+    final base = kIsWeb ? Uri.base.origin : AppConfig.appPublicUrl;
+    final uri = Uri.parse('$base/$page/index.html');
+    await launchUrl(uri, webOnlyWindowName: '_blank', mode: LaunchMode.externalApplication);
   }
 }
