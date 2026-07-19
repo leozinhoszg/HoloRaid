@@ -65,14 +65,13 @@ class _TopBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(28, 18, 20, 14),
       child: Row(children: [
-        Flexible(
+        Expanded(
           child: Text(title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(fontFamily: 'Orbitron', fontWeight: FontWeight.w700, fontSize: 22, color: HoloPalette.ink)),
         ),
-        const SizedBox(width: 12),
-        const Spacer(),
+        const SizedBox(width: 16),
         const HoloUserMenu(),
       ]),
     );
