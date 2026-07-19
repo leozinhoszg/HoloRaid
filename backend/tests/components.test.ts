@@ -8,9 +8,9 @@ function deps() {
   const userRepo = makeFakeUserRepo();
   const personagemRepo = makeFakePersonagemRepo();
   const raidRepo = makeFakeRaidRepo();
-  const raidPlayerRepo = makeFakeRaidPlayerRepo(personagemRepo);
+  const raidPlayerRepo = makeFakeRaidPlayerRepo(personagemRepo, userRepo);
   const raidService = createRaidService({ raidRepo, raidPlayerRepo });
-  const raidJoinService = createRaidJoinService({ raidRepo, raidPlayerRepo, personagemRepo });
+  const raidJoinService = createRaidJoinService({ raidRepo, raidPlayerRepo, personagemRepo, userRepo });
   const events: string[] = [];
   const bus: RaidBroadcaster = { raidCreated: () => {}, raidUpdated: (_d, e) => events.push(e), raidRemoved: () => {} };
   const d: ComponentDeps = { raidService, userRepo, personagemRepo, raidJoinService, bus, appPublicUrl: 'https://holoraid.fun' };

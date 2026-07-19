@@ -3,12 +3,21 @@ import type { ProgressionService } from './progression.service';
 
 export function createProgressionController(progressionService: ProgressionService) {
   return {
+    // admin: alvo é um usuário (:id)
     async award(req: Request, res: Response) {
       const { bossIds } = req.body as { bossIds: number[] };
       res.json(await progressionService.award(Number(req.params.id), bossIds));
     },
     async revoke(req: Request, res: Response) {
       res.json(await progressionService.revoke(Number(req.params.id), Number(req.params.bossId)));
+    },
+    // conta do próprio usuário logado
+    async myHistory(req: Request, res: Response) {
+      res.json(await progressionService.history(req.user!.sub));
+    },
+    async setMine(req: Request, res: Response) {
+      const { bossIds } = req.body as { bossIds: number[] };
+      res.json(await progressionService.setCompletions(req.user!.sub, bossIds));
     },
   };
 }

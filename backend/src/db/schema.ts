@@ -12,6 +12,7 @@ export interface UsuariosTable {
   email: string | null;
   role: 'user' | 'admin';
   push_enabled: Generated<number>; // tinyint (0/1); Generated = tem DEFAULT, opcional no insert
+  total_points: Generated<number>; // integer DEFAULT 0 (progressão PvE por conta)
   created_at: Created;
   updated_at: Updated;
 }
@@ -46,7 +47,6 @@ export interface PersonagensTable {
   role: 'Tank' | 'Healer' | 'DPS';
   origin_story: string | null;
   item_level: number;
-  total_points: number;
   created_at: Created;
   updated_at: Updated;
 }
@@ -60,9 +60,9 @@ export interface BossesTable {
   points: number;
 }
 
-export interface CharacterBossesTable {
+export interface UsuarioBossesTable {
   id: Generated<number>;
-  personagem_id: number;
+  usuario_id: number;
   boss_id: number;
   completed_at: ColumnType<Date, Date | string, never>;
 }
@@ -131,7 +131,7 @@ export interface DB {
   admin_audit_log: AdminAuditLogTable;
   personagens: PersonagensTable;
   bosses: BossesTable;
-  character_bosses: CharacterBossesTable;
+  usuario_bosses: UsuarioBossesTable;
   raids: RaidsTable;
   raid_players: RaidPlayersTable;
   guild_config: GuildConfigTable;

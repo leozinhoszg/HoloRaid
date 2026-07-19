@@ -69,7 +69,7 @@ export function createApp(deps: {
   if (deps.profileRaidRepo) app.use('/', createProfileRouter(deps.profileRaidRepo));
   if (deps.bossRepo) app.use('/', createReferenceRouter(deps.bossRepo));
   if (deps.characterService && deps.progressionService) {
-    app.use('/', createCharactersRouter(deps.characterService, deps.progressionService));
+    app.use('/', createCharactersRouter(deps.characterService));
     app.use('/', createProgressionRouter(deps.progressionService));
   }
   if (deps.raidService && deps.raidJoinService) {

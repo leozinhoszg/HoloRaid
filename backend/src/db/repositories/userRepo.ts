@@ -6,6 +6,7 @@ export type UserRecord = {
   id: number; discord_id: string; username: string;
   nickname: string | null; avatar: string | null; email: string | null; role: Role;
   push_enabled: boolean;
+  total_points: number;
 };
 export type UpsertUser = {
   discord_id: string; username: string;
@@ -18,10 +19,11 @@ export interface UserRepo {
   findByIds(ids: number[]): Promise<UserRecord[]>;
   updateRole(id: number, role: Role): Promise<void>;
   setPushEnabled(id: number, enabled: boolean): Promise<void>;
+  updateTotalPoints(id: number, total: number): Promise<void>;
   list(): Promise<UserRecord[]>;
 }
 
-const COLS = ['id', 'discord_id', 'username', 'nickname', 'avatar', 'email', 'role', 'push_enabled'] as const;
+const COLS = ['id', 'discord_id', 'username', 'nickname', 'avatar', 'email', 'role', 'push_enabled', 'total_points'] as const;
 
 const norm = (row: any): UserRecord => ({ ...row, push_enabled: !!row.push_enabled });
 
@@ -54,6 +56,9 @@ export function createUserRepo(db: Kysely<DB>): UserRepo {
     },
     async setPushEnabled(id, enabled) {
       await db.updateTable('usuarios').set({ push_enabled: enabled ? 1 : 0, updated_at: new Date() }).where('id', '=', id).execute();
+    },
+    async updateTotalPoints(id, total) {
+      await db.updateTable('usuarios').set({ total_points: total, updated_at: new Date() }).where('id', '=', id).execute();
     },
     async list() {
       const rows = await db.selectFrom('usuarios').select(COLS).orderBy('id').execute();

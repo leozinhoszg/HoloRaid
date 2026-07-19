@@ -50,7 +50,8 @@ export async function handleJoinClick(i: ComponentInteraction, deps: ComponentDe
   }
 
   const chars = await deps.personagemRepo.findByUsuario(user.id);
-  const eligible = chars.filter((c) => c.faccao === detail.faction && calcularTier(c.total_points) >= detail.minimum_tier);
+  const accountTier = calcularTier(user.total_points);
+  const eligible = chars.filter((c) => c.faccao === detail.faction && accountTier >= detail.minimum_tier);
   if (eligible.length === 0) {
     const reason = chars.length === 0
       ? `You don't have a character yet — create one at ${deps.appPublicUrl}`
@@ -63,7 +64,7 @@ export async function handleJoinClick(i: ComponentInteraction, deps: ComponentDe
     customId: `hr:pick:${code}`,
     placeholder: 'Pick a character',
     options: eligible.map((c) => ({
-      label: `${c.nome} — ${c.role} (${c.faccao}, Tier ${calcularTier(c.total_points)})`,
+      label: `${c.nome} — ${c.role} (${c.faccao}, Tier ${accountTier})`,
       value: String(c.id),
     })),
   });
