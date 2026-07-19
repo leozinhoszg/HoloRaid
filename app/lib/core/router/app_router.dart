@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../auth/auth_providers.dart';
+import '../nav/app_shell.dart';
 import '../../features/login/login_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/characters/characters_list_screen.dart';
@@ -35,8 +36,18 @@ final routerProvider = Provider<GoRouter>((ref) {
     },
     routes: [
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
-      GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
-      GoRoute(path: '/characters', builder: (_, _) => const CharactersListScreen()),
+      // Destinos principais dentro do app shell (sidebar/drawer + user menu).
+      ShellRoute(
+        builder: (context, state, child) => AppShell(child: child),
+        routes: [
+          GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
+          GoRoute(path: '/characters', builder: (_, _) => const CharactersListScreen()),
+          GoRoute(path: '/raids', builder: (_, _) => const RaidsListScreen()),
+          GoRoute(path: '/dashboard', builder: (_, _) => const DashboardScreen()),
+          GoRoute(path: '/admin/users', builder: (_, _) => const UsersAdminScreen()),
+        ],
+      ),
+      // Telas empilhadas em tela cheia (fora do shell, com botão voltar próprio).
       GoRoute(path: '/characters/new', builder: (_, _) => const CharacterFormScreen()),
       GoRoute(
         path: '/characters/:id',
@@ -46,13 +57,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/characters/:id/progression',
         builder: (_, state) => CharacterProgressionScreen(id: int.parse(state.pathParameters['id']!)),
       ),
-      GoRoute(path: '/raids', builder: (_, _) => const RaidsListScreen()),
       GoRoute(path: '/raids/new', builder: (_, _) => const RaidFormScreen()),
       GoRoute(path: '/raids/:id/edit', builder: (_, state) => RaidFormScreen(editRaidId: int.parse(state.pathParameters['id']!))),
       GoRoute(path: '/raids/:id', builder: (_, state) => RaidDetailScreen(id: int.parse(state.pathParameters['id']!))),
-      GoRoute(path: '/dashboard', builder: (_, _) => const DashboardScreen()),
       GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
-      GoRoute(path: '/admin/users', builder: (_, _) => const UsersAdminScreen()),
     ],
   );
 });

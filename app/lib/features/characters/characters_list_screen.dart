@@ -8,14 +8,7 @@ class CharactersListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final chars = ref.watch(charactersProvider);
-    return Scaffold(
-      appBar: AppBar(title: const Text('Meus Personagens')),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push('/characters/new'),
-        icon: const Icon(Icons.add),
-        label: const Text('Novo'),
-      ),
-      body: chars.when(
+    return chars.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Erro: $e')),
         data: (list) => list.isEmpty
@@ -46,7 +39,6 @@ class CharactersListScreen extends ConsumerWidget {
                   },
                 ),
               ),
-      ),
-    );
+      );
   }
 }

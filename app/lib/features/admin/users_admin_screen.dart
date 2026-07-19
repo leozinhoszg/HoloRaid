@@ -30,9 +30,7 @@ class _UsersAdminScreenState extends ConsumerState<UsersAdminScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Usuários (admin)')),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
+    return FutureBuilder<List<Map<String, dynamic>>>(
         future: _users,
         builder: (context, snap) {
           if (!snap.hasData) return const Center(child: CircularProgressIndicator());
@@ -56,7 +54,6 @@ class _UsersAdminScreenState extends ConsumerState<UsersAdminScreen> {
             ),
           );
         },
-      ),
-    );
+      );
   }
 }

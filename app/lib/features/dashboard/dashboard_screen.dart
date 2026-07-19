@@ -34,9 +34,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Dashboard')),
-      body: FutureBuilder<Map<String, dynamic>>(
+    return FutureBuilder<Map<String, dynamic>>(
         future: _stats,
         builder: (context, snap) {
           if (snap.connectionState != ConnectionState.done) return const Center(child: CircularProgressIndicator());
@@ -85,8 +83,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ),
           );
         },
-      ),
-    );
+      );
   }
 
   Widget _statCard(BuildContext context, String label, Object? value) => Container(

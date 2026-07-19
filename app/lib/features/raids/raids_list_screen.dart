@@ -8,14 +8,7 @@ class RaidsListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final raids = ref.watch(raidsListProvider);
-    return Scaffold(
-      appBar: AppBar(title: const Text('Raids')),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push('/raids/new'),
-        icon: const Icon(Icons.add),
-        label: const Text('Criar raid'),
-      ),
-      body: raids.when(
+    return raids.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Erro: $e')),
         data: (list) => list.isEmpty
@@ -40,7 +33,6 @@ class RaidsListScreen extends ConsumerWidget {
                   },
                 ),
               ),
-      ),
-    );
+      );
   }
 }
