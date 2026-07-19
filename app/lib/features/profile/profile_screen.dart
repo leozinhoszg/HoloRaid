@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/auth/auth_providers.dart';
+import '../../core/settings/language_selector.dart';
 import '../../core/ui/holo_avatar.dart';
 import '../../core/ui/tier_badge.dart';
 
@@ -103,6 +104,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     );
                   }).toList());
                 },
+              ),
+              const SizedBox(height: 20),
+              const Divider(),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: LanguageSelector(),
               ),
             ],
           ),

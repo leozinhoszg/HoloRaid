@@ -1,1 +1,6 @@
-{ "common": { "app_name": "HoloRaid" } }
+{
+  "common": {
+    "app_name": "HoloRaid",
+    "language": "Idioma"
+  }
+}

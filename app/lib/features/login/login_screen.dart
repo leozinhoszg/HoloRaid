@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/auth/auth_providers.dart';
 import '../../core/config/app_config.dart';
+import '../../core/settings/language_selector.dart';
 import '../../core/ui/glass_card.dart';
 import '../../core/ui/holo_wordmark.dart';
 import '../../core/ui/starfield.dart';
@@ -188,6 +189,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       const SizedBox(height: 8),
       const Text('Not affiliated with BioWare or EA.',
           style: TextStyle(color: LoginPalette.textDim, fontSize: 11)),
+      const SizedBox(height: 12),
+      const LanguageSelector(compact: true),
     ]);
   }
 
