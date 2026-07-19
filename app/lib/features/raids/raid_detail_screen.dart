@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../core/auth/auth_providers.dart';
 import '../../core/config/app_config.dart';
+import '../../core/ui/tier_badge.dart';
 import '../characters/characters_providers.dart';
 import 'raid_model.dart';
 import 'raids_providers.dart';
@@ -85,7 +86,7 @@ class RaidDetailScreen extends ConsumerWidget {
         leading: CircleAvatar(child: Text(r.role[0])),
         title: Text('${r.nome} (${r.classe})'),
         subtitle: Text('${r.role} · iLvl ${r.itemLevel}'),
-        trailing: Chip(label: Text(r.tier == 0 ? 'Sem Tier' : 'Tier ${r.tier}')),
+        trailing: TierBadge(tier: r.tier, compact: true),
       );
 
   Future<void> _join(BuildContext context, WidgetRef ref, Raid raid) async {

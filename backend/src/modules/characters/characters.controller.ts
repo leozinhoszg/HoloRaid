@@ -1,8 +1,7 @@
 import type { Request, Response } from 'express';
 import type { CharacterService } from './characters.service';
-import type { ProgressionService } from '../progression/progression.service';
 
-export function createCharactersController(characterService: CharacterService, progressionService: ProgressionService) {
+export function createCharactersController(characterService: CharacterService) {
   return {
     async create(req: Request, res: Response) {
       const created = await characterService.create(req.user!.sub, req.body as any);
@@ -20,14 +19,6 @@ export function createCharactersController(characterService: CharacterService, p
     async remove(req: Request, res: Response) {
       await characterService.remove(req.user!.sub, Number(req.params.id));
       res.status(204).send();
-    },
-    async history(req: Request, res: Response) {
-      res.json(await progressionService.history(Number(req.params.id)));
-    },
-    async setBosses(req: Request, res: Response) {
-      await characterService.assertOwner(req.user!.sub, Number(req.params.id));
-      const { bossIds } = req.body as { bossIds: number[] };
-      res.json(await progressionService.setCompletions(Number(req.params.id), bossIds));
     },
   };
 }

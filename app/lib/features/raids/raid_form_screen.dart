@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/reference/reference_providers.dart';
+import '../../core/ui/holo_button.dart';
+import '../../core/ui/holo_dropdown.dart';
+import '../../core/ui/holo_palette.dart';
 import 'raids_providers.dart';
 
 class RaidFormScreen extends ConsumerStatefulWidget {
@@ -121,47 +124,51 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
           : ops.when(
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('Erro: $e')),
-              data: (operations) => ListView(
-                padding: const EdgeInsets.all(16),
+              data: (operations) => Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 560),
+                  child: ListView(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
                 children: [
-                  DropdownButtonFormField<String>(
+                  HoloDropdown<String>(
                     key: const ValueKey('f_operation'),
-                    initialValue: _operation,
-                    decoration: const InputDecoration(labelText: 'Operation'),
-                    items: operations.map((o) => DropdownMenuItem(value: o, child: Text(o))).toList(),
+                    label: 'Operation',
+                    value: _operation,
+                    items: operations.map((o) => HoloDropdownItem(o, o)).toList(),
                     onChanged: _isEdit ? null : (v) => setState(() => _operation = v),
                   ),
                   const SizedBox(height: 12),
-                  DropdownButtonFormField<String>(
+                  HoloDropdown<String>(
                     key: const ValueKey('f_difficulty'),
-                    initialValue: _difficulty,
-                    decoration: const InputDecoration(labelText: 'Difficulty'),
-                    items: const [DropdownMenuItem(value: 'SM', child: Text('Story Mode')), DropdownMenuItem(value: 'HM', child: Text('Veteran (HM)')), DropdownMenuItem(value: 'NiM', child: Text('Master (NiM)'))],
+                    label: 'Difficulty',
+                    value: _difficulty,
+                    items: const [HoloDropdownItem('SM', 'Story Mode'), HoloDropdownItem('HM', 'Veteran (HM)'), HoloDropdownItem('NiM', 'Master (NiM)')],
                     onChanged: _isEdit ? null : (v) => setState(() => _difficulty = v!),
                   ),
                   const SizedBox(height: 12),
-                  DropdownButtonFormField<int>(
+                  HoloDropdown<int>(
                     key: const ValueKey('f_size'),
-                    initialValue: _size,
-                    decoration: const InputDecoration(labelText: 'Size'),
-                    items: const [DropdownMenuItem(value: 8, child: Text('8 players')), DropdownMenuItem(value: 16, child: Text('16 players'))],
+                    label: 'Size',
+                    value: _size,
+                    items: const [HoloDropdownItem(8, '8 players'), HoloDropdownItem(16, '16 players')],
                     onChanged: _isEdit ? null : (v) => _applyDefaults(v!),
                   ),
                   const SizedBox(height: 12),
-                  DropdownButtonFormField<String>(
+                  HoloDropdown<String>(
                     key: const ValueKey('f_faction'),
-                    initialValue: _faction,
-                    decoration: const InputDecoration(labelText: 'Facção'),
-                    items: const [DropdownMenuItem(value: 'Republic', child: Text('Republic')), DropdownMenuItem(value: 'Empire', child: Text('Empire'))],
+                    label: 'Facção',
+                    value: _faction,
+                    items: const [HoloDropdownItem('Republic', 'Republic'), HoloDropdownItem('Empire', 'Empire')],
                     onChanged: _isEdit ? null : (v) => setState(() => _faction = v!),
                   ),
                   const SizedBox(height: 12),
-                  DropdownButtonFormField<int>(
-                    initialValue: _minTier,
-                    decoration: const InputDecoration(labelText: 'Tier mínimo'),
-                    items: List.generate(7, (i) => DropdownMenuItem(value: i, child: Text(i == 0 ? 'Sem Tier' : 'Tier $i'))),
+                  HoloDropdown<int>(
+                    label: 'Tier mínimo',
+                    value: _minTier,
+                    items: List.generate(7, (i) => HoloDropdownItem(i, i == 0 ? 'Sem Tier' : 'Tier $i')),
                     onChanged: (v) => setState(() => _minTier = v!),
                   ),
+                  const SizedBox(height: 4),
                   SwitchListTile(
                     title: const Text('Check Composition'),
                     subtitle: const Text('Enforça vagas por role'),
@@ -175,52 +182,120 @@ class _RaidFormScreenState extends ConsumerState<RaidFormScreen> {
                       value: _disableMentions,
                       onChanged: (v) => setState(() => _disableMentions = v),
                     ),
-                  Row(children: [
-                    Expanded(child: _slotField('Tank', _tank, (v) => setState(() => _tank = v))),
-                    Expanded(child: _slotField('Heal', _heal, (v) => setState(() => _heal = v))),
-                    Expanded(child: _slotField('DPS', _dps, (v) => setState(() => _dps = v))),
-                  ]),
-                  Text('Soma das vagas: $_slotsSum / $_size',
-                      style: TextStyle(color: _slotsSum == _size ? null : Theme.of(context).colorScheme.error)),
+                  const SizedBox(height: 16),
+                  _slotsCard(),
                   const SizedBox(height: 12),
-                  ListTile(
-                    title: Text('Data: ${_date.toLocal().toString().split(' ').first}'),
-                    trailing: const Icon(Icons.calendar_today),
+                  _pickerTile(
+                    icon: Icons.calendar_today,
+                    label: 'DATA',
+                    value: _date.toLocal().toString().split(' ').first,
                     onTap: () async {
                       final d = await showDatePicker(context: context, initialDate: _date, firstDate: DateTime(2020), lastDate: DateTime(2030));
                       if (d != null) setState(() => _date = d);
                     },
                   ),
-                  ListTile(
-                    title: Text('Hora: ${_time.format(context)}'),
-                    trailing: const Icon(Icons.access_time),
+                  const SizedBox(height: 10),
+                  _pickerTile(
+                    icon: Icons.access_time,
+                    label: 'HORA',
+                    value: _time.format(context),
                     onTap: () async {
                       final t = await showTimePicker(context: context, initialTime: _time);
                       if (t != null) setState(() => _time = t);
                     },
                   ),
+                  const SizedBox(height: 12),
                   TextField(controller: _notes, decoration: const InputDecoration(labelText: 'Observações'), maxLines: 2),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   if (_error != null) Padding(padding: const EdgeInsets.only(bottom: 12), child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error))),
-                  FilledButton(
-                    onPressed: (_saving || _operation == null || _slotsSum != _size) ? null : _save,
-                    child: Text(_saving ? 'Salvando...' : (_isEdit ? 'Salvar' : 'Criar raid')),
+                  HoloButton(
+                    label: _isEdit ? 'Salvar' : 'Criar raid',
+                    loading: _saving,
+                    onPressed: (_operation == null || _slotsSum != _size) ? null : _save,
                   ),
                 ],
+              ),
+                ),
               ),
             ),
     );
   }
 
-  Widget _slotField(String label, int value, ValueChanged<int> onChanged) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: Column(children: [
-          Text(label),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            IconButton(onPressed: value > 0 ? () => onChanged(value - 1) : null, icon: const Icon(Icons.remove)),
-            Text('$value'),
-            IconButton(onPressed: () => onChanged(value + 1), icon: const Icon(Icons.add)),
-          ]),
+  Widget _slotsCard() {
+    final ok = _slotsSum == _size;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+      decoration: BoxDecoration(
+        color: HoloPalette.glassFill,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: HoloPalette.glassBorder),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          const Text('VAGAS POR ROLE', style: TextStyle(fontFamily: 'Aldrich', fontSize: 11, letterSpacing: 2, color: HoloPalette.faint)),
+          Text('$_slotsSum / $_size',
+              style: TextStyle(fontFamily: 'Orbitron', fontWeight: FontWeight.w700, fontSize: 13, color: ok ? HoloPalette.heal : HoloPalette.red)),
         ]),
+        const SizedBox(height: 12),
+        Row(children: [
+          Expanded(child: _slotField('TANK', HoloPalette.tank, _tank, (v) => setState(() => _tank = v))),
+          Expanded(child: _slotField('HEAL', HoloPalette.heal, _heal, (v) => setState(() => _heal = v))),
+          Expanded(child: _slotField('DPS', HoloPalette.dps, _dps, (v) => setState(() => _dps = v))),
+        ]),
+      ]),
+    );
+  }
+
+  Widget _slotField(String label, Color color, int value, ValueChanged<int> onChanged) => Column(children: [
+        Text(label, style: TextStyle(fontFamily: 'Aldrich', fontSize: 10, letterSpacing: 1.5, color: color)),
+        const SizedBox(height: 4),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          _stepBtn(Icons.remove, value > 0 ? () => onChanged(value - 1) : null),
+          SizedBox(
+            width: 26,
+            child: Text('$value', textAlign: TextAlign.center,
+                style: const TextStyle(fontFamily: 'Orbitron', fontWeight: FontWeight.w700, fontSize: 16, color: HoloPalette.ink)),
+          ),
+          _stepBtn(Icons.add, () => onChanged(value + 1)),
+        ]),
+      ]);
+
+  Widget _stepBtn(IconData icon, VoidCallback? onTap) => InkResponse(
+        onTap: onTap,
+        radius: 20,
+        child: Opacity(
+          opacity: onTap == null ? 0.35 : 1,
+          child: Container(
+            width: 30,
+            height: 30,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: HoloPalette.glassBorderStrong),
+            ),
+            child: Icon(icon, size: 16, color: HoloPalette.dim),
+          ),
+        ),
+      );
+
+  Widget _pickerTile({required IconData icon, required String label, required String value, required VoidCallback onTap}) => InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: HoloPalette.glassFill,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: HoloPalette.glassBorder),
+          ),
+          child: Row(children: [
+            Icon(icon, size: 18, color: HoloPalette.blue),
+            const SizedBox(width: 12),
+            Text('$label:', style: const TextStyle(fontFamily: 'Aldrich', fontSize: 11, letterSpacing: 2, color: HoloPalette.faint)),
+            const SizedBox(width: 8),
+            Expanded(child: Text(value, style: const TextStyle(fontFamily: 'Jura', fontSize: 15, color: HoloPalette.ink))),
+            const Icon(Icons.chevron_right, size: 18, color: HoloPalette.faint),
+          ]),
+        ),
       );
 }

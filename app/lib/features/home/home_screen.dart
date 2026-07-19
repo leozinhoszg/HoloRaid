@@ -1,76 +1,96 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import '../../core/auth/auth_providers.dart';
+import '../../core/ui/holo_palette.dart';
+import '../characters/characters_providers.dart';
+import 'home_providers.dart';
+import 'my_raid_model.dart';
+import 'widgets/home_skeleton.dart';
+import 'widgets/next_raid_hero.dart';
+import 'widgets/stat_tiles.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final me = ref.watch(meProvider);
+    final raids = ref.watch(myRaidsProvider);
+    final chars = ref.watch(charactersProvider);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('HoloRaid'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => ref.read(authStateProvider.notifier).logout(),
-          ),
-        ],
-      ),
-      body: Center(
-        child: FutureBuilder<Map<String, dynamic>>(
-          future: ref.read(authServiceProvider).loadMe(),
-          builder: (context, snap) {
-            if (!snap.hasData) return const CircularProgressIndicator();
-            final me = snap.data!;
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircleAvatar(
-                  radius: 32,
-                  child: Text((me['username'] as String? ?? '?').substring(0, 1).toUpperCase()),
-                ),
-                const SizedBox(height: 12),
-                Text(me['username'] as String? ?? 'sem nome',
-                    style: Theme.of(context).textTheme.titleLarge),
-                Text('Papel: ${me['role'] ?? '-'}'),
-                const SizedBox(height: 24),
-                FilledButton.icon(
-                  onPressed: () => context.push('/characters'),
-                  icon: const Icon(Icons.people),
-                  label: const Text('Meus Personagens'),
-                ),
-                const SizedBox(height: 12),
-                FilledButton.icon(
-                  onPressed: () => context.push('/raids'),
-                  icon: const Icon(Icons.event),
-                  label: const Text('Raids'),
-                ),
-                const SizedBox(height: 12),
-                FilledButton.icon(
-                  onPressed: () => context.push('/dashboard'),
-                  icon: const Icon(Icons.bar_chart),
-                  label: const Text('Dashboard'),
-                ),
-                const SizedBox(height: 12),
-                FilledButton.icon(
-                  onPressed: () => context.push('/profile'),
-                  icon: const Icon(Icons.person),
-                  label: const Text('Perfil'),
-                ),
-                if ((me['role'] as String?) == 'admin') ...[
-                  const SizedBox(height: 12),
-                  FilledButton.icon(
-                    onPressed: () => context.push('/admin/users'),
-                    icon: const Icon(Icons.admin_panel_settings),
-                    label: const Text('Admin'),
+      body: SafeArea(
+          child: LayoutBuilder(builder: (context, c) {
+            final compact = c.maxWidth < 720;
+            return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: compact ? 16 : 28, vertical: 24),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1120),
+                  child: me.when(
+                    loading: () => const HomeSkeleton(),
+                    error: (e, _) => _error(context, ref),
+                    data: (meData) {
+                      final raidList = raids.valueOrNull ?? const <MyRaid>[];
+                      final next = nextRaid(raidList, DateTime.now());
+                      var i = 0;
+                      Widget stg(Widget w) {
+                        final d = (i++ * 70).ms;
+                        return w
+                            .animate()
+                            .fadeIn(delay: d, duration: 250.ms, curve: Curves.easeOut)
+                            .slideY(begin: .1, end: 0, delay: d, duration: 250.ms, curve: Curves.easeOutCubic);
+                      }
+
+                      return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                        stg(const _Eyebrow()),
+                        const SizedBox(height: 14),
+                        stg(raids.isLoading
+                            ? const HeroSkeleton()
+                            : NextRaidHero(raid: next, compact: compact)),
+                        SizedBox(height: compact ? 20 : 26),
+                        stg(StatTiles(
+                          raids: activeRaidsCount(raidList),
+                          chars: chars.valueOrNull?.length ?? 0,
+                          confirmed: confirmedCount(raidList),
+                          compact: compact,
+                        )),
+                        const SizedBox(height: 30),
+                      ]);
+                    },
                   ),
-                ],
-              ],
+                ),
+              ),
             );
-          },
+          }),
         ),
-      ),
     );
   }
+
+  Widget _error(BuildContext context, WidgetRef ref) => Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(children: [
+          const Text('Não foi possível carregar seus dados.',
+              style: TextStyle(fontFamily: 'Jura', color: HoloPalette.dim)),
+          const SizedBox(height: 12),
+          TextButton(
+            onPressed: () {
+              ref.invalidate(meProvider);
+              ref.invalidate(myRaidsProvider);
+            },
+            child: const Text('Tentar de novo'),
+          ),
+        ]),
+      );
+}
+
+class _Eyebrow extends StatelessWidget {
+  const _Eyebrow();
+  @override
+  Widget build(BuildContext context) => const Text.rich(
+        TextSpan(children: [
+          TextSpan(text: 'CENTRO DE '),
+          TextSpan(text: 'COMANDO', style: TextStyle(color: HoloPalette.blue)),
+        ]),
+        style: TextStyle(fontFamily: 'Aldrich', fontSize: 11, letterSpacing: 5, color: HoloPalette.faint),
+      );
 }

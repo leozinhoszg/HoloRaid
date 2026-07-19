@@ -1,20 +1,21 @@
-import { makeFakeRaidRepo, makeFakeRaidPlayerRepo, makeFakePersonagemRepo } from './fakes/fakeRepos';
+import { makeFakeRaidRepo, makeFakeRaidPlayerRepo, makeFakePersonagemRepo, makeFakeUserRepo } from './fakes/fakeRepos';
 import { createRaidJoinService } from '../src/modules/raids/raidJoin.service';
 
 async function setup(opts: Partial<{ check: boolean; size: number; minTier: number; faction: 'Republic' | 'Empire' }> = {}) {
   const raidRepo = makeFakeRaidRepo();
+  const userRepo = makeFakeUserRepo();
   const personagemRepo = makeFakePersonagemRepo();
-  const raidPlayerRepo = makeFakeRaidPlayerRepo(personagemRepo);
-  const svc = createRaidJoinService({ raidRepo, raidPlayerRepo, personagemRepo });
+  const raidPlayerRepo = makeFakeRaidPlayerRepo(personagemRepo, userRepo);
+  const svc = createRaidJoinService({ raidRepo, raidPlayerRepo, personagemRepo, userRepo });
   const raid = await raidRepo.create({
     codigo: 'ABC12345', operation: 'Dread Palace', difficulty: 'HM', size: opts.size ?? 8, faction: opts.faction ?? 'Republic',
     minimum_tier: opts.minTier ?? 0, check_composition: opts.check ?? false, slots_tank: 2, slots_heal: 2, slots_dps: 4, notes: null,
     start_at: new Date('2026-08-01T20:30:00Z'), created_by: 99,
   });
-  // helper para criar personagem de um usuário (Tier 0 por padrão; ajuste via updateTotalPoints)
+  // helper para criar personagem de um usuário (Tier da CONTA 0 por padrão; ajuste via userRepo.updateTotalPoints)
   const mkChar = (uid: number, role: 'Tank' | 'Healer' | 'DPS', faccao: 'Republic' | 'Empire' = 'Republic') =>
     personagemRepo.create({ usuario_id: uid, nome: 'P' + uid, faccao, classe: role === 'Tank' ? 'Guardian' : role === 'Healer' ? 'Sage' : 'Sentinel', especializacao: null, role, origin_story: null, item_level: 340 });
-  return { svc, raid, personagemRepo, raidPlayerRepo, mkChar };
+  return { svc, raid, userRepo, personagemRepo, raidPlayerRepo, mkChar };
 }
 
 describe('RaidJoinService', () => {
@@ -30,10 +31,9 @@ describe('RaidJoinService', () => {
     await expect(svc.join(1, raid.id, c.id)).rejects.toThrow();
   });
 
-  it('rejeita Tier abaixo do mínimo', async () => {
-    const { svc, raid, personagemRepo, mkChar } = await setup({ minTier: 1 });
-    const c = await mkChar(1, 'DPS');
-    await personagemRepo.updateTotalPoints(c.id, 0); // tier 0 < 1
+  it('rejeita Tier abaixo do mínimo (conta sem pontos → Tier 0 < 1)', async () => {
+    const { svc, raid, mkChar } = await setup({ minTier: 1 });
+    const c = await mkChar(1, 'DPS'); // conta do uid 1 sem pontos → Tier 0
     await expect(svc.join(1, raid.id, c.id)).rejects.toThrow();
   });
 

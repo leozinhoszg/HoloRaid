@@ -6,9 +6,9 @@ export type Role = 'Tank' | 'Healer' | 'DPS';
 export type PersonagemRecord = {
   id: number; usuario_id: number; nome: string; faccao: Faccao; classe: string;
   especializacao: string | null; role: Role; origin_story: string | null;
-  item_level: number; total_points: number;
+  item_level: number;
 };
-export type PersonagemInput = Omit<PersonagemRecord, 'id' | 'total_points'>;
+export type PersonagemInput = Omit<PersonagemRecord, 'id'>;
 
 export interface PersonagemRepo {
   create(p: PersonagemInput): Promise<PersonagemRecord>;
@@ -16,15 +16,14 @@ export interface PersonagemRepo {
   findByUsuario(usuarioId: number): Promise<PersonagemRecord[]>;
   update(id: number, patch: Partial<PersonagemInput>): Promise<void>;
   delete(id: number): Promise<void>;
-  updateTotalPoints(id: number, total: number): Promise<void>;
 }
 
-const COLS = ['id', 'usuario_id', 'nome', 'faccao', 'classe', 'especializacao', 'role', 'origin_story', 'item_level', 'total_points'] as const;
+const COLS = ['id', 'usuario_id', 'nome', 'faccao', 'classe', 'especializacao', 'role', 'origin_story', 'item_level'] as const;
 
 export function createPersonagemRepo(db: Kysely<DB>): PersonagemRepo {
   return {
     async create(p) {
-      const res = await db.insertInto('personagens').values({ ...p, total_points: 0, updated_at: new Date() }).executeTakeFirstOrThrow();
+      const res = await db.insertInto('personagens').values({ ...p, updated_at: new Date() }).executeTakeFirstOrThrow();
       const id = Number(res.insertId);
       const row = await db.selectFrom('personagens').select(COLS).where('id', '=', id).executeTakeFirstOrThrow();
       return row as PersonagemRecord;
@@ -42,9 +41,6 @@ export function createPersonagemRepo(db: Kysely<DB>): PersonagemRepo {
     },
     async delete(id) {
       await db.deleteFrom('personagens').where('id', '=', id).execute();
-    },
-    async updateTotalPoints(id, total) {
-      await db.updateTable('personagens').set({ total_points: total, updated_at: new Date() }).where('id', '=', id).execute();
     },
   };
 }

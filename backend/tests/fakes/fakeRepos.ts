@@ -2,7 +2,7 @@ import type { UserRepo, UserRecord } from '../../src/db/repositories/userRepo';
 import type { RefreshTokenRepo, RefreshRecord, NewRefresh } from '../../src/db/repositories/refreshTokenRepo';
 import type { PersonagemRepo, PersonagemRecord, PersonagemInput } from '../../src/db/repositories/personagemRepo';
 import type { BossRepo, BossRecord } from '../../src/db/repositories/bossRepo';
-import type { CharacterBossRepo, CompletedBossRow } from '../../src/db/repositories/characterBossRepo';
+import type { UserBossRepo, CompletedBossRow } from '../../src/db/repositories/userBossRepo';
 import type { RaidRepo, RaidRecord, NewRaid } from '../../src/db/repositories/raidRepo';
 import type { RaidPlayerRepo, RaidPlayerRecord, RosterRow } from '../../src/db/repositories/raidPlayerRepo';
 import type { GuildConfigRepo, GuildConfig } from '../../src/db/repositories/guildConfigRepo';
@@ -20,7 +20,7 @@ export function makeFakeUserRepo(): UserRepo {
         Object.assign(existing, { username: p.username, nickname: p.nickname, avatar: p.avatar, email: p.email });
         return { ...existing };
       }
-      const rec: UserRecord = { id: seq++, ...p, push_enabled: true };
+      const rec: UserRecord = { id: seq++, ...p, total_points: 0, push_enabled: true };
       users.push(rec);
       return { ...rec };
     },
@@ -28,6 +28,7 @@ export function makeFakeUserRepo(): UserRepo {
     async findByIds(ids) { return users.filter((u) => ids.includes(u.id)).map((u) => ({ ...u })); },
     async updateRole(id, role) { const u = users.find((x) => x.id === id); if (u) u.role = role; },
     async setPushEnabled(id, enabled) { const u = users.find((x) => x.id === id); if (u) u.push_enabled = enabled; },
+    async updateTotalPoints(id, total) { const u = users.find((x) => x.id === id); if (u) u.total_points = total; },
     async list() { return users.map((u) => ({ ...u })); },
   };
 }
@@ -52,7 +53,7 @@ export function makeFakePersonagemRepo(): PersonagemRepo {
   let seq = 1;
   return {
     async create(p: PersonagemInput) {
-      const rec: PersonagemRecord = { id: seq++, total_points: 0, ...p };
+      const rec: PersonagemRecord = { id: seq++, ...p };
       rows.push(rec);
       return { ...rec };
     },
@@ -60,7 +61,6 @@ export function makeFakePersonagemRepo(): PersonagemRepo {
     async findByUsuario(u) { return rows.filter((r) => r.usuario_id === u).map((r) => ({ ...r })); },
     async update(id, patch) { const r = rows.find((x) => x.id === id); if (r) Object.assign(r, patch); },
     async delete(id) { const i = rows.findIndex((x) => x.id === id); if (i >= 0) rows.splice(i, 1); },
-    async updateTotalPoints(id, total) { const r = rows.find((x) => x.id === id); if (r) r.total_points = total; },
   };
 }
 
@@ -73,18 +73,18 @@ export function makeFakeBossRepo(): BossRepo {
   };
 }
 
-export function makeFakeCharacterBossRepo(bossRepo: BossRepo): CharacterBossRepo {
-  const completed = new Map<number, Set<number>>(); // personagemId -> bossIds
+export function makeFakeUserBossRepo(bossRepo: BossRepo): UserBossRepo {
+  const completed = new Map<number, Set<number>>(); // usuarioId -> bossIds
   return {
-    async listBossIds(pid) { return [...(completed.get(pid) ?? new Set<number>())]; },
-    async insertMany(pid, bossIds) {
-      const set = completed.get(pid) ?? new Set<number>();
+    async listBossIds(uid) { return [...(completed.get(uid) ?? new Set<number>())]; },
+    async insertMany(uid, bossIds) {
+      const set = completed.get(uid) ?? new Set<number>();
       bossIds.forEach((b) => set.add(b));
-      completed.set(pid, set);
+      completed.set(uid, set);
     },
-    async deleteOne(pid, bossId) { completed.get(pid)?.delete(bossId); },
-    async listWithBoss(pid) {
-      const ids = [...(completed.get(pid) ?? new Set<number>())];
+    async deleteOne(uid, bossId) { completed.get(uid)?.delete(bossId); },
+    async listWithBoss(uid) {
+      const ids = [...(completed.get(uid) ?? new Set<number>())];
       const bosses = await bossRepo.findByIds(ids);
       return bosses.map((b) => ({ boss_id: b.id, operation: b.operation, boss: b.boss, difficulty: b.difficulty, type: b.type, points: b.points, completed_at: new Date(0) })) as CompletedBossRow[];
     },
@@ -125,7 +125,7 @@ export function makeFakeRaidRepo(): RaidRepo {
 }
 
 // personagemRepo é usado só para montar o roster (nome/classe/pontos)
-export function makeFakeRaidPlayerRepo(personagemRepo: PersonagemRepo): RaidPlayerRepo {
+export function makeFakeRaidPlayerRepo(personagemRepo: PersonagemRepo, userRepo?: UserRepo): RaidPlayerRepo {
   const rows: RaidPlayerRecord[] = [];
   let seq = 1;
   return {
@@ -137,7 +137,8 @@ export function makeFakeRaidPlayerRepo(personagemRepo: PersonagemRepo): RaidPlay
       const out: RosterRow[] = [];
       for (const r of list) {
         const p = await personagemRepo.findById(r.personagem_id);
-        out.push({ usuario_id: r.usuario_id, username: 'u' + r.usuario_id, avatar: null, personagem_id: r.personagem_id, nome: p?.nome ?? '?', classe: p?.classe ?? '?', especializacao: p?.especializacao ?? null, role: r.role, item_level: p?.item_level ?? 0, total_points: p?.total_points ?? 0, status: r.status, joined_at: r.joined_at });
+        const u = userRepo ? await userRepo.findById(r.usuario_id) : null;
+        out.push({ usuario_id: r.usuario_id, username: 'u' + r.usuario_id, avatar: null, personagem_id: r.personagem_id, nome: p?.nome ?? '?', classe: p?.classe ?? '?', especializacao: p?.especializacao ?? null, role: r.role, item_level: p?.item_level ?? 0, total_points: u?.total_points ?? 0, status: r.status, joined_at: r.joined_at });
       }
       return out;
     },

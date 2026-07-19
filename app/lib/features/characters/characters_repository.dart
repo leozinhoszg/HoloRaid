@@ -26,9 +26,4 @@ class CharactersRepository {
   }
 
   Future<void> remove(int id) async => api.dio.delete('/characters/$id');
-
-  Future<List<Map<String, dynamic>>> history(int id) async {
-    final res = await api.dio.get('/characters/$id/history');
-    return (res.data as List).map((e) => (e as Map).cast<String, dynamic>()).toList();
-  }
 }

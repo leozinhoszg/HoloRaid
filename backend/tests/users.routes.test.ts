@@ -44,6 +44,16 @@ describe('rotas de usuários', () => {
     expect((await request(app).get('/me')).status).toBe(401);
   });
 
+  it('GET /me expõe total_points/tier/pointsToNextTier da conta', async () => {
+    const { app, u1, userRepo } = await build();
+    await userRepo.updateTotalPoints(u1.id, 26); // Tier 1, faltam 25 p/ o próximo (51)
+    const token = signAccessToken({ sub: u1.id, role: 'user' });
+    const res = await request(app).get('/me').set('Authorization', `Bearer ${token}`);
+    expect(res.body.total_points).toBe(26);
+    expect(res.body.tier).toBe(1);
+    expect(res.body.pointsToNextTier).toBe(25);
+  });
+
   it('user comum não lista usuários (403)', async () => {
     const { app, u1 } = await build();
     const token = signAccessToken({ sub: u1.id, role: 'user' });

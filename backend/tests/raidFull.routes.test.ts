@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { createApp } from '../src/app';
-import { makeFakeRaidRepo, makeFakeRaidPlayerRepo, makeFakePersonagemRepo } from './fakes/fakeRepos';
+import { makeFakeRaidRepo, makeFakeRaidPlayerRepo, makeFakePersonagemRepo, makeFakeUserRepo } from './fakes/fakeRepos';
 import { createRaidService } from '../src/modules/raids/raids.service';
 import { createRaidJoinService } from '../src/modules/raids/raidJoin.service';
 import type { RaidBroadcaster } from '../src/realtime/broadcaster';
@@ -14,10 +14,11 @@ beforeAll(() => {
 
 function build() {
   const raidRepo = makeFakeRaidRepo();
+  const userRepo = makeFakeUserRepo();
   const personagemRepo = makeFakePersonagemRepo();
-  const raidPlayerRepo = makeFakeRaidPlayerRepo(personagemRepo);
+  const raidPlayerRepo = makeFakeRaidPlayerRepo(personagemRepo, userRepo);
   const raidService = createRaidService({ raidRepo, raidPlayerRepo });
-  const raidJoinService = createRaidJoinService({ raidRepo, raidPlayerRepo, personagemRepo });
+  const raidJoinService = createRaidJoinService({ raidRepo, raidPlayerRepo, personagemRepo, userRepo });
   const events: string[] = [];
   const broadcaster: RaidBroadcaster = {
     raidCreated: () => events.push('created'),

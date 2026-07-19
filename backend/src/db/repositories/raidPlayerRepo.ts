@@ -47,7 +47,7 @@ export function createRaidPlayerRepo(db: Kysely<DB>): RaidPlayerRepo {
           'raid_players.usuario_id as usuario_id', 'usuarios.username as username', 'usuarios.avatar as avatar',
           'raid_players.personagem_id as personagem_id', 'personagens.nome as nome', 'personagens.classe as classe',
           'personagens.especializacao as especializacao', 'raid_players.role as role', 'personagens.item_level as item_level',
-          'personagens.total_points as total_points', 'raid_players.status as status', 'raid_players.joined_at as joined_at',
+          'usuarios.total_points as total_points', 'raid_players.status as status', 'raid_players.joined_at as joined_at',
         ])
         .where('raid_players.raid_id', '=', raidId).orderBy('raid_players.joined_at').execute();
       return rows.map((r: any) => ({ ...r, joined_at: new Date(r.joined_at) })) as RosterRow[];

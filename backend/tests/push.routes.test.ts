@@ -13,11 +13,11 @@ async function setup() {
   const userRepo = makeFakeUserRepo();
   const personagemRepo = makeFakePersonagemRepo();
   const raidRepo = makeFakeRaidRepo();
-  const raidPlayerRepo = makeFakeRaidPlayerRepo(personagemRepo);
+  const raidPlayerRepo = makeFakeRaidPlayerRepo(personagemRepo, userRepo);
   const deviceTokenRepo = makeFakeDeviceTokenRepo();
   const gateway = makeFakePushGateway();
   const raidService = createRaidService({ raidRepo, raidPlayerRepo });
-  const raidJoinService = createRaidJoinService({ raidRepo, raidPlayerRepo, personagemRepo });
+  const raidJoinService = createRaidJoinService({ raidRepo, raidPlayerRepo, personagemRepo, userRepo });
   const notify = createNotificationService({ gateway, deviceTokenRepo, userRepo });
   const app = createApp({ authService: {} as any, raidService, raidJoinService, notificationService: notify });
   return { app, gateway, userRepo, deviceTokenRepo, personagemRepo, raidService, raidJoinService };

@@ -9,7 +9,7 @@ import { createAuthService } from './modules/auth/auth.service';
 import { createUserService } from './modules/users/users.service';
 import { createPersonagemRepo } from './db/repositories/personagemRepo';
 import { createBossRepo } from './db/repositories/bossRepo';
-import { createCharacterBossRepo } from './db/repositories/characterBossRepo';
+import { createUserBossRepo } from './db/repositories/userBossRepo';
 import { createCharacterService } from './modules/characters/characters.service';
 import { createProgressionService } from './modules/progression/progression.service';
 import { createRaidRepo } from './db/repositories/raidRepo';
@@ -48,15 +48,15 @@ const userService = createUserService({ userRepo, auditLog: createAuditLog(db) }
 
 const personagemRepo = createPersonagemRepo(db);
 const bossRepo = createBossRepo(db);
-const charBossRepo = createCharacterBossRepo(db);
+const userBossRepo = createUserBossRepo(db);
 const raidRepo = createRaidRepo(db);
 // raidPlayerRepo vem antes do characterService: o remove() consulta o roster (007).
 const raidPlayerRepo = createRaidPlayerRepo(db);
-const characterService = createCharacterService({ personagemRepo, raidPlayerRepo });
-const progressionService = createProgressionService({ personagemRepo, bossRepo, charBossRepo });
+const characterService = createCharacterService({ personagemRepo, raidPlayerRepo, userRepo });
+const progressionService = createProgressionService({ userRepo, bossRepo, userBossRepo });
 
 const raidService = createRaidService({ raidRepo, raidPlayerRepo });
-const raidJoinService = createRaidJoinService({ raidRepo, raidPlayerRepo, personagemRepo });
+const raidJoinService = createRaidJoinService({ raidRepo, raidPlayerRepo, personagemRepo, userRepo });
 
 // Socket.IO no mesmo http.Server (sem app ainda, p/ quebrar o ciclo io↔broadcaster↔app)
 const httpServer = http.createServer();

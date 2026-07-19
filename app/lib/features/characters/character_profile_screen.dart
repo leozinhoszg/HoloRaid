@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import '../../core/ui/tier_badge.dart';
 import 'characters_providers.dart';
 
 class CharacterProfileScreen extends ConsumerWidget {
@@ -28,39 +28,14 @@ class CharacterProfileScreen extends ConsumerWidget {
                   Text(c.nome, style: Theme.of(context).textTheme.headlineSmall),
                   Text('${c.faccao} · ${c.classe}${c.especializacao != null ? ' · ${c.especializacao}' : ''} · ${c.role}'),
                   const SizedBox(height: 8),
-                  Chip(label: Text(c.tier == 0 ? 'Sem Tier' : 'Tier ${c.tier}')),
-                  const SizedBox(height: 8),
-                  OutlinedButton.icon(
-                    onPressed: () => context.push('/characters/${c.id}/progression'),
-                    icon: const Icon(Icons.checklist),
-                    label: const Text('Marcar bosses'),
-                  ),
+                  TierBadge(tier: c.tier),
                 ]),
               ),
               const SizedBox(height: 16),
-              Text('${c.totalPoints} pontos${next != null ? ' · faltam $next para o próximo Tier' : ' · máximo!'}'),
+              // Tier/pontos são da CONTA (iguais em todos os personagens). Marque bosses no menu "Progressão".
+              Text('${c.totalPoints} pontos${next != null ? ' · faltam $next para o próximo Tier' : ' · máximo!'} · Tier da conta'),
               const SizedBox(height: 8),
               LinearProgressIndicator(value: progress),
-              const SizedBox(height: 24),
-              Text('Histórico', style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 8),
-              FutureBuilder<List<Map<String, dynamic>>>(
-                future: ref.read(charactersRepositoryProvider).history(id),
-                builder: (context, snap) {
-                  if (!snap.hasData) return const Padding(padding: EdgeInsets.all(8), child: LinearProgressIndicator());
-                  final rows = snap.data!;
-                  if (rows.isEmpty) return const Text('Nenhum boss concluído ainda.');
-                  return Column(
-                    children: rows
-                        .map((r) => ListTile(
-                              dense: true,
-                              title: Text('${r['operation']} · ${r['boss']}'),
-                              subtitle: Text('${r['difficulty'] ?? r['type']} · ${r['points']} pt'),
-                            ))
-                        .toList(),
-                  );
-                },
-              ),
             ],
           );
         },

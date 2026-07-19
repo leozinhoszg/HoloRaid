@@ -1,10 +1,11 @@
 import type { RaidRepo } from '../../db/repositories/raidRepo';
 import type { RaidPlayerRepo, Role } from '../../db/repositories/raidPlayerRepo';
 import type { PersonagemRepo } from '../../db/repositories/personagemRepo';
+import type { UserRepo } from '../../db/repositories/userRepo';
 import { calcularTier } from '../../common/progression/tier';
 import { NotFoundError, ForbiddenError, ConflictError, ValidationError } from '../../common/errors/AppError';
 
-type Deps = { raidRepo: RaidRepo; raidPlayerRepo: RaidPlayerRepo; personagemRepo: PersonagemRepo };
+type Deps = { raidRepo: RaidRepo; raidPlayerRepo: RaidPlayerRepo; personagemRepo: PersonagemRepo; userRepo: UserRepo };
 
 export function createRaidJoinService(deps: Deps) {
   function slotFor(raid: { slots_tank: number; slots_heal: number; slots_dps: number }, role: Role): number {
@@ -22,9 +23,10 @@ export function createRaidJoinService(deps: Deps) {
       if (pers.usuario_id !== actorId) throw new ForbiddenError('Você só inscreve o seu personagem');
       if (pers.faccao !== raid.faction) throw new ValidationError(`Personagem é ${pers.faccao}; a raid é ${raid.faction}`);
 
-      const tier = calcularTier(pers.total_points);
+      const user = await deps.userRepo.findById(actorId);
+      const tier = calcularTier(user?.total_points ?? 0);
       if (tier < raid.minimum_tier) {
-        throw new ValidationError(`Seu personagem possui Tier ${tier}. Esta raid exige Tier ${raid.minimum_tier} ou superior.`);
+        throw new ValidationError(`Sua conta possui Tier ${tier}. Esta raid exige Tier ${raid.minimum_tier} ou superior.`);
       }
       if (await deps.raidPlayerRepo.findByRaidAndUser(raidId, actorId)) throw new ConflictError('Você já está nesta raid');
 

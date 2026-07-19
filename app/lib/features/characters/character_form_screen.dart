@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/reference/reference_providers.dart';
 import '../../core/reference/reference_models.dart';
+import '../../core/ui/holo_button.dart';
+import '../../core/ui/holo_dropdown.dart';
 import 'characters_providers.dart';
 
 class CharacterFormScreen extends ConsumerStatefulWidget {
@@ -56,8 +58,11 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
           final style = _classe == null ? null : data.combatStyles.firstWhere((c) => c.name == _classe);
           final discs = _classe == null ? <Discipline>[] : data.disciplinesOfStyle(_classe!);
           final roleOptions = style?.allowedRoles ?? <String>[];
-          return ListView(
-            padding: const EdgeInsets.all(16),
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
             children: [
               TextField(
                 controller: _nome,
@@ -65,10 +70,10 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
                 onChanged: (_) => setState(() {}),
               ),
               const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                initialValue: _faccao,
-                decoration: const InputDecoration(labelText: 'Facção'),
-                items: data.factions.map((f) => DropdownMenuItem(value: f, child: Text(f))).toList(),
+              HoloDropdown<String>(
+                label: 'Facção',
+                value: _faccao,
+                items: data.factions.map((f) => HoloDropdownItem(f, f)).toList(),
                 onChanged: (v) => setState(() {
                   _faccao = v;
                   _classe = null;
@@ -77,10 +82,10 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
                 }),
               ),
               const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                initialValue: _classe,
-                decoration: const InputDecoration(labelText: 'Combat Style'),
-                items: styles.map((c) => DropdownMenuItem(value: c.name, child: Text(c.name))).toList(),
+              HoloDropdown<String>(
+                label: 'Combat Style',
+                value: _classe,
+                items: styles.map((c) => HoloDropdownItem(c.name, c.name)).toList(),
                 onChanged: _faccao == null
                     ? null
                     : (v) => setState(() {
@@ -90,12 +95,12 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
                         }),
               ),
               const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                initialValue: _disciplina,
-                decoration: const InputDecoration(labelText: 'Disciplina (opcional)'),
+              HoloDropdown<String?>(
+                label: 'Disciplina (opcional)',
+                value: _disciplina,
                 items: [
-                  const DropdownMenuItem(value: null, child: Text('— nenhuma —')),
-                  ...discs.map((d) => DropdownMenuItem(value: d.name, child: Text('${d.name} (${d.role})'))),
+                  const HoloDropdownItem<String?>(null, '— nenhuma —'),
+                  ...discs.map((d) => HoloDropdownItem<String?>(d.name, '${d.name} (${d.role})')),
                 ],
                 onChanged: _classe == null
                     ? null
@@ -105,10 +110,10 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
                         }),
               ),
               const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                initialValue: _role,
-                decoration: const InputDecoration(labelText: 'Role'),
-                items: roleOptions.map((r) => DropdownMenuItem(value: r, child: Text(r))).toList(),
+              HoloDropdown<String>(
+                label: 'Role',
+                value: _role,
+                items: roleOptions.map((r) => HoloDropdownItem(r, r)).toList(),
                 onChanged: (_classe == null || _disciplina != null) ? null : (v) => setState(() => _role = v),
               ),
               const SizedBox(height: 12),
@@ -123,13 +128,16 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
                   padding: const EdgeInsets.only(bottom: 12),
                   child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
                 ),
-              FilledButton(
-                onPressed: (_saving || _nome.text.trim().isEmpty || _faccao == null || _classe == null || _role == null)
+              HoloButton(
+                label: 'Criar personagem',
+                loading: _saving,
+                onPressed: (_nome.text.trim().isEmpty || _faccao == null || _classe == null || _role == null)
                     ? null
                     : _save,
-                child: Text(_saving ? 'Salvando...' : 'Criar personagem'),
               ),
             ],
+          ),
+            ),
           );
         },
       ),

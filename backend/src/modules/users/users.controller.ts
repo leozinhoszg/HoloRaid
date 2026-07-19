@@ -1,10 +1,12 @@
 import type { Request, Response } from 'express';
 import type { UserService } from './users.service';
+import { calcularTier, pointsToNextTier } from '../../common/progression/tier';
 
 export function createUsersController(userService: UserService) {
   return {
     async me(req: Request, res: Response) {
-      res.json(await userService.getMe(req.user!.sub));
+      const u = await userService.getMe(req.user!.sub);
+      res.json({ ...u, tier: calcularTier(u.total_points), pointsToNextTier: pointsToNextTier(u.total_points) });
     },
     async list(_req: Request, res: Response) {
       res.json(await userService.list());
