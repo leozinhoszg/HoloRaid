@@ -13,7 +13,11 @@
     "close": "Schließen",
     "edit": "Bearbeiten",
     "no_tier": "Kein Tier",
-    "tier": "Tier {n}"
+    "tier": "Tier {n}",
+    "creator": "Ersteller",
+    "confirmed": "Bestätigt",
+    "waitlist": "Warteliste",
+    "failed": "Fehlgeschlagen: {error}"
   },
   "nav": {
     "home": "Start",
@@ -125,5 +129,46 @@
     "time": "UHRZEIT",
     "notes": "Notizen",
     "slots_per_role": "SLOTS PRO ROLLE"
+  },
+  "characters": {
+    "empty": "Noch keine Charaktere. Erstelle deinen ersten!",
+    "list_subtitle": "{class} · {role} · iLvl {ilvl}"
+  },
+  "character_profile": {
+    "points": "{n} Punkte",
+    "to_next_tier": "{n} bis zum nächsten Tier",
+    "max": "Maximum!",
+    "account_tier": "Konto-Tier"
+  },
+  "character_form": {
+    "title": "Neuer Charakter",
+    "invalid_combo": "Ungültige Kombination aus Klasse/Rolle/Disziplin.",
+    "name": "Name",
+    "faction": "Fraktion",
+    "combat_style": "Combat Style",
+    "discipline": "Disziplin (optional)",
+    "none": "— keine —",
+    "role": "Rolle",
+    "item_level": "Item Level",
+    "create": "Charakter erstellen"
+  },
+  "progression": {
+    "saved": "Fortschritt gespeichert",
+    "save": "Fortschritt speichern"
+  },
+  "admin": {
+    "role_admin": "Admin",
+    "role_user": "Benutzer",
+    "promote": "Befördern",
+    "demote": "Herabstufen"
+  },
+  "profile": {
+    "role": "Rolle: {role}",
+    "points": "{n} Punkte",
+    "to_next_tier": "{n} bis zum nächsten Tier",
+    "max_tier": "Höchster Tier!",
+    "my_raids": "Meine Raids",
+    "no_raids": "Du bist noch keinem Raid beigetreten.",
+    "raid_subtitle": "{date} · {status}"
   }
 }

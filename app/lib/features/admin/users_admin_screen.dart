@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'admin_repository.dart';
@@ -24,7 +25,7 @@ class _UsersAdminScreenState extends ConsumerState<UsersAdminScreen> {
       await action();
       _reload();
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Falha: $e')));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('common.failed'.tr(namedArgs: {'error': '$e'}))));
     }
   }
 
@@ -45,10 +46,10 @@ class _UsersAdminScreenState extends ConsumerState<UsersAdminScreen> {
                 return ListTile(
                   leading: CircleAvatar(child: Text((u['username'] as String? ?? '?').substring(0, 1).toUpperCase())),
                   title: Text(u['username'] as String? ?? '—'),
-                  subtitle: Text(role),
+                  subtitle: Text(isAdmin ? 'admin.role_admin'.tr() : 'admin.role_user'.tr()),
                   trailing: isAdmin
-                      ? OutlinedButton(onPressed: () => _act(() => ref.read(adminRepositoryProvider).demote(id)), child: const Text('Rebaixar'))
-                      : FilledButton(onPressed: () => _act(() => ref.read(adminRepositoryProvider).promote(id)), child: const Text('Promover')),
+                      ? OutlinedButton(onPressed: () => _act(() => ref.read(adminRepositoryProvider).demote(id)), child: Text('admin.demote'.tr()))
+                      : FilledButton(onPressed: () => _act(() => ref.read(adminRepositoryProvider).promote(id)), child: Text('admin.promote'.tr())),
                 );
               }).toList(),
             ),

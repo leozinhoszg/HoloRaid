@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -39,7 +40,7 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
       if (mounted) context.pop();
     } on DioException catch (e) {
       setState(() => _error =
-          e.response?.statusCode == 422 ? 'Combinação inválida de classe/role/disciplina.' : 'Falha: ${e.message}');
+          e.response?.statusCode == 422 ? 'character_form.invalid_combo'.tr() : 'common.failed'.tr(namedArgs: {'error': '${e.message}'}));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -49,10 +50,10 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
   Widget build(BuildContext context) {
     final refData = ref.watch(referenceProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Novo Personagem')),
+      appBar: AppBar(title: Text('character_form.title'.tr())),
       body: refData.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Erro: $e')),
+        error: (e, _) => Center(child: Text('common.error'.tr(namedArgs: {'error': '$e'}))),
         data: (data) {
           final styles = _faccao == null ? <CombatStyle>[] : data.stylesOfFaction(_faccao!);
           final style = _classe == null ? null : data.combatStyles.firstWhere((c) => c.name == _classe);
@@ -66,12 +67,12 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
             children: [
               TextField(
                 controller: _nome,
-                decoration: const InputDecoration(labelText: 'Nome'),
+                decoration: InputDecoration(labelText: 'character_form.name'.tr()),
                 onChanged: (_) => setState(() {}),
               ),
               const SizedBox(height: 12),
               HoloDropdown<String>(
-                label: 'Facção',
+                label: 'character_form.faction'.tr(),
                 value: _faccao,
                 items: data.factions.map((f) => HoloDropdownItem(f, f)).toList(),
                 onChanged: (v) => setState(() {
@@ -83,7 +84,7 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
               ),
               const SizedBox(height: 12),
               HoloDropdown<String>(
-                label: 'Combat Style',
+                label: 'character_form.combat_style'.tr(),
                 value: _classe,
                 items: styles.map((c) => HoloDropdownItem(c.name, c.name)).toList(),
                 onChanged: _faccao == null
@@ -96,10 +97,10 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
               ),
               const SizedBox(height: 12),
               HoloDropdown<String?>(
-                label: 'Disciplina (opcional)',
+                label: 'character_form.discipline'.tr(),
                 value: _disciplina,
                 items: [
-                  const HoloDropdownItem<String?>(null, '— nenhuma —'),
+                  HoloDropdownItem<String?>(null, 'character_form.none'.tr()),
                   ...discs.map((d) => HoloDropdownItem<String?>(d.name, '${d.name} (${d.role})')),
                 ],
                 onChanged: _classe == null
@@ -111,7 +112,7 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
               ),
               const SizedBox(height: 12),
               HoloDropdown<String>(
-                label: 'Role',
+                label: 'character_form.role'.tr(),
                 value: _role,
                 items: roleOptions.map((r) => HoloDropdownItem(r, r)).toList(),
                 onChanged: (_classe == null || _disciplina != null) ? null : (v) => setState(() => _role = v),
@@ -120,7 +121,7 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
               TextField(
                 controller: _itemLevel,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Item Level'),
+                decoration: InputDecoration(labelText: 'character_form.item_level'.tr()),
               ),
               const SizedBox(height: 20),
               if (_error != null)
@@ -129,7 +130,7 @@ class _CharacterFormScreenState extends ConsumerState<CharacterFormScreen> {
                   child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
                 ),
               HoloButton(
-                label: 'Criar personagem',
+                label: 'character_form.create'.tr(),
                 loading: _saving,
                 onPressed: (_nome.text.trim().isEmpty || _faccao == null || _classe == null || _role == null)
                     ? null

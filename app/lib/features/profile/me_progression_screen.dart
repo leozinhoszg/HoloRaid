@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/auth/auth_providers.dart';
@@ -49,7 +50,7 @@ class _State extends ConsumerState<MeProgressionScreen> {
     ref.invalidate(charactersProvider);
     if (!mounted) return;
     setState(() => _saving = false);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Progressão salva')));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('progression.saved'.tr())));
   }
 
   @override
@@ -86,7 +87,7 @@ class _State extends ConsumerState<MeProgressionScreen> {
             top: false,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-              child: HoloButton(label: 'Salvar progressão', loading: _saving, onPressed: _save),
+              child: HoloButton(label: 'progression.save'.tr(), loading: _saving, onPressed: _save),
             ),
           ),
         ]),

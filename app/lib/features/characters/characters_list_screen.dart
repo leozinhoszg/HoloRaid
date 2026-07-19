@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,9 +12,9 @@ class CharactersListScreen extends ConsumerWidget {
     final chars = ref.watch(charactersProvider);
     return chars.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Erro: $e')),
+        error: (e, _) => Center(child: Text('common.error'.tr(namedArgs: {'error': '$e'}))),
         data: (list) => list.isEmpty
-            ? const Center(child: Text('Nenhum personagem ainda. Crie o primeiro!'))
+            ? Center(child: Text('characters.empty'.tr()))
             : RefreshIndicator(
                 onRefresh: () async => ref.refresh(charactersProvider.future),
                 child: ListView.builder(
@@ -26,7 +27,7 @@ class CharactersListScreen extends ConsumerWidget {
                         onTap: () => context.push('/characters/${c.id}'),
                         leading: CircleAvatar(child: Text(c.role[0])),
                         title: Text(c.nome),
-                        subtitle: Text('${c.classe} · ${c.role} · iLvl ${c.itemLevel}'),
+                        subtitle: Text('characters.list_subtitle'.tr(namedArgs: {'class': c.classe, 'role': c.role, 'ilvl': '${c.itemLevel}'})),
                         trailing: TierBadge(tier: c.tier, compact: true),
                       ),
                     );

@@ -13,7 +13,11 @@
     "close": "Fechar",
     "edit": "Editar",
     "no_tier": "Sem Tier",
-    "tier": "Tier {n}"
+    "tier": "Tier {n}",
+    "creator": "Criador",
+    "confirmed": "Confirmado",
+    "waitlist": "Waitlist",
+    "failed": "Falha: {error}"
   },
   "nav": {
     "home": "Início",
@@ -125,5 +129,46 @@
     "time": "HORA",
     "notes": "Observações",
     "slots_per_role": "VAGAS POR ROLE"
+  },
+  "characters": {
+    "empty": "Nenhum personagem ainda. Crie o primeiro!",
+    "list_subtitle": "{class} · {role} · iLvl {ilvl}"
+  },
+  "character_profile": {
+    "points": "{n} pontos",
+    "to_next_tier": "faltam {n} para o próximo Tier",
+    "max": "máximo!",
+    "account_tier": "Tier da conta"
+  },
+  "character_form": {
+    "title": "Novo Personagem",
+    "invalid_combo": "Combinação inválida de classe/role/disciplina.",
+    "name": "Nome",
+    "faction": "Facção",
+    "combat_style": "Combat Style",
+    "discipline": "Disciplina (opcional)",
+    "none": "— nenhuma —",
+    "role": "Role",
+    "item_level": "Item Level",
+    "create": "Criar personagem"
+  },
+  "progression": {
+    "saved": "Progressão salva",
+    "save": "Salvar progressão"
+  },
+  "admin": {
+    "role_admin": "Admin",
+    "role_user": "Usuário",
+    "promote": "Promover",
+    "demote": "Rebaixar"
+  },
+  "profile": {
+    "role": "Papel: {role}",
+    "points": "{n} pontos",
+    "to_next_tier": "faltam {n} para o próximo Tier",
+    "max_tier": "Tier máximo!",
+    "my_raids": "Minhas raids",
+    "no_raids": "Você ainda não participou de raids.",
+    "raid_subtitle": "{date} · {status}"
   }
 }

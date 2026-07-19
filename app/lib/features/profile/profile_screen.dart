@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +6,7 @@ import '../../core/auth/auth_providers.dart';
 import '../../core/settings/language_selector.dart';
 import '../../core/ui/holo_avatar.dart';
 import '../../core/ui/tier_badge.dart';
+import '../raids/raid_status_label.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -31,7 +33,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Perfil')),
+      appBar: AppBar(title: Text('common.profile'.tr())),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _me,
         builder: (context, meSnap) {
@@ -54,7 +56,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 Expanded(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text(me['username'] as String? ?? '—', style: Theme.of(context).textTheme.titleLarge),
-                    Text('Papel: ${me['role'] ?? '-'}', style: Theme.of(context).textTheme.bodySmall),
+                    Text('profile.role'.tr(namedArgs: {'role': '${me['role'] ?? '-'}'}), style: Theme.of(context).textTheme.bodySmall),
                   ]),
                 ),
               ]),
@@ -70,35 +72,35 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     Row(children: [
                       TierBadge(tier: tier),
                       const Spacer(),
-                      Text('$pts pontos', style: Theme.of(context).textTheme.bodyMedium),
+                      Text('profile.points'.tr(namedArgs: {'n': '$pts'}), style: Theme.of(context).textTheme.bodyMedium),
                     ]),
                     const SizedBox(height: 10),
                     LinearProgressIndicator(value: progress),
                     const SizedBox(height: 6),
-                    Text(next != null ? 'faltam $next para o próximo Tier' : 'Tier máximo!',
+                    Text(next != null ? 'profile.to_next_tier'.tr(namedArgs: {'n': '$next'}) : 'profile.max_tier'.tr(),
                         style: Theme.of(context).textTheme.bodySmall),
                   ]),
                 ));
               }),
               const SizedBox(height: 20),
-              Text('Minhas raids', style: Theme.of(context).textTheme.titleMedium),
+              Text('profile.my_raids'.tr(), style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
               FutureBuilder<List<dynamic>>(
                 future: _raids,
                 builder: (context, rSnap) {
                   if (!rSnap.hasData) return const Center(child: Padding(padding: EdgeInsets.all(16), child: CircularProgressIndicator()));
                   final raids = rSnap.data!;
-                  if (raids.isEmpty) return const Text('Você ainda não participou de raids.');
+                  if (raids.isEmpty) return Text('profile.no_raids'.tr());
                   return Column(children: raids.map((r) {
                     final m = (r as Map).cast<String, dynamic>();
                     final quando = DateTime.parse(m['start_at'] as String).toLocal();
                     final badge = (m['created'] as bool? ?? false)
-                        ? 'Criador'
-                        : (m['myStatus'] == 'confirmed' ? 'Confirmado' : m['myStatus'] == 'waitlist' ? 'Waitlist' : '—');
+                        ? 'common.creator'.tr()
+                        : (m['myStatus'] == 'confirmed' ? 'common.confirmed'.tr() : m['myStatus'] == 'waitlist' ? 'common.waitlist'.tr() : '—');
                     return ListTile(
                       dense: true,
                       title: Text('${m['operation']} · ${m['difficulty']}'),
-                      subtitle: Text('${quando.toString().substring(0, 16)} · ${m['status']}'),
+                      subtitle: Text('profile.raid_subtitle'.tr(namedArgs: {'date': quando.toString().substring(0, 16), 'status': raidStatusLabel('${m['status']}')})),
                       trailing: Chip(label: Text(badge)),
                       onTap: () => context.push('/raids/${m['id']}'),
                     );

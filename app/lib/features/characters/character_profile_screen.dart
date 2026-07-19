@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/ui/tier_badge.dart';
@@ -11,10 +12,10 @@ class CharacterProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final char = ref.watch(characterProvider(id));
     return Scaffold(
-      appBar: AppBar(title: const Text('Perfil')),
+      appBar: AppBar(title: Text('common.profile'.tr())),
       body: char.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Erro: $e')),
+        error: (e, _) => Center(child: Text('common.error'.tr(namedArgs: {'error': '$e'}))),
         data: (c) {
           final next = c.pointsToNextTier;
           final progress = next == null ? 1.0 : (c.totalPoints / (c.totalPoints + next)).clamp(0.0, 1.0);
@@ -33,7 +34,9 @@ class CharacterProfileScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               // Tier/pontos são da CONTA (iguais em todos os personagens). Marque bosses no menu "Progressão".
-              Text('${c.totalPoints} pontos${next != null ? ' · faltam $next para o próximo Tier' : ' · máximo!'} · Tier da conta'),
+              Text('${'character_profile.points'.tr(namedArgs: {'n': '${c.totalPoints}'})}'
+                  '${next != null ? ' · ${'character_profile.to_next_tier'.tr(namedArgs: {'n': '$next'})}' : ' · ${'character_profile.max'.tr()}'}'
+                  ' · ${'character_profile.account_tier'.tr()}'),
               const SizedBox(height: 8),
               LinearProgressIndicator(value: progress),
             ],
