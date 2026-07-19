@@ -2,5 +2,18 @@
   "common": {
     "app_name": "HoloRaid",
     "language": "Idioma"
+  },
+  "login": {
+    "tagline": "Comanda tus Operaciones de SWTOR.",
+    "subtitle": "Organiza raids, sincroniza con Discord y sigue tu progresión PvE — en tiempo real.",
+    "connecting": "Conectando…",
+    "continue_discord": "Continuar con Discord",
+    "login_failed": "Error al iniciar sesión. Inténtalo de nuevo.",
+    "highlight_organize": "Organiza raids",
+    "highlight_sync": "Sincroniza con Discord",
+    "highlight_track": "Sigue la progresión PvE",
+    "terms": "Términos",
+    "privacy": "Privacidad",
+    "not_affiliated": "Sin afiliación con BioWare ni EA."
   }
 }

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -28,7 +29,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     try {
       await ref.read(authStateProvider.notifier).login();
     } catch (_) {
-      if (mounted) setState(() => _error = 'Login failed. Try again.');
+      if (mounted) setState(() => _error = 'login.login_failed'.tr());
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -100,16 +101,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         SizedBox(height: compact ? 14 : 20),
         stagger(HoloWordmark(size: compact ? 38 : 44)),
         const SizedBox(height: 10),
-        stagger(const Text(
-          'Command your SWTOR Operations.',
+        stagger(Text(
+          'login.tagline'.tr(),
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFFE7E9F5)),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFFE7E9F5)),
         )),
         const SizedBox(height: 8),
-        stagger(const Text(
-          'Organize raids, sync with Discord, and track your PvE progression — in real time.',
+        stagger(Text(
+          'login.subtitle'.tr(),
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 14, height: 1.5, color: LoginPalette.textDim),
+          style: const TextStyle(fontSize: 14, height: 1.5, color: LoginPalette.textDim),
         )),
         SizedBox(height: compact ? 22 : 28),
         stagger(_cta(context)),
@@ -150,7 +151,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             icon: _loading
                 ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                 : const Icon(Icons.discord),
-            label: Text(_loading ? 'Connecting…' : 'Continue with Discord'),
+            label: Text(_loading ? 'login.connecting'.tr() : 'login.continue_discord'.tr()),
           ),
         ),
       ),
@@ -159,9 +160,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Widget _highlights(BuildContext context) {
     final items = <(Color, IconData, String)>[
-      (LoginPalette.tank, Icons.event_available, 'Organize raids'),
-      (LoginPalette.indigo, Icons.forum, 'Sync with Discord'),
-      (LoginPalette.dps, Icons.military_tech, 'Track PvE progression'),
+      (LoginPalette.tank, Icons.event_available, 'login.highlight_organize'.tr()),
+      (LoginPalette.indigo, Icons.forum, 'login.highlight_sync'.tr()),
+      (LoginPalette.dps, Icons.military_tech, 'login.highlight_track'.tr()),
     ];
     return Wrap(
       spacing: 12, runSpacing: 12, alignment: WrapAlignment.center,
@@ -182,13 +183,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     const link = TextStyle(color: LoginPalette.indigo, fontSize: 12, decoration: TextDecoration.underline);
     return Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        GestureDetector(onTap: () => _openLegal('terms'), child: const Text('Terms', style: link)),
+        GestureDetector(onTap: () => _openLegal('terms'), child: Text('login.terms'.tr(), style: link)),
         const Text('  ·  ', style: TextStyle(color: LoginPalette.textDim, fontSize: 12)),
-        GestureDetector(onTap: () => _openLegal('privacy'), child: const Text('Privacy', style: link)),
+        GestureDetector(onTap: () => _openLegal('privacy'), child: Text('login.privacy'.tr(), style: link)),
       ]),
       const SizedBox(height: 8),
-      const Text('Not affiliated with BioWare or EA.',
-          style: TextStyle(color: LoginPalette.textDim, fontSize: 11)),
+      Text('login.not_affiliated'.tr(),
+          style: const TextStyle(color: LoginPalette.textDim, fontSize: 11)),
       const SizedBox(height: 12),
       const LanguageSelector(compact: true),
     ]);
