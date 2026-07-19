@@ -42,15 +42,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/splash', builder: (_, _) => const SplashScreen()),
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
       // Destinos principais dentro do app shell (sidebar/drawer + user menu).
+      // Troca de destino SEM transição: o cross-fade padrão sobrepõe duas telas
+      // transparentes (com glass/BackdropFilter) sobre o fundo global → trava.
       ShellRoute(
         builder: (context, state, child) => AppShell(child: child),
         routes: [
-          GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
-          GoRoute(path: '/characters', builder: (_, _) => const CharactersListScreen()),
-          GoRoute(path: '/progression', builder: (_, _) => const MeProgressionScreen()),
-          GoRoute(path: '/raids', builder: (_, _) => const RaidsListScreen()),
-          GoRoute(path: '/dashboard', builder: (_, _) => const DashboardScreen()),
-          GoRoute(path: '/admin/users', builder: (_, _) => const UsersAdminScreen()),
+          GoRoute(path: '/home', pageBuilder: (_, _) => const NoTransitionPage(child: HomeScreen())),
+          GoRoute(path: '/characters', pageBuilder: (_, _) => const NoTransitionPage(child: CharactersListScreen())),
+          GoRoute(path: '/progression', pageBuilder: (_, _) => const NoTransitionPage(child: MeProgressionScreen())),
+          GoRoute(path: '/raids', pageBuilder: (_, _) => const NoTransitionPage(child: RaidsListScreen())),
+          GoRoute(path: '/dashboard', pageBuilder: (_, _) => const NoTransitionPage(child: DashboardScreen())),
+          GoRoute(path: '/admin/users', pageBuilder: (_, _) => const NoTransitionPage(child: UsersAdminScreen())),
         ],
       ),
       // Telas empilhadas em tela cheia (fora do shell, com botão voltar próprio).
