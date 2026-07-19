@@ -5,18 +5,21 @@ import '../auth/auth_providers.dart';
 import '../settings/settings_providers.dart';
 import '../ui/holo_avatar.dart';
 import '../ui/holo_palette.dart';
+import '../ui/tier_badge.dart';
 import '../../features/home/home_providers.dart';
 
-/// Menu do usuário: avatar → Perfil / Reduzir animações / Admin (se admin) / Sair.
+/// Menu do usuário: card glass (avatar + nome + tier) → Perfil / Reduzir
+/// animações / Admin (se admin) / Sair. `compact` (mobile) mostra só o avatar.
 class HoloUserMenu extends ConsumerWidget {
-  const HoloUserMenu({super.key, this.avatarSize = 38});
-  final double avatarSize;
+  const HoloUserMenu({super.key, this.compact = false});
+  final bool compact;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final me = ref.watch(meProvider).valueOrNull ?? const {};
     final name = me['username'] as String? ?? '—';
     final role = me['role'] as String? ?? 'user';
+    final tier = (me['tier'] as num?)?.toInt() ?? 0;
     final isAdmin = role == 'admin';
     final discordId = me['discord_id']?.toString();
     final avatar = me['avatar'] as String?;
@@ -30,17 +33,41 @@ class HoloUserMenu extends ConsumerWidget {
         surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
         elevation: const WidgetStatePropertyAll(10),
         padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 6)),
-        minimumSize: const WidgetStatePropertyAll(Size(220, 0)),
+        minimumSize: const WidgetStatePropertyAll(Size(232, 0)),
+        // Alinha o menu à direita do card (abre pra baixo/esquerda, sem sair da tela).
+        alignment: Alignment.bottomRight,
         shape: WidgetStatePropertyAll(RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
           side: const BorderSide(color: HoloPalette.glassBorderStrong),
         )),
       ),
-      alignmentOffset: const Offset(-160, 6),
+      alignmentOffset: const Offset(0, 6),
       builder: (context, controller, child) => InkWell(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(40),
         onTap: () => controller.isOpen ? controller.close() : controller.open(),
-        child: HoloAvatar(url: url, label: name, size: avatarSize),
+        child: compact
+            ? HoloAvatar(url: url, label: name, size: 38)
+            : Container(
+                padding: const EdgeInsets.fromLTRB(6, 6, 12, 6),
+                decoration: BoxDecoration(
+                  color: HoloPalette.glassFill,
+                  border: Border.all(color: HoloPalette.glassBorderStrong),
+                  borderRadius: BorderRadius.circular(40),
+                ),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  HoloAvatar(url: url, label: name, size: 34),
+                  const SizedBox(width: 9),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 150),
+                    child: Text(name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontFamily: 'Aldrich', fontSize: 13, color: HoloPalette.ink)),
+                  ),
+                  const SizedBox(width: 10),
+                  TierBadge(tier: tier, compact: true),
+                ]),
+              ),
       ),
       menuChildren: [
         _item(Icons.person_outline, 'Perfil', () => context.push('/profile')),

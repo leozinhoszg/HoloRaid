@@ -47,7 +47,7 @@ class AppShell extends ConsumerWidget {
       return Scaffold(
         appBar: AppBar(
           title: Text(title),
-          actions: const [Padding(padding: EdgeInsets.only(right: 12), child: Center(child: HoloUserMenu()))],
+          actions: const [Padding(padding: EdgeInsets.only(right: 12), child: Center(child: HoloUserMenu(compact: true)))],
         ),
         drawer: const HoloDrawer(),
         floatingActionButton: fabWidget,
