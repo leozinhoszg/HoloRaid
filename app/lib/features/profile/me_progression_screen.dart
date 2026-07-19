@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/auth/auth_providers.dart';
 import '../../core/ui/holo_button.dart';
+import '../characters/characters_providers.dart';
+import '../home/home_providers.dart';
 
 /// Progressão PvE da conta (destino do app shell — body-only).
 class MeProgressionScreen extends ConsumerStatefulWidget {
@@ -41,6 +43,10 @@ class _State extends ConsumerState<MeProgressionScreen> {
     setState(() => _saving = true);
     final api = ref.read(apiClientProvider);
     await api.dio.put('/me/bosses', data: {'bossIds': _checked.toList()});
+    // O Tier da conta mudou: refaz o /me (badge do menu/perfil) e a lista de
+    // personagens (badge por char deriva do Tier da conta).
+    ref.invalidate(meProvider);
+    ref.invalidate(charactersProvider);
     if (!mounted) return;
     setState(() => _saving = false);
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Progressão salva')));
