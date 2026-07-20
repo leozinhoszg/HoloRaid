@@ -4,63 +4,205 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="index,follow" />
+  <meta name="theme-color" content="#080816" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Aldrich&family=Audiowide&family=Jura:wght@400;600;700&family=Orbitron:wght@600;700&display=swap" rel="stylesheet" />
   <title>Terms of Service — HoloRaid</title>
   <style>
-    :root { color-scheme: dark; }
+    :root {
+      color-scheme: dark;
+      --bg-top: #080816; --bg-mid: #0B0F28; --bg-bottom: #050509;
+      --blue: #76C8FF; --indigo: #7E7BFF;
+      --ink: #EAECF7; --dim: #9AA0C3; --faint: #6B7099;
+      --glass-fill: rgba(14, 18, 40, .55);
+      --glass-border: rgba(120, 140, 255, .14);
+      --glass-border-strong: rgba(120, 140, 255, .28);
+    }
     * { box-sizing: border-box; }
     body {
-      margin: 0; padding: 0;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 50% -10%, #1b1e3a 0%, #0b0d1a 55%, #070810 100%);
-      color: #e7e9f5; line-height: 1.65;
+      margin: 0; min-height: 100vh;
+      font-family: 'Jura', system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--ink); line-height: 1.7; font-size: 15.5px;
+      background:
+        radial-gradient(120% 90% at 18% -10%, rgba(118, 200, 255, .10), rgba(118, 200, 255, 0) 62%),
+        radial-gradient(120% 100% at 96% 112%, rgba(126, 123, 255, .13), rgba(126, 123, 255, 0) 62%),
+        radial-gradient(140% 120% at 50% -30%, var(--bg-mid) 0%, var(--bg-top) 46%, var(--bg-bottom) 100%);
+      background-attachment: fixed;
     }
-    .wrap { max-width: 820px; margin: 0 auto; padding: 48px 20px 80px; }
-    header { border-bottom: 1px solid #2a2e52; padding-bottom: 20px; margin-bottom: 28px; }
-    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-    .brand { font-weight: 800; letter-spacing: .5px; font-size: 20px; color: #a5b4ff;
-      text-shadow: 0 0 12px rgba(120,140,255,.5); text-decoration: none; }
-    h1 { font-size: 30px; margin: 14px 0 6px; }
-    .updated { color: #9aa0c3; font-size: 14px; }
-    h2 { font-size: 20px; margin: 34px 0 10px; color: #c7ccf5; }
-    p, li { color: #cdd2ee; }
-    a { color: #8ea2ff; }
+    /* Starfield sutil — mesma atmosfera do HoloBackground do app */
+    .stars {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .8;
+      background-image:
+        radial-gradient(1.4px 1.4px at 9% 14%, rgba(234, 236, 247, .8), transparent 55%),
+        radial-gradient(1px 1px at 23% 64%, rgba(234, 236, 247, .5), transparent 55%),
+        radial-gradient(1.6px 1.6px at 37% 30%, rgba(118, 200, 255, .7), transparent 55%),
+        radial-gradient(1px 1px at 51% 78%, rgba(234, 236, 247, .45), transparent 55%),
+        radial-gradient(1.3px 1.3px at 64% 8%, rgba(234, 236, 247, .7), transparent 55%),
+        radial-gradient(1px 1px at 72% 47%, rgba(126, 123, 255, .6), transparent 55%),
+        radial-gradient(1.5px 1.5px at 84% 86%, rgba(234, 236, 247, .6), transparent 55%),
+        radial-gradient(1px 1px at 93% 25%, rgba(234, 236, 247, .5), transparent 55%);
+      background-size: 720px 720px, 540px 540px, 860px 860px, 620px 620px, 780px 780px, 500px 500px, 900px 900px, 680px 680px;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .stars { animation: twinkle 8s ease-in-out infinite alternate; }
+      .emblem .ring { animation: ringspin 6s linear infinite; }
+    }
+    @keyframes twinkle { from { opacity: .55; } to { opacity: .95; } }
+    @keyframes ringspin { to { transform: rotate(360deg); } }
+    .wrap { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 40px 20px 72px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 26px; }
+    /* Lockup da marca: emblema + wordmark (Audiowide, gradiente azul→índigo + glow) */
+    .lockup { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
+    .emblem { width: 34px; height: 34px; flex: none; }
+    .emblem .ring { transform-box: view-box; transform-origin: center; }
+    .wordmark {
+      font-family: 'Audiowide', 'Orbitron', sans-serif; font-size: 22px; letter-spacing: .5px; line-height: 1;
+      background: linear-gradient(90deg, var(--blue), var(--indigo));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      filter: drop-shadow(0 0 9px rgba(74, 180, 255, .45));
+    }
+    /* "HoloRaid" no corpo do texto, com o mesmo visual do wordmark */
+    .hr {
+      font-family: 'Audiowide', 'Orbitron', sans-serif; font-weight: 400; font-size: .92em; letter-spacing: .3px;
+      background: linear-gradient(90deg, var(--blue), var(--indigo));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    /* Painel "glass" do documento (mesmos tokens dos cards do app) */
+    section[data-lang] {
+      background: var(--glass-fill);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 34px 38px 28px;
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 24px 60px rgba(3, 5, 16, .45);
+    }
+    h1 { font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 25px; letter-spacing: .5px; margin: 0 0 10px; color: var(--ink); }
+    .updated {
+      font-family: 'Aldrich', sans-serif; font-size: 11.5px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--dim); margin-bottom: 26px; padding-bottom: 18px; border-bottom: 1px solid var(--glass-border);
+    }
+    h2 { font-family: 'Orbitron', sans-serif; font-weight: 600; font-size: 15px; letter-spacing: .4px; color: #C7CCF5; margin: 32px 0 10px; }
+    p, li { color: #CDD2EE; }
+    strong { color: #F2F4FF; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    a:focus-visible, select:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 4px; }
     ul { padding-left: 22px; }
-    .note { background: #14172b; border: 1px solid #2a2e52; border-radius: 12px;
-      padding: 14px 16px; margin: 22px 0; color: #b9bfe0; font-size: 14px; }
-    footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid #2a2e52;
-      color: #8b90b5; font-size: 14px; }
-    footer a { margin-right: 16px; }
-    /* Seletor de idioma em pílula "glass" (consistente com o app) */
-    .lang { position: relative; display: inline-flex; align-items: center; }
-    .lang svg { position: absolute; left: 12px; pointer-events: none; opacity: .8; }
-    .lang select {
-      appearance: none; -webkit-appearance: none;
-      background: rgba(14,18,40,.55); color: #eaecf7;
-      border: 1px solid rgba(120,140,255,.28); border-radius: 999px;
-      padding: 8px 34px 8px 34px; font-size: 13px; font-family: inherit;
+    li { margin-bottom: 6px; }
+    li::marker { color: var(--indigo); }
+    code {
+      font-family: ui-monospace, Consolas, monospace; font-size: .9em;
+      background: rgba(23, 26, 48, .8); border: 1px solid var(--glass-border);
+      padding: 2px 6px; border-radius: 6px; color: #B9C2FF;
+    }
+    footer {
+      margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--glass-border);
+      font-family: 'Aldrich', sans-serif; font-size: 12px; letter-spacing: 1px; color: var(--faint);
+    }
+    footer a { margin-right: 18px; color: var(--dim); }
+    footer a:hover { color: var(--blue); text-decoration: none; }
+    /* Seletor de idioma "glass" — mesmo visual do GlassLanguageSelector (login) */
+    .lang { position: relative; }
+    .lang-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--glass-fill); color: var(--ink);
+      border: 1px solid var(--glass-border); border-radius: 999px;
+      padding: 8px 10px 8px 12px; font-size: 13px; font-family: inherit; line-height: 1;
       cursor: pointer; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     }
-    .lang select:focus { outline: none; border-color: rgba(120,140,255,.5); }
-    .lang .chev { position: absolute; right: 12px; pointer-events: none; opacity: .7; }
+    .lang-btn:hover, .lang.open .lang-btn { border-color: var(--glass-border-strong); }
+    .lang-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+    .lang-menu {
+      position: absolute; right: 0; top: calc(100% + 6px); z-index: 20;
+      min-width: 172px; padding: 8px 0; display: none;
+      background: rgba(16, 20, 48, .95);
+      border: 1px solid var(--glass-border-strong); border-radius: 14px;
+      box-shadow: 0 18px 44px rgba(3, 5, 16, .55);
+    }
+    .lang.open .lang-menu { display: block; }
+    .lang-opt {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+      padding: 12px 18px; background: none; border: 0; cursor: pointer;
+      font-family: inherit; font-size: 14px; color: var(--dim); text-align: left;
+    }
+    .lang-opt:hover, .lang-opt:focus-visible { background: rgba(255, 255, 255, .05); color: var(--ink); outline: none; }
+    .lang-opt[aria-selected="true"] { color: var(--ink); font-weight: 600; background: rgba(255, 255, 255, .06); }
+    .lang-opt svg { flex: none; }
+    /* Bandeira retangular (cantos arredondados + borda sutil) — botão e itens */
+    .flag {
+      width: 21px; height: 15px; flex: none; object-fit: cover;
+      border-radius: 3px; border: 1px solid rgba(255, 255, 255, .14);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .35);
+    }
+    .i-check { margin-left: auto; display: none; }
+    .lang-opt[aria-selected="true"] .i-check { display: inline; }
     [data-lang] { display: none; }
     [data-lang].active { display: block; }
+    @media (max-width: 560px) {
+      .wrap { padding: 22px 12px 48px; }
+      section[data-lang] { padding: 24px 18px 20px; border-radius: 14px; }
+      h1 { font-size: 20px; }
+      body { font-size: 15px; }
+    }
   </style>
 </head>
 <body>
+  <div class="stars" aria-hidden="true"></div>
   <div class="wrap">
     <header>
       <div class="topbar">
-        <a class="brand" href="https://holoraid.fun">HoloRaid</a>
-        <div class="lang">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa0c3" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20a15 15 0 0 1 0-20"/></svg>
-          <select id="langSelect" aria-label="Language">
-            <option value="en">English</option>
-            <option value="pt">Português</option>
-            <option value="de">Deutsch</option>
-            <option value="fr">Français</option>
-            <option value="es">Español</option>
-          </select>
-          <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9aa0c3" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        <a class="lockup" href="https://holoraid.fun" aria-label="HoloRaid">
+          <svg class="emblem" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true" focusable="false">
+            <defs>
+              <linearGradient id="ring-g" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#76C8FF"/><stop offset="20%" stop-color="#7E7BFF"/><stop offset="46%" stop-color="#8CFFB7"/><stop offset="70%" stop-color="#FFF29A"/><stop offset="86%" stop-color="#FF8B5B"/><stop offset="100%" stop-color="#FF5555"/>
+              </linearGradient>
+              <filter id="gTank" x="-70%" y="-70%" width="240%" height="240%"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#7E7BFF" flood-opacity="0.55"/></filter>
+              <filter id="gHeal" x="-70%" y="-70%" width="240%" height="240%"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#8CFFB7" flood-opacity="0.55"/></filter>
+              <filter id="gDps"  x="-70%" y="-70%" width="240%" height="240%"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#FF8B5B" flood-opacity="0.55"/></filter>
+              <filter id="gRing" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#8C96FF" flood-opacity="0.45"/></filter>
+            </defs>
+            <circle class="ring" cx="256" cy="256" r="230" fill="none" stroke="url(#ring-g)" stroke-width="12" filter="url(#gRing)"/>
+            <g filter="url(#gTank)" transform="translate(256 176) scale(1.18)"><path d="M -46 -48 L -12 -48 L 0 -34 L 12 -48 L 46 -48 L 46 -2 Q 46 32 0 58 Q -46 32 -46 -2 Z" fill="none" stroke="#7E7BFF" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/></g>
+            <g filter="url(#gHeal)" transform="translate(196 322) scale(1.18)"><path d="M 0 -50 L 40 -6 L -40 -6 Z" fill="none" stroke="#8CFFB7" stroke-width="9" stroke-linejoin="round"/><rect x="-40" y="6" width="80" height="13" rx="6" fill="#8CFFB7"/><rect x="-40" y="27" width="80" height="13" rx="6" fill="#8CFFB7"/></g>
+            <g filter="url(#gDps)" transform="translate(316 322) scale(1.12)"><circle r="50" fill="none" stroke="#FF8B5B" stroke-width="7" stroke-dasharray="24 20" stroke-linecap="round"/><circle r="12" fill="#FF8B5B"/><line x1="16.0" y1="0.0" x2="30.0" y2="0.0" stroke="#FF8B5B" stroke-width="8" stroke-linecap="round"/><line x1="0.0" y1="16.0" x2="0.0" y2="30.0" stroke="#FF8B5B" stroke-width="8" stroke-linecap="round"/><line x1="-16.0" y1="0.0" x2="-30.0" y2="0.0" stroke="#FF8B5B" stroke-width="8" stroke-linecap="round"/><line x1="-0.0" y1="-16.0" x2="-0.0" y2="-30.0" stroke="#FF8B5B" stroke-width="8" stroke-linecap="round"/><path d="M 41.0 41.0 L 26.8 17.4 L 17.4 26.8 ZM -41.0 41.0 L -17.4 26.8 L -26.8 17.4 ZM -41.0 -41.0 L -26.8 -17.4 L -17.4 -26.8 ZM 41.0 -41.0 L 17.4 -26.8 L 26.8 -17.4 Z" fill="#FF8B5B"/></g>
+          </svg>
+          <span class="wordmark">HoloRaid</span>
+        </a>
+        <div class="lang" id="langRoot">
+          <button type="button" class="lang-btn" id="langBtn" aria-haspopup="listbox" aria-expanded="false" aria-label="Language">
+            <img class="flag" id="langFlag" src="../flags/us.png" alt="">
+            <span id="langLabel">English</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#9AA0C3" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+          </button>
+          <div class="lang-menu" id="langMenu" role="listbox" aria-label="Language">
+            <button type="button" class="lang-opt" role="option" data-value="en" aria-selected="false">
+              <img class="flag" src="../flags/us.png" alt="" width="21" height="15">
+              <span>English</span>
+              <svg class="i-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#76C8FF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+            </button>
+            <button type="button" class="lang-opt" role="option" data-value="pt" aria-selected="false">
+              <img class="flag" src="../flags/br.png" alt="" width="21" height="15">
+              <span>Português</span>
+              <svg class="i-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#76C8FF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+            </button>
+            <button type="button" class="lang-opt" role="option" data-value="de" aria-selected="false">
+              <img class="flag" src="../flags/de.png" alt="" width="21" height="15">
+              <span>Deutsch</span>
+              <svg class="i-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#76C8FF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+            </button>
+            <button type="button" class="lang-opt" role="option" data-value="fr" aria-selected="false">
+              <img class="flag" src="../flags/fr.png" alt="" width="21" height="15">
+              <span>Français</span>
+              <svg class="i-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#76C8FF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+            </button>
+            <button type="button" class="lang-opt" role="option" data-value="es" aria-selected="false">
+              <img class="flag" src="../flags/es.png" alt="" width="21" height="15">
+              <span>Español</span>
+              <svg class="i-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#76C8FF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+            </button>
+          </div>
         </div>
       </div>
     </header>
@@ -68,9 +210,9 @@
     <!-- ==================== ENGLISH ==================== -->
     <section data-lang="en">
       <h1>Terms of Service</h1>
-      <div class="updated">Last updated: July 17, 2026</div>
+      <div class="updated">Last updated: July 20, 2026</div>
 
-      <p>Welcome to <strong>HoloRaid</strong>. These Terms of Service (“Terms”) govern your use of
+      <p>Welcome to <strong class="hr">HoloRaid</strong>. These Terms of Service (“Terms”) govern your use of
       the HoloRaid website, application and Discord bot (the “service”). By using the service, you
       agree to these Terms. If you do not agree, do not use the service.</p>
 
@@ -138,9 +280,6 @@
       <p>Questions about these Terms:
       <a href="mailto:contato@holoraid.fun">contato@holoraid.fun</a>.</p>
 
-      <div class="note">This document is an initial good-faith template. It does not constitute legal
-      advice — review by a professional is recommended before production use.</div>
-
       <footer>
         <a href="https://holoraid.fun">Home</a>
         <a href="/privacy">Privacy Policy</a>
@@ -150,9 +289,9 @@
     <!-- ==================== PORTUGUÊS ==================== -->
     <section data-lang="pt">
       <h1>Termos de Serviço</h1>
-      <div class="updated">Última atualização: 17 de julho de 2026</div>
+      <div class="updated">Última atualização: 20 de julho de 2026</div>
 
-      <p>Bem-vindo ao <strong>HoloRaid</strong>. Estes Termos de Serviço (“Termos”) regem o uso do
+      <p>Bem-vindo ao <strong class="hr">HoloRaid</strong>. Estes Termos de Serviço (“Termos”) regem o uso do
       site, do aplicativo e do bot do Discord do HoloRaid (o “serviço”). Ao usar o serviço, você
       concorda com estes Termos. Se não concordar, não utilize o serviço.</p>
 
@@ -222,9 +361,6 @@
       <p>Dúvidas sobre estes Termos:
       <a href="mailto:contato@holoraid.fun">contato@holoraid.fun</a>.</p>
 
-      <div class="note">Este documento é um modelo inicial de boa-fé. Ele não constitui
-      aconselhamento jurídico — recomenda-se revisão por um profissional antes de uso em produção.</div>
-
       <footer>
         <a href="https://holoraid.fun">Início</a>
         <a href="/privacy">Política de Privacidade</a>
@@ -234,9 +370,9 @@
     <!-- ==================== DEUTSCH ==================== -->
     <section data-lang="de">
       <h1>Nutzungsbedingungen</h1>
-      <div class="updated">Zuletzt aktualisiert: 17. Juli 2026</div>
+      <div class="updated">Zuletzt aktualisiert: 20. Juli 2026</div>
 
-      <p>Willkommen bei <strong>HoloRaid</strong>. Diese Nutzungsbedingungen („Bedingungen“) regeln
+      <p>Willkommen bei <strong class="hr">HoloRaid</strong>. Diese Nutzungsbedingungen („Bedingungen“) regeln
       die Nutzung der HoloRaid-Website, der Anwendung und des Discord-Bots (der „Dienst“). Durch die
       Nutzung des Dienstes stimmst du diesen Bedingungen zu. Wenn du nicht einverstanden bist, nutze
       den Dienst nicht.</p>
@@ -311,10 +447,6 @@
       <p>Fragen zu diesen Bedingungen:
       <a href="mailto:contato@holoraid.fun">contato@holoraid.fun</a>.</p>
 
-      <div class="note">Dieses Dokument ist eine anfängliche Vorlage nach bestem Wissen. Es stellt
-      keine Rechtsberatung dar — eine Prüfung durch eine Fachkraft wird vor dem Produktiveinsatz
-      empfohlen.</div>
-
       <footer>
         <a href="https://holoraid.fun">Start</a>
         <a href="/privacy">Datenschutzerklärung</a>
@@ -324,9 +456,9 @@
     <!-- ==================== FRANÇAIS ==================== -->
     <section data-lang="fr">
       <h1>Conditions d'utilisation</h1>
-      <div class="updated">Dernière mise à jour : 17 juillet 2026</div>
+      <div class="updated">Dernière mise à jour : 20 juillet 2026</div>
 
-      <p>Bienvenue sur <strong>HoloRaid</strong>. Ces Conditions d'utilisation (« Conditions »)
+      <p>Bienvenue sur <strong class="hr">HoloRaid</strong>. Ces Conditions d'utilisation (« Conditions »)
       régissent l'utilisation du site, de l'application et du bot Discord de HoloRaid (le
       « service »). En utilisant le service, vous acceptez ces Conditions. Si vous n'êtes pas
       d'accord, n'utilisez pas le service.</p>
@@ -400,10 +532,6 @@
       <p>Questions sur ces Conditions :
       <a href="mailto:contato@holoraid.fun">contato@holoraid.fun</a>.</p>
 
-      <div class="note">Ce document est un modèle initial de bonne foi. Il ne constitue pas un
-      conseil juridique — une révision par un professionnel est recommandée avant toute utilisation
-      en production.</div>
-
       <footer>
         <a href="https://holoraid.fun">Accueil</a>
         <a href="/privacy">Politique de confidentialité</a>
@@ -413,9 +541,9 @@
     <!-- ==================== ESPAÑOL ==================== -->
     <section data-lang="es">
       <h1>Términos de Servicio</h1>
-      <div class="updated">Última actualización: 17 de julio de 2026</div>
+      <div class="updated">Última actualización: 20 de julio de 2026</div>
 
-      <p>Bienvenido a <strong>HoloRaid</strong>. Estos Términos de Servicio (“Términos”) rigen el
+      <p>Bienvenido a <strong class="hr">HoloRaid</strong>. Estos Términos de Servicio (“Términos”) rigen el
       uso del sitio, la aplicación y el bot de Discord de HoloRaid (el “servicio”). Al usar el
       servicio, aceptas estos Términos. Si no estás de acuerdo, no utilices el servicio.</p>
 
@@ -486,10 +614,6 @@
       <p>Dudas sobre estos Términos:
       <a href="mailto:contato@holoraid.fun">contato@holoraid.fun</a>.</p>
 
-      <div class="note">Este documento es una plantilla inicial de buena fe. No constituye
-      asesoramiento jurídico — se recomienda la revisión por un profesional antes de su uso en
-      producción.</div>
-
       <footer>
         <a href="https://holoraid.fun">Inicio</a>
         <a href="/privacy">Política de Privacidad</a>
@@ -520,6 +644,9 @@
         return SUPPORTED.indexOf(nav) >= 0 ? nav : 'en';
       }
 
+      var NAMES = { en: 'English', pt: 'Português', de: 'Deutsch', fr: 'Français', es: 'Español' };
+      var FLAG = { en: 'us', pt: 'br', de: 'de', fr: 'fr', es: 'es' };
+
       function apply(lang) {
         if (SUPPORTED.indexOf(lang) < 0) lang = 'en';
         var sections = document.querySelectorAll('[data-lang]');
@@ -528,13 +655,50 @@
         }
         document.documentElement.lang = lang;
         document.title = TITLES[lang] || TITLES.en;
-        var sel = document.getElementById('langSelect');
-        if (sel) sel.value = lang;
+        var label = document.getElementById('langLabel');
+        if (label) label.textContent = NAMES[lang] || lang;
+        var flag = document.getElementById('langFlag');
+        if (flag) flag.src = '../flags/' + (FLAG[lang] || 'us') + '.png';
+        var opts = document.querySelectorAll('.lang-opt');
+        for (var j = 0; j < opts.length; j++) {
+          opts[j].setAttribute('aria-selected', opts[j].getAttribute('data-value') === lang ? 'true' : 'false');
+        }
         try { localStorage.setItem(KEY, lang); } catch (e) {}
       }
 
-      var sel = document.getElementById('langSelect');
-      if (sel) sel.addEventListener('change', function () { apply(sel.value); });
+      var root = document.getElementById('langRoot');
+      var btn = document.getElementById('langBtn');
+      var menu = document.getElementById('langMenu');
+
+      function setOpen(open) {
+        root.classList.toggle('open', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open) {
+          var cur = menu.querySelector('[aria-selected="true"]') || menu.querySelector('.lang-opt');
+          if (cur) cur.focus();
+        }
+      }
+
+      btn.addEventListener('click', function () { setOpen(!root.classList.contains('open')); });
+      menu.addEventListener('click', function (e) {
+        var opt = e.target.closest ? e.target.closest('.lang-opt') : null;
+        if (opt) { apply(opt.getAttribute('data-value')); setOpen(false); btn.focus(); }
+      });
+      document.addEventListener('click', function (e) {
+        if (root.classList.contains('open') && !root.contains(e.target)) setOpen(false);
+      });
+      document.addEventListener('keydown', function (e) {
+        if (!root.classList.contains('open')) return;
+        if (e.key === 'Escape') { setOpen(false); btn.focus(); return; }
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          var list = Array.prototype.slice.call(menu.querySelectorAll('.lang-opt'));
+          var i = list.indexOf(document.activeElement);
+          var next = e.key === 'ArrowDown' ? (i + 1) % list.length : (i - 1 + list.length) % list.length;
+          list[next].focus();
+        }
+      });
+
       apply(pick());
     })();
   </script>

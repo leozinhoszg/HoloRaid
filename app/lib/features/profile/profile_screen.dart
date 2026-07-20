@@ -111,7 +111,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               const Divider(),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8),
-                child: LanguageSelector(),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: GlassLanguageSelector(),
+                ),
               ),
             ],
           ),
