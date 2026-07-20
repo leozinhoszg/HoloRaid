@@ -79,6 +79,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ),
               ),
+              // Seletor de idioma (glass) no canto superior esquerdo: troca todos
+              // os textos na hora via context.setLocale.
+              const SafeArea(
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: GlassLanguageSelector(),
+                  ),
+                ),
+              ),
             ],
           );
         },
@@ -190,8 +201,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       const SizedBox(height: 8),
       Text('login.not_affiliated'.tr(),
           style: const TextStyle(color: LoginPalette.textDim, fontSize: 11)),
-      const SizedBox(height: 12),
-      const LanguageSelector(compact: true),
     ]);
   }
 
