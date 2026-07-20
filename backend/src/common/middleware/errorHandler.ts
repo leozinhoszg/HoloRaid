@@ -3,7 +3,7 @@ import { AppError } from '../errors/AppError';
 import { logger } from '../logger/logger';
 
 export const notFoundHandler: RequestHandler = (_req, res) => {
-  res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Recurso não encontrado' } });
+  res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Resource not found' } });
 };
 
 export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
@@ -14,6 +14,6 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
     });
     return;
   }
-  logger.error({ err, reqId: (req as any).id }, 'Erro não tratado');
+  logger.error({ err, reqId: (req as any).id }, 'Unhandled error');
   res.status(500).json({ error: { code: 'INTERNAL', message: 'Erro interno' } });
 };

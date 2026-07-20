@@ -8,7 +8,7 @@ export function createUserService(deps: Deps) {
   return {
     async getMe(userId: number): Promise<UserRecord> {
       const u = await deps.userRepo.findById(userId);
-      if (!u) throw new NotFoundError('Usuário não encontrado');
+      if (!u) throw new NotFoundError('User not found');
       return u;
     },
     async list(): Promise<UserRecord[]> {
@@ -16,14 +16,14 @@ export function createUserService(deps: Deps) {
     },
     async promote(actorId: number, targetId: number): Promise<void> {
       const target = await deps.userRepo.findById(targetId);
-      if (!target) throw new NotFoundError('Usuário alvo não encontrado');
+      if (!target) throw new NotFoundError('Target user not found');
       await deps.userRepo.updateRole(targetId, 'admin');
       await deps.auditLog({ actor_id: actorId, action: 'promote', target_id: targetId });
     },
     async demote(actorId: number, targetId: number): Promise<void> {
-      if (actorId === targetId) throw new BadRequestError('Você não pode rebaixar a si mesmo');
+      if (actorId === targetId) throw new BadRequestError('You cannot demote yourself');
       const target = await deps.userRepo.findById(targetId);
-      if (!target) throw new NotFoundError('Usuário alvo não encontrado');
+      if (!target) throw new NotFoundError('Target user not found');
       await deps.userRepo.updateRole(targetId, 'user');
       await deps.auditLog({ actor_id: actorId, action: 'demote', target_id: targetId });
     },

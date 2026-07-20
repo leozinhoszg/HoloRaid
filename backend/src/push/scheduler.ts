@@ -19,7 +19,7 @@ export async function runStartingSoonTick(deps: Deps): Promise<number> {
       await deps.raidRepo.markStartingNotified(r.id);
       sent++;
     } catch (err) {
-      logger.error({ err, raid: r.id }, 'push: lembrete falhou');
+      logger.error({ err, raid: r.id }, 'push: reminder failed');
     }
   }
   return sent;
@@ -27,7 +27,7 @@ export async function runStartingSoonTick(deps: Deps): Promise<number> {
 
 export function startScheduler(deps: Deps, intervalMs = 60_000): NodeJS.Timeout {
   const t = setInterval(() => {
-    runStartingSoonTick(deps).catch((err) => logger.error({ err }, 'push: tick falhou'));
+    runStartingSoonTick(deps).catch((err) => logger.error({ err }, 'push: tick failed'));
   }, intervalMs);
   t.unref(); // não segura o processo
   return t;

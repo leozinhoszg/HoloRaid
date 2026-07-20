@@ -4,7 +4,7 @@ import { logger } from '../common/logger/logger';
 
 export function createRaidEventBus(...listeners: RaidBroadcaster[]): RaidBroadcaster {
   const safe = (fn: () => void) => {
-    try { fn(); } catch (err) { logger.error({ err }, 'RaidEventBus: ouvinte falhou'); }
+    try { fn(); } catch (err) { logger.error({ err }, 'RaidEventBus: listener failed'); }
   };
   return {
     raidCreated(detail: RaidDetail) { for (const l of listeners) safe(() => l.raidCreated(detail)); },

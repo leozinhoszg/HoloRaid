@@ -14,24 +14,24 @@ const fields = {
 function refine(data: any, ctx: z.RefinementCtx) {
   const style = combatStyleByName(data.classe);
   if (!style) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['classe'], message: 'Combat Style inexistente' });
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['classe'], message: 'Combat Style does not exist' });
     return;
   }
   if (style.faccao !== data.faccao) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['classe'], message: 'Combat Style não pertence à facção' });
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['classe'], message: 'Combat Style does not belong to the faction' });
   }
   if (!style.allowedRoles.includes(data.role)) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['role'], message: 'Role não permitida para a classe' });
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['role'], message: 'Role not allowed for this class' });
   }
   if (data.origin_story && data.origin_story !== style.originStory) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['origin_story'], message: 'Origin Story não bate com a classe' });
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['origin_story'], message: 'Origin Story does not match the class' });
   }
   if (data.especializacao) {
     const disc = disciplineByName(data.especializacao);
     if (!disc || disc.combatStyle !== data.classe) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['especializacao'], message: 'Disciplina não pertence à classe' });
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['especializacao'], message: 'Discipline does not belong to the class' });
     } else if (disc.role !== data.role) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['especializacao'], message: 'Role da disciplina diverge da role escolhida' });
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['especializacao'], message: 'Discipline role differs from the chosen role' });
     }
   }
 }

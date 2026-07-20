@@ -35,7 +35,7 @@ export function createAuthController(authService: AuthService) {
     async refresh(req: Request, res: Response) {
       const body = req.body as { refreshToken?: string; device?: string };
       const raw = body.refreshToken ?? (req.cookies?.[COOKIE] as string | undefined);
-      if (!raw) throw new UnauthorizedError('Refresh ausente');
+      if (!raw) throw new UnauthorizedError('Missing refresh token');
       const pair = await authService.rotate(raw, body.device ?? 'web');
       setRefreshCookie(res, pair.refreshToken, pair.refreshExpiresAt);
       res.json({ accessToken: pair.accessToken, refreshToken: pair.refreshToken });

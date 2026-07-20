@@ -44,7 +44,7 @@ export async function exchangeCodeForProfile(
   });
   if (!tokenRes.ok) throw new UnauthorizedError('Falha ao trocar o code do Discord');
   const token = (await tokenRes.json()) as { access_token?: string };
-  if (!token.access_token) throw new UnauthorizedError('Discord não retornou access_token');
+  if (!token.access_token) throw new UnauthorizedError('Discord did not return an access_token');
 
   const meRes = await doFetch(ME_URL, { headers: { Authorization: `Bearer ${token.access_token}` } });
   if (!meRes.ok) throw new UnauthorizedError('Falha ao buscar perfil do Discord');

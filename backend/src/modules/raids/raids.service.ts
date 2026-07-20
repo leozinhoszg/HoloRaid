@@ -33,7 +33,7 @@ export function createRaidService(deps: { raidRepo: RaidRepo; raidPlayerRepo: Ra
   }
   async function load(id: number): Promise<RaidRecord> {
     const raid = await deps.raidRepo.findById(id);
-    if (!raid) throw new NotFoundError('Raid não encontrada');
+    if (!raid) throw new NotFoundError('Raid not found');
     return raid;
   }
 
@@ -50,7 +50,7 @@ export function createRaidService(deps: { raidRepo: RaidRepo; raidPlayerRepo: Ra
     },
     async getByCodigo(codigo: string): Promise<RaidDetail> {
       const raid = await deps.raidRepo.findByCodigo(codigo);
-      if (!raid) throw new NotFoundError('Raid não encontrada');
+      if (!raid) throw new NotFoundError('Raid not found');
       return detail(raid);
     },
     async update(actor: Actor, id: number, patch: Partial<CreateInput>): Promise<RaidDetail> {

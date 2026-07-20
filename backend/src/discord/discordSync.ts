@@ -27,7 +27,7 @@ export function createDiscordSyncCore(deps: Deps) {
         try {
           const messageId = await deps.gateway.postEmbed(g.raid_channel_id, embed, opts);
           await deps.msgRepo.create({ raid_id: detail.id, guild_id: g.guild_id, channel_id: g.raid_channel_id, message_id: messageId });
-        } catch (err) { logger.error({ err, guild: g.guild_id }, 'discord: post falhou'); }
+        } catch (err) { logger.error({ err, guild: g.guild_id }, 'discord: post failed'); }
       }
     },
     async onUpdated(detail: RaidDetail, event: string): Promise<void> {
@@ -36,13 +36,13 @@ export function createDiscordSyncCore(deps: Deps) {
         try {
           await deps.gateway.editEmbed(m.channel_id, m.message_id, embed);
           if (event === 'raidFull') await deps.gateway.postMessage(m.channel_id, '🔴 Raid full — starting soon!', NO_PING);
-        } catch (err) { logger.error({ err, channel: m.channel_id }, 'discord: edit falhou'); }
+        } catch (err) { logger.error({ err, channel: m.channel_id }, 'discord: edit failed'); }
       }
     },
     async onRemoved(id: number): Promise<void> {
       for (const m of await deps.msgRepo.listByRaid(id)) {
         try { await deps.gateway.deleteMessage(m.channel_id, m.message_id); }
-        catch (err) { logger.error({ err, channel: m.channel_id }, 'discord: delete falhou'); }
+        catch (err) { logger.error({ err, channel: m.channel_id }, 'discord: delete failed'); }
       }
       await deps.msgRepo.deleteByRaid(id);
     },
@@ -54,7 +54,7 @@ export function createDiscordSyncCore(deps: Deps) {
         await deps.msgRepo.create({ raid_id: detail.id, guild_id: guildId, channel_id: channelId, message_id: messageId });
         return 'posted';
       } catch (err) {
-        logger.error({ err, channel: channelId }, 'discord: report falhou');
+        logger.error({ err, channel: channelId }, 'discord: report failed');
         return 'failed';
       }
     },
@@ -65,7 +65,7 @@ export function createDiscordSync(deps: Deps): RaidBroadcaster & {
   reportTo(detail: RaidDetail, guildId: string, channelId: string): Promise<'posted' | 'exists' | 'failed'>;
 } {
   const core = createDiscordSyncCore(deps);
-  const run = (p: Promise<unknown>) => { p.catch((err) => logger.error({ err }, 'discord sync falhou')); };
+  const run = (p: Promise<unknown>) => { p.catch((err) => logger.error({ err }, 'discord sync failed')); };
   return {
     raidCreated(detail) { run(core.onCreated(detail)); },
     raidUpdated(detail, event) { run(core.onUpdated(detail, event)); },

@@ -86,7 +86,7 @@ export function attachBot(client: Client, deps: { token: string; clientId: strin
   new REST({ version: '10' }).setToken(deps.token)
     .put(Routes.applicationCommands(deps.clientId), { body: buildCommandDefs() })
     .then(() => logger.info('Discord: slash commands registrados'))
-    .catch((err) => logger.error({ err }, 'Discord: falha ao registrar commands'));
+    .catch((err) => logger.error({ err }, 'Discord: failed to register commands'));
 
   client.on(Events.InteractionCreate, async (interaction) => {
     try {
@@ -110,7 +110,7 @@ export function attachBot(client: Client, deps: { token: string; clientId: strin
         else if (i.customId.startsWith('hr:pick:')) await handleCharacterPick(i, deps);
       }
     } catch (err) {
-      logger.error({ err, cmd: interaction.isCommand() ? interaction.commandName : (interaction as any).customId }, 'Discord: erro na interação');
+      logger.error({ err, cmd: interaction.isCommand() ? interaction.commandName : (interaction as any).customId }, 'Discord: interaction error');
       if (interaction.isRepliable()) {
         // Se já deferimos/respondemos, o reply falharia ("already acknowledged") — usar followUp.
         const payload = { content: 'Something went wrong.', flags: MessageFlags.Ephemeral } as const;
@@ -120,7 +120,7 @@ export function attachBot(client: Client, deps: { token: string; clientId: strin
     }
   });
 
-  client.login(deps.token).catch((err) => logger.error({ err }, 'Discord: falha no login (bot desativado)'));
+  client.login(deps.token).catch((err) => logger.error({ err }, 'Discord: login failed (bot disabled)'));
 }
 
 export function createDiscordClient(): Client {

@@ -14,7 +14,7 @@ declare global {
 export const requireAuth: RequestHandler = (req, _res, next) => {
   const header = req.headers.authorization;
   if (!header?.startsWith('Bearer ')) {
-    return next(new UnauthorizedError('Token ausente'));
+    return next(new UnauthorizedError('Missing token'));
   }
   try {
     req.user = verifyAccessToken(header.slice(7));

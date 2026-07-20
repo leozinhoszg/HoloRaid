@@ -40,7 +40,7 @@ export function createNotificationService(deps: Deps) {
 
   const rosterIds = (d: RaidDetail) => [...new Set(d.roster.map((r) => r.usuario_id))];
   // Best-effort: push nunca derruba o fluxo que o chamou.
-  const guard = (p: Promise<void>) => p.catch((err) => { logger.error({ err }, 'push: envio falhou'); });
+  const guard = (p: Promise<void>) => p.catch((err) => { logger.error({ err }, 'push: send failed'); });
 
   return {
     async slotConfirmed(userId: number, detail: RaidDetail): Promise<void> {

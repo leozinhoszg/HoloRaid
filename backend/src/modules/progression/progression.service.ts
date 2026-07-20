@@ -15,7 +15,7 @@ export function createProgressionService(deps: Deps) {
   }
 
   async function ensureExists(usuarioId: number) {
-    if (!(await deps.userRepo.findById(usuarioId))) throw new NotFoundError('Usuário não encontrado');
+    if (!(await deps.userRepo.findById(usuarioId))) throw new NotFoundError('User not found');
   }
 
   return {

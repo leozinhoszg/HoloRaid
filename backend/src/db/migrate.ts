@@ -47,7 +47,7 @@ export async function migrateToLatest(): Promise<void> {
     console.log(`${r.status === 'Success' ? 'OK' : 'FALHA'}: ${r.migrationName}`);
   });
   if (error) {
-    console.error('Migration falhou:', error);
+    console.error('Migration failed:', error);
     process.exit(1);
   }
 }

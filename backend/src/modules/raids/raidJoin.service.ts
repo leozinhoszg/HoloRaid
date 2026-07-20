@@ -15,12 +15,12 @@ export function createRaidJoinService(deps: Deps) {
   return {
     async join(actorId: number, raidId: number, personagemId: number): Promise<{ status: 'confirmed' | 'waitlist' }> {
       const raid = await deps.raidRepo.findById(raidId);
-      if (!raid) throw new NotFoundError('Raid não encontrada');
-      if (raid.status !== 'OPEN') throw new ConflictError('A raid não está aberta para inscrições');
+      if (!raid) throw new NotFoundError('Raid not found');
+      if (raid.status !== 'OPEN') throw new ConflictError('This raid is not open for sign-ups');
 
       const pers = await deps.personagemRepo.findById(personagemId);
-      if (!pers) throw new NotFoundError('Personagem não encontrado');
-      if (pers.usuario_id !== actorId) throw new ForbiddenError('Você só inscreve o seu personagem');
+      if (!pers) throw new NotFoundError('Character not found');
+      if (pers.usuario_id !== actorId) throw new ForbiddenError('You can only sign up your own character');
       if (pers.faccao !== raid.faction) throw new ValidationError(`Personagem é ${pers.faccao}; a raid é ${raid.faction}`);
 
       const user = await deps.userRepo.findById(actorId);
@@ -28,7 +28,7 @@ export function createRaidJoinService(deps: Deps) {
       if (tier < raid.minimum_tier) {
         throw new ValidationError(`Sua conta possui Tier ${tier}. Esta raid exige Tier ${raid.minimum_tier} ou superior.`);
       }
-      if (await deps.raidPlayerRepo.findByRaidAndUser(raidId, actorId)) throw new ConflictError('Você já está nesta raid');
+      if (await deps.raidPlayerRepo.findByRaidAndUser(raidId, actorId)) throw new ConflictError('You are already in this raid');
 
       const confirmed = (await deps.raidPlayerRepo.listByRaid(raidId)).filter((p) => p.status === 'confirmed');
       let status: 'confirmed' | 'waitlist';
@@ -44,10 +44,10 @@ export function createRaidJoinService(deps: Deps) {
 
     async leave(actorId: number, raidId: number): Promise<{ promoted?: number }> {
       const raid = await deps.raidRepo.findById(raidId);
-      if (!raid) throw new NotFoundError('Raid não encontrada');
-      if (raid.status !== 'OPEN') throw new ConflictError('Só é possível sair de uma raid aberta');
+      if (!raid) throw new NotFoundError('Raid not found');
+      if (raid.status !== 'OPEN') throw new ConflictError('You can only leave an open raid');
       const me = await deps.raidPlayerRepo.findByRaidAndUser(raidId, actorId);
-      if (!me) throw new NotFoundError('Você não está nesta raid');
+      if (!me) throw new NotFoundError('You are not in this raid');
 
       const wasConfirmed = me.status === 'confirmed';
       const freedRole = me.role;

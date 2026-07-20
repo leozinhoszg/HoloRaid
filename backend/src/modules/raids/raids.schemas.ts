@@ -18,7 +18,7 @@ const commonFields = {
 
 export const raidCreateSchema = z.object(commonFields).superRefine((d, ctx) => {
   if (!OPERATIONS.includes(d.operation)) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['operation'], message: 'Operation inválida' });
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['operation'], message: 'Invalid Operation' });
   }
   if (d.slots_tank + d.slots_heal + d.slots_dps !== d.size) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['slots_dps'], message: 'slots devem somar o size' });

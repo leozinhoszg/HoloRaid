@@ -29,7 +29,7 @@ export function createDiscordDmGateway(client: Client, appPublicUrl: string): Dm
           await user.send({ embeds: [embed] });
         } catch (err) {
           // 50007 = DMs desativadas ou sem servidor em comum. Best-effort: segue para o próximo.
-          logger.warn({ err, discordId: id }, 'discord: DM não entregue');
+          logger.warn({ err, discordId: id }, 'discord: DM not delivered');
         }
       }
     },

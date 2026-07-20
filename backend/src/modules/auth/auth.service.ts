@@ -57,16 +57,16 @@ export function createAuthService(deps: Deps) {
 
     async rotate(rawRefresh: string, device: string | null): Promise<TokenPair> {
       const rec = await deps.refreshRepo.findByHash(hashToken(rawRefresh));
-      if (!rec) throw new UnauthorizedError('Refresh inválido');
+      if (!rec) throw new UnauthorizedError('Invalid refresh token');
       if (rec.revoked_at) {
         // Reuso de token já revogado: possível roubo → mata a família toda.
         await deps.refreshRepo.revokeFamily(rec.family_id);
-        throw new UnauthorizedError('Refresh reutilizado — sessão revogada');
+        throw new UnauthorizedError('Refresh token reused — session revoked');
       }
-      if (rec.expires_at.getTime() <= now().getTime()) throw new UnauthorizedError('Refresh expirado');
+      if (rec.expires_at.getTime() <= now().getTime()) throw new UnauthorizedError('Refresh token expired');
 
       const user = await deps.userRepo.findById(rec.usuario_id);
-      if (!user) throw new UnauthorizedError('Usuário inexistente');
+      if (!user) throw new UnauthorizedError('User does not exist');
 
       await deps.refreshRepo.revokeById(rec.id);
       return issue(user, rec.family_id, device);

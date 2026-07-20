@@ -16,13 +16,13 @@ export function verifyAccessToken(token: string): AccessClaims {
   const cfg = getConfig();
   try {
     const decoded = jwt.verify(token, cfg.JWT_SECRET, { algorithms: ['HS256'] });
-    if (typeof decoded !== 'object' || decoded === null) throw new Error('claims inválidas');
+    if (typeof decoded !== 'object' || decoded === null) throw new Error('Invalid claims');
     const { sub, role } = decoded as Record<string, unknown>;
     if (typeof sub !== 'number' || (role !== 'user' && role !== 'admin')) {
-      throw new Error('claims inválidas');
+      throw new Error('Invalid claims');
     }
     return { sub, role };
   } catch {
-    throw new UnauthorizedError('Token inválido ou expirado');
+    throw new UnauthorizedError('Invalid or expired token');
   }
 }

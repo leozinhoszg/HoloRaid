@@ -15,21 +15,21 @@ const view = (p: PersonagemRecord, points: number): CharacterView => ({
 // Revalida coerência cross-field (usado no update sobre o registro mesclado).
 function assertCoerente(p: Pick<PersonagemRecord, 'faccao' | 'classe' | 'role' | 'especializacao' | 'origin_story'>) {
   const style = combatStyleByName(p.classe);
-  if (!style || style.faccao !== p.faccao) throw new ValidationError('Combat Style inválido para a facção');
-  if (!style.allowedRoles.includes(p.role)) throw new ValidationError('Role não permitida para a classe');
-  if (p.origin_story && p.origin_story !== style.originStory) throw new ValidationError('Origin Story não bate com a classe');
+  if (!style || style.faccao !== p.faccao) throw new ValidationError('Invalid Combat Style for the faction');
+  if (!style.allowedRoles.includes(p.role)) throw new ValidationError('Role not allowed for this class');
+  if (p.origin_story && p.origin_story !== style.originStory) throw new ValidationError('Origin Story does not match the class');
   if (p.especializacao) {
     const disc = disciplineByName(p.especializacao);
-    if (!disc || disc.combatStyle !== p.classe) throw new ValidationError('Disciplina não pertence à classe');
-    if (disc.role !== p.role) throw new ValidationError('Role da disciplina diverge da role');
+    if (!disc || disc.combatStyle !== p.classe) throw new ValidationError('Discipline does not belong to the class');
+    if (disc.role !== p.role) throw new ValidationError('Discipline role differs from the chosen role');
   }
 }
 
 export function createCharacterService(deps: { personagemRepo: PersonagemRepo; raidPlayerRepo: RaidPlayerRepo; userRepo: UserRepo }) {
   async function owned(actorId: number, id: number): Promise<PersonagemRecord> {
     const p = await deps.personagemRepo.findById(id);
-    if (!p) throw new NotFoundError('Personagem não encontrado');
-    if (p.usuario_id !== actorId) throw new ForbiddenError('Personagem de outro usuário');
+    if (!p) throw new NotFoundError('Character not found');
+    if (p.usuario_id !== actorId) throw new ForbiddenError('Character belongs to another user');
     return p;
   }
   async function pointsOf(usuarioId: number): Promise<number> {
@@ -47,7 +47,7 @@ export function createCharacterService(deps: { personagemRepo: PersonagemRepo; r
     },
     async get(id: number): Promise<CharacterView> {
       const p = await deps.personagemRepo.findById(id);
-      if (!p) throw new NotFoundError('Personagem não encontrado');
+      if (!p) throw new NotFoundError('Character not found');
       return view(p, await pointsOf(p.usuario_id));
     },
     async update(actorId: number, id: number, patch: Partial<PersonagemInput>): Promise<CharacterView> {
@@ -61,7 +61,7 @@ export function createCharacterService(deps: { personagemRepo: PersonagemRepo; r
       await owned(actorId, id);
       // A FK fk_rp_personagem (007) recusaria isso no banco; aqui viramos um 409 de domínio.
       if (await deps.raidPlayerRepo.existsByPersonagem(id)) {
-        throw new ConflictError('Este personagem está inscrito em uma raid. Saia da raid antes de apagá-lo.');
+        throw new ConflictError('This character is signed up for a raid. Leave the raid before deleting it.');
       }
       await deps.personagemRepo.delete(id);
     },
