@@ -30,11 +30,12 @@ describe('bosses seed', () => {
     expect(BOSSES_SEED.reduce((s, b) => s + b.points, 0)).toBe(105);
   });
 
-  it('contagem por tipo: boss=88, timer=8, lair=9', () => {
+  it('contagem por tipo: boss=90, timer=8, lair=7', () => {
+    // Hateful/Dreadful Entity migraram de lair p/ boss secreto (Scum and Villainy / Terror From Beyond).
     const by = (t: string) => BOSSES_SEED.filter((b) => b.type === t).reduce((s, b) => s + b.points, 0);
-    expect(by('boss')).toBe(88);
+    expect(by('boss')).toBe(90);
     expect(by('timer')).toBe(8);
-    expect(by('lair')).toBe(9);
+    expect(by('lair')).toBe(7);
   });
 
   it('timers não têm dificuldade', () => {

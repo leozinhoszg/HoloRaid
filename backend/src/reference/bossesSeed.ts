@@ -30,7 +30,11 @@ export const BOSSES_SEED: BossSeed[] = [
   // type 'boss' — Veteran + Master
   ...both('Explosive Conflict', ['Zorn & Toth', 'Tanks', 'Minefield', 'Kephess']),
   ...both('Terror From Beyond', ['Writhing Horror', 'Dread Guards', 'Operator IX', 'Kephess', 'Terror From Beyond']),
+  // Dreadful Entity: boss secreto de Terror From Beyond (só Veteran)
+  { operation: 'Terror From Beyond', boss: 'Dreadful Entity', difficulty: 'Veteran', type: 'boss', points: 1 },
   ...both('Scum and Villainy', ['Dash', 'Titan 6', 'Thrasher', 'Operations Chief', 'Olok', 'Warlords', 'Styrak']),
+  // Hateful Entity: boss secreto de Scum and Villainy (só Master)
+  { operation: 'Scum and Villainy', boss: 'Hateful Entity', difficulty: 'Master', type: 'boss', points: 1 },
   ...both('Dread Fortress', ['Nefra', 'Draxus', "Grob'Thok", 'Corrupter Zero', 'Brontes']),
   ...both('Dread Palace', ['Bestia', 'Tyrans', 'Calphayus', 'Raptus', 'Council']),
   ...both('Dxun', ['Red', 'Lights Out', 'According to Plan', 'Trandoshans', 'Huntmaster', 'Apex']),
@@ -48,5 +52,4 @@ export const BOSSES_SEED: BossSeed[] = [
   { operation: 'XR-53', boss: 'XR-53', difficulty: 'Veteran', type: 'lair', points: 1 },
   { operation: 'XR-53', boss: 'XR-53', difficulty: 'Master', type: 'lair', points: 1 },
   lair('Golden Fury', 'Veteran'), lair('Eyeless', 'Veteran'), lair('Xeno', 'Veteran'),
-  lair('Hateful Entity', 'Master'), lair('Dreadful Entity', 'Veteran'),
 ];

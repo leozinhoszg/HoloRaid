@@ -157,7 +157,10 @@
   },
   "progression": {
     "saved": "Progression enregistrée",
-    "save": "Enregistrer la progression"
+    "save": "Enregistrer la progression",
+    "lair_bosses": "Lair Bosses",
+    "timers": "Timers",
+    "timed": "Timed"
   },
   "admin": {
     "role_admin": "Admin",
