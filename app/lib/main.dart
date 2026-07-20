@@ -35,7 +35,18 @@ class HoloRaidApp extends ConsumerWidget {
       localizationsDelegates: context.localizationDelegates,
       // Fundo holográfico global: com os Scaffold transparentes (tema), toda tela
       // renderiza sobre o starfield/glow, garantindo consistência visual.
-      builder: (context, child) => HoloBackground(child: child ?? const SizedBox.shrink()),
+      //
+      // KeyedSubtree com chave no locale: como as telas usam `'chave'.tr()` (sem
+      // context, lê o singleton global e NÃO cria dependência do Localizations),
+      // uma troca de idioma não rebuildaria a página em cache do go_router.
+      // Trocar a Key força o subtree roteado a reconstruir → todos os `.tr()`
+      // reavaliam na hora, preservando a rota atual.
+      builder: (context, child) => HoloBackground(
+        child: KeyedSubtree(
+          key: ValueKey(context.locale.languageCode),
+          child: child ?? const SizedBox.shrink(),
+        ),
+      ),
     );
   }
 }
