@@ -205,10 +205,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   /// Termos/Privacidade são páginas HTML estáticas (app/web/{terms,privacy}) —
-  /// abre em nova aba (web) ou no navegador externo (mobile).
+  /// abre em nova aba (web) ou no navegador externo (mobile). Passa o idioma
+  /// atual do app via `?lang=` para a página abrir já traduzida.
   Future<void> _openLegal(String page) async {
     final base = kIsWeb ? Uri.base.origin : AppConfig.appPublicUrl;
-    final uri = Uri.parse('$base/$page/index.html');
+    final lang = context.locale.languageCode;
+    final uri = Uri.parse('$base/$page/index.html?lang=$lang');
     await launchUrl(uri, webOnlyWindowName: '_blank', mode: LaunchMode.externalApplication);
   }
 }

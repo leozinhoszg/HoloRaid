@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="index,follow" />
-  <title>Termos de Serviço — HoloRaid</title>
+  <title>Terms of Service — HoloRaid</title>
   <style>
     :root { color-scheme: dark; }
     * { box-sizing: border-box; }
@@ -16,6 +16,7 @@
     }
     .wrap { max-width: 820px; margin: 0 auto; padding: 48px 20px 80px; }
     header { border-bottom: 1px solid #2a2e52; padding-bottom: 20px; margin-bottom: 28px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
     .brand { font-weight: 800; letter-spacing: .5px; font-size: 20px; color: #a5b4ff;
       text-shadow: 0 0 12px rgba(120,140,255,.5); text-decoration: none; }
     h1 { font-size: 30px; margin: 14px 0 6px; }
@@ -29,93 +30,513 @@
     footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid #2a2e52;
       color: #8b90b5; font-size: 14px; }
     footer a { margin-right: 16px; }
+    /* Seletor de idioma em pílula "glass" (consistente com o app) */
+    .lang { position: relative; display: inline-flex; align-items: center; }
+    .lang svg { position: absolute; left: 12px; pointer-events: none; opacity: .8; }
+    .lang select {
+      appearance: none; -webkit-appearance: none;
+      background: rgba(14,18,40,.55); color: #eaecf7;
+      border: 1px solid rgba(120,140,255,.28); border-radius: 999px;
+      padding: 8px 34px 8px 34px; font-size: 13px; font-family: inherit;
+      cursor: pointer; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    }
+    .lang select:focus { outline: none; border-color: rgba(120,140,255,.5); }
+    .lang .chev { position: absolute; right: 12px; pointer-events: none; opacity: .7; }
+    [data-lang] { display: none; }
+    [data-lang].active { display: block; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <a class="brand" href="https://holoraid.fun">HoloRaid</a>
-      <h1>Termos de Serviço</h1>
-      <div class="updated">Última atualização: 17 de julho de 2026</div>
+      <div class="topbar">
+        <a class="brand" href="https://holoraid.fun">HoloRaid</a>
+        <div class="lang">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa0c3" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20a15 15 0 0 1 0-20"/></svg>
+          <select id="langSelect" aria-label="Language">
+            <option value="en">English</option>
+            <option value="pt">Português</option>
+            <option value="de">Deutsch</option>
+            <option value="fr">Français</option>
+            <option value="es">Español</option>
+          </select>
+          <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9aa0c3" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
     </header>
 
-    <p>Bem-vindo ao <strong>HoloRaid</strong>. Estes Termos de Serviço (“Termos”) regem o uso do
-    site, do aplicativo e do bot do Discord do HoloRaid (o “serviço”). Ao usar o serviço, você
-    concorda com estes Termos. Se não concordar, não utilize o serviço.</p>
+    <!-- ==================== ENGLISH ==================== -->
+    <section data-lang="en">
+      <h1>Terms of Service</h1>
+      <div class="updated">Last updated: July 17, 2026</div>
 
-    <h2>1. O que é o HoloRaid</h2>
-    <p>O HoloRaid é uma ferramenta feita por fãs para organizar Operations (raids) do jogo
-    <em>Star Wars: The Old Republic</em> (SWTOR): cadastro de personagens, progressão PvE,
-    criação e gerenciamento de raids, lista de espera e integração com o Discord (comandos,
-    anúncios e notificações), com sincronização em tempo real.</p>
+      <p>Welcome to <strong>HoloRaid</strong>. These Terms of Service (“Terms”) govern your use of
+      the HoloRaid website, application and Discord bot (the “service”). By using the service, you
+      agree to these Terms. If you do not agree, do not use the service.</p>
 
-    <h2>2. Não afiliação / marcas</h2>
-    <p>O HoloRaid é um projeto <strong>não oficial, feito por fãs</strong>, e <strong>não é
-    afiliado, patrocinado nem endossado</strong> pela BioWare, Electronic Arts, Lucasfilm, Disney
-    ou pelo Discord. “Star Wars”, “The Old Republic”, “SWTOR” e marcas relacionadas pertencem aos
-    seus respectivos titulares. O uso dessas referências ocorre de forma nominativa, sem
-    reivindicação de propriedade.</p>
+      <h2>1. What HoloRaid is</h2>
+      <p>HoloRaid is a fan-made tool for organizing Operations (raids) in
+      <em>Star Wars: The Old Republic</em> (SWTOR): character registration, PvE progression, raid
+      creation and management, waitlist, and Discord integration (commands, announcements and
+      notifications), with real-time synchronization.</p>
 
-    <h2>3. Elegibilidade e conta</h2>
-    <ul>
-      <li>Você deve ter pelo menos 13 anos (ou a idade mínima exigida pelo Discord na sua
-      região) e cumprir os Termos do Discord.</li>
-      <li>O acesso é feito via login do Discord (OAuth2). Você é responsável pela atividade na
-      sua conta.</li>
-    </ul>
+      <h2>2. No affiliation / trademarks</h2>
+      <p>HoloRaid is an <strong>unofficial, fan-made project</strong> and is <strong>not affiliated
+      with, sponsored by, or endorsed by</strong> BioWare, Electronic Arts, Lucasfilm, Disney or
+      Discord. “Star Wars”, “The Old Republic”, “SWTOR” and related marks belong to their respective
+      owners. Such references are used nominatively, without any claim of ownership.</p>
 
-    <h2>4. Uso aceitável</h2>
-    <p>Você concorda em não:</p>
-    <ul>
-      <li>usar o serviço para fins ilegais, abusivos, fraudulentos ou que violem direitos de
-      terceiros;</li>
-      <li>tentar burlar autenticação, autorização ou limites do serviço, ou interferir na sua
-      operação (ex.: sobrecarga, exploração de falhas);</li>
-      <li>publicar conteúdo ofensivo, spam ou enganoso por meio dos recursos do serviço;</li>
-      <li>usar o bot ou a API de forma automatizada além do uso normal pretendido.</li>
-    </ul>
+      <h2>3. Eligibility and account</h2>
+      <ul>
+        <li>You must be at least 13 years old (or the minimum age required by Discord in your
+        region) and comply with Discord's Terms.</li>
+        <li>Access is via Discord login (OAuth2). You are responsible for the activity on your
+        account.</li>
+      </ul>
 
-    <h2>5. Conteúdo do usuário</h2>
-    <p>Você mantém a titularidade das informações que fornece (como nomes de personagens e
-    anotações de raid). Ao inseri-las, você concede ao HoloRaid uma licença limitada para
-    armazenar, exibir e processar esse conteúdo <strong>com a finalidade de operar o
-    serviço</strong> — inclusive exibi-lo a outros usuários no roster das raids e nos anúncios do
-    Discord, conforme descrito na <a href="/privacy">Política de Privacidade</a>.</p>
+      <h2>4. Acceptable use</h2>
+      <p>You agree not to:</p>
+      <ul>
+        <li>use the service for illegal, abusive, fraudulent purposes or in a way that violates the
+        rights of others;</li>
+        <li>attempt to bypass authentication, authorization or service limits, or interfere with its
+        operation (e.g. overload, exploiting flaws);</li>
+        <li>post offensive, spam or misleading content through the service's features;</li>
+        <li>use the bot or the API in an automated way beyond the normal intended use.</li>
+      </ul>
 
-    <h2>6. Papel de administrador</h2>
-    <p>Administradores podem criar, editar, cancelar, encerrar, duplicar e excluir raids, além de
-    gerenciar papéis de usuários. Essas ações são registradas para auditoria.</p>
+      <h2>5. User content</h2>
+      <p>You retain ownership of the information you provide (such as character names and raid
+      notes). By entering it, you grant HoloRaid a limited license to store, display and process
+      that content <strong>for the purpose of operating the service</strong> — including displaying
+      it to other users in the raid roster and in Discord announcements, as described in the
+      <a href="/privacy">Privacy Policy</a>.</p>
 
-    <h2>7. Disponibilidade e “no estado em que se encontra”</h2>
-    <p>O serviço é fornecido <strong>“no estado em que se encontra” e “conforme disponível”</strong>,
-    sem garantias de qualquer tipo, expressas ou implícitas. Não garantimos que o serviço será
-    ininterrupto, livre de erros ou de que os dados estarão sempre disponíveis. Recursos podem
-    mudar ou ser descontinuados.</p>
+      <h2>6. Administrator role</h2>
+      <p>Administrators can create, edit, cancel, finish, duplicate and delete raids, as well as
+      manage user roles. These actions are logged for auditing.</p>
 
-    <h2>8. Limitação de responsabilidade</h2>
-    <p>Na máxima extensão permitida por lei, o HoloRaid e seus mantenedores não se
-    responsabilizam por danos indiretos, incidentais ou consequentes decorrentes do uso ou da
-    impossibilidade de uso do serviço, incluindo perda de dados.</p>
+      <h2>7. Availability and “as is”</h2>
+      <p>The service is provided <strong>“as is” and “as available”</strong>, without warranties of
+      any kind, express or implied. We do not guarantee that the service will be uninterrupted,
+      error-free, or that data will always be available. Features may change or be discontinued.</p>
 
-    <h2>9. Suspensão e encerramento</h2>
-    <p>Podemos suspender ou encerrar o acesso que viole estes Termos. Você pode parar de usar o
-    serviço e solicitar a exclusão da sua conta a qualquer momento (ver Política de Privacidade).</p>
+      <h2>8. Limitation of liability</h2>
+      <p>To the maximum extent permitted by law, HoloRaid and its maintainers are not liable for
+      indirect, incidental or consequential damages arising from the use of or inability to use the
+      service, including data loss.</p>
 
-    <h2>10. Alterações</h2>
-    <p>Podemos atualizar estes Termos. A data de “Última atualização” indica a versão vigente. O
-    uso continuado após mudanças significa aceitação da versão atualizada.</p>
+      <h2>9. Suspension and termination</h2>
+      <p>We may suspend or terminate access that violates these Terms. You may stop using the
+      service and request deletion of your account at any time (see the Privacy Policy).</p>
 
-    <h2>11. Contato</h2>
-    <p>Dúvidas sobre estes Termos:
-    <a href="mailto:contato@holoraid.fun">contato@holoraid.fun</a>.</p>
+      <h2>10. Changes</h2>
+      <p>We may update these Terms. The “Last updated” date indicates the current version. Continued
+      use after changes means acceptance of the updated version.</p>
 
-    <div class="note">Este documento é um modelo inicial de boa-fé. Ele não constitui
-    aconselhamento jurídico — recomenda-se revisão por um profissional antes de uso em produção.</div>
+      <h2>11. Contact</h2>
+      <p>Questions about these Terms:
+      <a href="mailto:contato@holoraid.fun">contato@holoraid.fun</a>.</p>
 
-    <footer>
-      <a href="https://holoraid.fun">Início</a>
-      <a href="/privacy">Política de Privacidade</a>
-    </footer>
+      <div class="note">This document is an initial good-faith template. It does not constitute legal
+      advice — review by a professional is recommended before production use.</div>
+
+      <footer>
+        <a href="https://holoraid.fun">Home</a>
+        <a href="/privacy">Privacy Policy</a>
+      </footer>
+    </section>
+
+    <!-- ==================== PORTUGUÊS ==================== -->
+    <section data-lang="pt">
+      <h1>Termos de Serviço</h1>
+      <div class="updated">Última atualização: 17 de julho de 2026</div>
+
+      <p>Bem-vindo ao <strong>HoloRaid</strong>. Estes Termos de Serviço (“Termos”) regem o uso do
+      site, do aplicativo e do bot do Discord do HoloRaid (o “serviço”). Ao usar o serviço, você
+      concorda com estes Termos. Se não concordar, não utilize o serviço.</p>
+
+      <h2>1. O que é o HoloRaid</h2>
+      <p>O HoloRaid é uma ferramenta feita por fãs para organizar Operations (raids) do jogo
+      <em>Star Wars: The Old Republic</em> (SWTOR): cadastro de personagens, progressão PvE,
+      criação e gerenciamento de raids, lista de espera e integração com o Discord (comandos,
+      anúncios e notificações), com sincronização em tempo real.</p>
+
+      <h2>2. Não afiliação / marcas</h2>
+      <p>O HoloRaid é um projeto <strong>não oficial, feito por fãs</strong>, e <strong>não é
+      afiliado, patrocinado nem endossado</strong> pela BioWare, Electronic Arts, Lucasfilm, Disney
+      ou pelo Discord. “Star Wars”, “The Old Republic”, “SWTOR” e marcas relacionadas pertencem aos
+      seus respectivos titulares. O uso dessas referências ocorre de forma nominativa, sem
+      reivindicação de propriedade.</p>
+
+      <h2>3. Elegibilidade e conta</h2>
+      <ul>
+        <li>Você deve ter pelo menos 13 anos (ou a idade mínima exigida pelo Discord na sua
+        região) e cumprir os Termos do Discord.</li>
+        <li>O acesso é feito via login do Discord (OAuth2). Você é responsável pela atividade na
+        sua conta.</li>
+      </ul>
+
+      <h2>4. Uso aceitável</h2>
+      <p>Você concorda em não:</p>
+      <ul>
+        <li>usar o serviço para fins ilegais, abusivos, fraudulentos ou que violem direitos de
+        terceiros;</li>
+        <li>tentar burlar autenticação, autorização ou limites do serviço, ou interferir na sua
+        operação (ex.: sobrecarga, exploração de falhas);</li>
+        <li>publicar conteúdo ofensivo, spam ou enganoso por meio dos recursos do serviço;</li>
+        <li>usar o bot ou a API de forma automatizada além do uso normal pretendido.</li>
+      </ul>
+
+      <h2>5. Conteúdo do usuário</h2>
+      <p>Você mantém a titularidade das informações que fornece (como nomes de personagens e
+      anotações de raid). Ao inseri-las, você concede ao HoloRaid uma licença limitada para
+      armazenar, exibir e processar esse conteúdo <strong>com a finalidade de operar o
+      serviço</strong> — inclusive exibi-lo a outros usuários no roster das raids e nos anúncios do
+      Discord, conforme descrito na <a href="/privacy">Política de Privacidade</a>.</p>
+
+      <h2>6. Papel de administrador</h2>
+      <p>Administradores podem criar, editar, cancelar, encerrar, duplicar e excluir raids, além de
+      gerenciar papéis de usuários. Essas ações são registradas para auditoria.</p>
+
+      <h2>7. Disponibilidade e “no estado em que se encontra”</h2>
+      <p>O serviço é fornecido <strong>“no estado em que se encontra” e “conforme disponível”</strong>,
+      sem garantias de qualquer tipo, expressas ou implícitas. Não garantimos que o serviço será
+      ininterrupto, livre de erros ou de que os dados estarão sempre disponíveis. Recursos podem
+      mudar ou ser descontinuados.</p>
+
+      <h2>8. Limitação de responsabilidade</h2>
+      <p>Na máxima extensão permitida por lei, o HoloRaid e seus mantenedores não se
+      responsabilizam por danos indiretos, incidentais ou consequentes decorrentes do uso ou da
+      impossibilidade de uso do serviço, incluindo perda de dados.</p>
+
+      <h2>9. Suspensão e encerramento</h2>
+      <p>Podemos suspender ou encerrar o acesso que viole estes Termos. Você pode parar de usar o
+      serviço e solicitar a exclusão da sua conta a qualquer momento (ver Política de Privacidade).</p>
+
+      <h2>10. Alterações</h2>
+      <p>Podemos atualizar estes Termos. A data de “Última atualização” indica a versão vigente. O
+      uso continuado após mudanças significa aceitação da versão atualizada.</p>
+
+      <h2>11. Contato</h2>
+      <p>Dúvidas sobre estes Termos:
+      <a href="mailto:contato@holoraid.fun">contato@holoraid.fun</a>.</p>
+
+      <div class="note">Este documento é um modelo inicial de boa-fé. Ele não constitui
+      aconselhamento jurídico — recomenda-se revisão por um profissional antes de uso em produção.</div>
+
+      <footer>
+        <a href="https://holoraid.fun">Início</a>
+        <a href="/privacy">Política de Privacidade</a>
+      </footer>
+    </section>
+
+    <!-- ==================== DEUTSCH ==================== -->
+    <section data-lang="de">
+      <h1>Nutzungsbedingungen</h1>
+      <div class="updated">Zuletzt aktualisiert: 17. Juli 2026</div>
+
+      <p>Willkommen bei <strong>HoloRaid</strong>. Diese Nutzungsbedingungen („Bedingungen“) regeln
+      die Nutzung der HoloRaid-Website, der Anwendung und des Discord-Bots (der „Dienst“). Durch die
+      Nutzung des Dienstes stimmst du diesen Bedingungen zu. Wenn du nicht einverstanden bist, nutze
+      den Dienst nicht.</p>
+
+      <h2>1. Was HoloRaid ist</h2>
+      <p>HoloRaid ist ein von Fans erstelltes Tool zur Organisation von Operationen (Raids) in
+      <em>Star Wars: The Old Republic</em> (SWTOR): Charakterverwaltung, PvE-Fortschritt, Erstellung
+      und Verwaltung von Raids, Warteliste und Discord-Integration (Befehle, Ankündigungen und
+      Benachrichtigungen), mit Echtzeit-Synchronisierung.</p>
+
+      <h2>2. Keine Zugehörigkeit / Marken</h2>
+      <p>HoloRaid ist ein <strong>inoffizielles, von Fans erstelltes Projekt</strong> und ist
+      <strong>weder mit BioWare, Electronic Arts, Lucasfilm, Disney noch mit Discord verbunden,
+      gesponsert oder unterstützt</strong>. „Star Wars“, „The Old Republic“, „SWTOR“ und verwandte
+      Marken gehören ihren jeweiligen Inhabern. Diese Verweise werden nominativ verwendet, ohne
+      Anspruch auf Eigentum.</p>
+
+      <h2>3. Berechtigung und Konto</h2>
+      <ul>
+        <li>Du musst mindestens 13 Jahre alt sein (oder das von Discord in deiner Region geforderte
+        Mindestalter) und die Discord-Bedingungen einhalten.</li>
+        <li>Der Zugang erfolgt über die Discord-Anmeldung (OAuth2). Du bist für die Aktivität in
+        deinem Konto verantwortlich.</li>
+      </ul>
+
+      <h2>4. Zulässige Nutzung</h2>
+      <p>Du verpflichtest dich, Folgendes zu unterlassen:</p>
+      <ul>
+        <li>den Dienst für illegale, missbräuchliche, betrügerische Zwecke oder auf eine Weise zu
+        nutzen, die Rechte Dritter verletzt;</li>
+        <li>Authentifizierung, Autorisierung oder Dienstgrenzen zu umgehen oder den Betrieb zu
+        stören (z. B. Überlastung, Ausnutzung von Schwachstellen);</li>
+        <li>anstößige, Spam- oder irreführende Inhalte über die Funktionen des Dienstes zu
+        veröffentlichen;</li>
+        <li>den Bot oder die API automatisiert über die normale vorgesehene Nutzung hinaus zu
+        verwenden.</li>
+      </ul>
+
+      <h2>5. Nutzerinhalte</h2>
+      <p>Du behältst das Eigentum an den von dir bereitgestellten Informationen (wie Charakternamen
+      und Raid-Notizen). Durch deren Eingabe gewährst du HoloRaid eine beschränkte Lizenz, diese
+      Inhalte zu speichern, anzuzeigen und zu verarbeiten, <strong>um den Dienst zu betreiben</strong>
+      — einschließlich der Anzeige gegenüber anderen Nutzern im Raid-Roster und in
+      Discord-Ankündigungen, wie in der <a href="/privacy">Datenschutzerklärung</a> beschrieben.</p>
+
+      <h2>6. Administratorrolle</h2>
+      <p>Administratoren können Raids erstellen, bearbeiten, absagen, beenden, duplizieren und
+      löschen sowie Nutzerrollen verwalten. Diese Aktionen werden zu Prüfzwecken protokolliert.</p>
+
+      <h2>7. Verfügbarkeit und „wie besehen“</h2>
+      <p>Der Dienst wird <strong>„wie besehen“ und „wie verfügbar“</strong> bereitgestellt, ohne
+      jegliche ausdrückliche oder stillschweigende Gewährleistung. Wir garantieren nicht, dass der
+      Dienst ununterbrochen oder fehlerfrei ist oder dass Daten stets verfügbar sind. Funktionen
+      können sich ändern oder eingestellt werden.</p>
+
+      <h2>8. Haftungsbeschränkung</h2>
+      <p>Soweit gesetzlich zulässig, haften HoloRaid und seine Betreiber nicht für indirekte,
+      zufällige oder Folgeschäden, die aus der Nutzung oder der Unmöglichkeit der Nutzung des
+      Dienstes entstehen, einschließlich Datenverlust.</p>
+
+      <h2>9. Sperrung und Beendigung</h2>
+      <p>Wir können Zugänge sperren oder beenden, die gegen diese Bedingungen verstoßen. Du kannst
+      die Nutzung des Dienstes jederzeit beenden und die Löschung deines Kontos beantragen (siehe
+      Datenschutzerklärung).</p>
+
+      <h2>10. Änderungen</h2>
+      <p>Wir können diese Bedingungen aktualisieren. Das Datum „Zuletzt aktualisiert“ gibt die
+      aktuelle Version an. Die fortgesetzte Nutzung nach Änderungen bedeutet die Annahme der
+      aktualisierten Version.</p>
+
+      <h2>11. Kontakt</h2>
+      <p>Fragen zu diesen Bedingungen:
+      <a href="mailto:contato@holoraid.fun">contato@holoraid.fun</a>.</p>
+
+      <div class="note">Dieses Dokument ist eine anfängliche Vorlage nach bestem Wissen. Es stellt
+      keine Rechtsberatung dar — eine Prüfung durch eine Fachkraft wird vor dem Produktiveinsatz
+      empfohlen.</div>
+
+      <footer>
+        <a href="https://holoraid.fun">Start</a>
+        <a href="/privacy">Datenschutzerklärung</a>
+      </footer>
+    </section>
+
+    <!-- ==================== FRANÇAIS ==================== -->
+    <section data-lang="fr">
+      <h1>Conditions d'utilisation</h1>
+      <div class="updated">Dernière mise à jour : 17 juillet 2026</div>
+
+      <p>Bienvenue sur <strong>HoloRaid</strong>. Ces Conditions d'utilisation (« Conditions »)
+      régissent l'utilisation du site, de l'application et du bot Discord de HoloRaid (le
+      « service »). En utilisant le service, vous acceptez ces Conditions. Si vous n'êtes pas
+      d'accord, n'utilisez pas le service.</p>
+
+      <h2>1. Qu'est-ce que HoloRaid</h2>
+      <p>HoloRaid est un outil créé par des fans pour organiser les Opérations (raids) de
+      <em>Star Wars: The Old Republic</em> (SWTOR) : gestion des personnages, progression PvE,
+      création et gestion de raids, liste d'attente et intégration Discord (commandes, annonces et
+      notifications), avec synchronisation en temps réel.</p>
+
+      <h2>2. Absence d'affiliation / marques</h2>
+      <p>HoloRaid est un projet <strong>non officiel, créé par des fans</strong>, et n'est
+      <strong>ni affilié, ni parrainé, ni approuvé</strong> par BioWare, Electronic Arts, Lucasfilm,
+      Disney ou Discord. « Star Wars », « The Old Republic », « SWTOR » et les marques associées
+      appartiennent à leurs titulaires respectifs. Ces références sont utilisées de manière
+      nominative, sans revendication de propriété.</p>
+
+      <h2>3. Admissibilité et compte</h2>
+      <ul>
+        <li>Vous devez avoir au moins 13 ans (ou l'âge minimum requis par Discord dans votre
+        région) et respecter les Conditions de Discord.</li>
+        <li>L'accès se fait via la connexion Discord (OAuth2). Vous êtes responsable de l'activité
+        de votre compte.</li>
+      </ul>
+
+      <h2>4. Utilisation acceptable</h2>
+      <p>Vous vous engagez à ne pas :</p>
+      <ul>
+        <li>utiliser le service à des fins illégales, abusives, frauduleuses ou portant atteinte aux
+        droits d'autrui ;</li>
+        <li>tenter de contourner l'authentification, l'autorisation ou les limites du service, ou
+        perturber son fonctionnement (ex. surcharge, exploitation de failles) ;</li>
+        <li>publier du contenu offensant, du spam ou trompeur via les fonctionnalités du service ;</li>
+        <li>utiliser le bot ou l'API de manière automatisée au-delà de l'usage normal prévu.</li>
+      </ul>
+
+      <h2>5. Contenu de l'utilisateur</h2>
+      <p>Vous conservez la propriété des informations que vous fournissez (noms de personnages et
+      notes de raid). En les saisissant, vous accordez à HoloRaid une licence limitée pour stocker,
+      afficher et traiter ce contenu <strong>afin d'exploiter le service</strong> — y compris son
+      affichage aux autres utilisateurs dans le roster des raids et dans les annonces Discord, comme
+      décrit dans la <a href="/privacy">Politique de confidentialité</a>.</p>
+
+      <h2>6. Rôle d'administrateur</h2>
+      <p>Les administrateurs peuvent créer, modifier, annuler, terminer, dupliquer et supprimer des
+      raids, ainsi que gérer les rôles des utilisateurs. Ces actions sont journalisées à des fins
+      d'audit.</p>
+
+      <h2>7. Disponibilité et « en l'état »</h2>
+      <p>Le service est fourni <strong>« en l'état » et « selon disponibilité »</strong>, sans
+      garantie d'aucune sorte, expresse ou implicite. Nous ne garantissons pas que le service sera
+      ininterrompu, sans erreur, ni que les données seront toujours disponibles. Les fonctionnalités
+      peuvent changer ou être interrompues.</p>
+
+      <h2>8. Limitation de responsabilité</h2>
+      <p>Dans toute la mesure permise par la loi, HoloRaid et ses mainteneurs ne sont pas
+      responsables des dommages indirects, accessoires ou consécutifs résultant de l'utilisation ou
+      de l'impossibilité d'utiliser le service, y compris la perte de données.</p>
+
+      <h2>9. Suspension et résiliation</h2>
+      <p>Nous pouvons suspendre ou résilier un accès qui enfreint ces Conditions. Vous pouvez cesser
+      d'utiliser le service et demander la suppression de votre compte à tout moment (voir la
+      Politique de confidentialité).</p>
+
+      <h2>10. Modifications</h2>
+      <p>Nous pouvons mettre à jour ces Conditions. La date de « Dernière mise à jour » indique la
+      version en vigueur. L'utilisation continue après des modifications vaut acceptation de la
+      version mise à jour.</p>
+
+      <h2>11. Contact</h2>
+      <p>Questions sur ces Conditions :
+      <a href="mailto:contato@holoraid.fun">contato@holoraid.fun</a>.</p>
+
+      <div class="note">Ce document est un modèle initial de bonne foi. Il ne constitue pas un
+      conseil juridique — une révision par un professionnel est recommandée avant toute utilisation
+      en production.</div>
+
+      <footer>
+        <a href="https://holoraid.fun">Accueil</a>
+        <a href="/privacy">Politique de confidentialité</a>
+      </footer>
+    </section>
+
+    <!-- ==================== ESPAÑOL ==================== -->
+    <section data-lang="es">
+      <h1>Términos de Servicio</h1>
+      <div class="updated">Última actualización: 17 de julio de 2026</div>
+
+      <p>Bienvenido a <strong>HoloRaid</strong>. Estos Términos de Servicio (“Términos”) rigen el
+      uso del sitio, la aplicación y el bot de Discord de HoloRaid (el “servicio”). Al usar el
+      servicio, aceptas estos Términos. Si no estás de acuerdo, no utilices el servicio.</p>
+
+      <h2>1. Qué es HoloRaid</h2>
+      <p>HoloRaid es una herramienta hecha por fans para organizar Operaciones (raids) de
+      <em>Star Wars: The Old Republic</em> (SWTOR): registro de personajes, progresión PvE, creación
+      y gestión de raids, lista de espera e integración con Discord (comandos, anuncios y
+      notificaciones), con sincronización en tiempo real.</p>
+
+      <h2>2. Sin afiliación / marcas</h2>
+      <p>HoloRaid es un proyecto <strong>no oficial, hecho por fans</strong>, y <strong>no está
+      afiliado, patrocinado ni respaldado</strong> por BioWare, Electronic Arts, Lucasfilm, Disney
+      ni Discord. “Star Wars”, “The Old Republic”, “SWTOR” y las marcas relacionadas pertenecen a
+      sus respectivos titulares. Estas referencias se usan de forma nominativa, sin reivindicación
+      de propiedad.</p>
+
+      <h2>3. Elegibilidad y cuenta</h2>
+      <ul>
+        <li>Debes tener al menos 13 años (o la edad mínima exigida por Discord en tu región) y
+        cumplir los Términos de Discord.</li>
+        <li>El acceso se realiza mediante el inicio de sesión de Discord (OAuth2). Eres responsable
+        de la actividad de tu cuenta.</li>
+      </ul>
+
+      <h2>4. Uso aceptable</h2>
+      <p>Aceptas no:</p>
+      <ul>
+        <li>usar el servicio con fines ilegales, abusivos, fraudulentos o que vulneren derechos de
+        terceros;</li>
+        <li>intentar eludir la autenticación, la autorización o los límites del servicio, o
+        interferir en su funcionamiento (p. ej. sobrecarga, explotación de fallos);</li>
+        <li>publicar contenido ofensivo, spam o engañoso mediante las funciones del servicio;</li>
+        <li>usar el bot o la API de forma automatizada más allá del uso normal previsto.</li>
+      </ul>
+
+      <h2>5. Contenido del usuario</h2>
+      <p>Conservas la titularidad de la información que proporcionas (como nombres de personajes y
+      notas de raid). Al introducirla, concedes a HoloRaid una licencia limitada para almacenar,
+      mostrar y procesar ese contenido <strong>con el fin de operar el servicio</strong> — incluida
+      su visualización a otros usuarios en el roster de las raids y en los anuncios de Discord, tal
+      como se describe en la <a href="/privacy">Política de Privacidad</a>.</p>
+
+      <h2>6. Rol de administrador</h2>
+      <p>Los administradores pueden crear, editar, cancelar, finalizar, duplicar y eliminar raids,
+      además de gestionar los roles de los usuarios. Estas acciones se registran para auditoría.</p>
+
+      <h2>7. Disponibilidad y “tal cual”</h2>
+      <p>El servicio se proporciona <strong>“tal cual” y “según disponibilidad”</strong>, sin
+      garantías de ningún tipo, expresas o implícitas. No garantizamos que el servicio sea
+      ininterrumpido, esté libre de errores ni que los datos estén siempre disponibles. Las
+      funciones pueden cambiar o descontinuarse.</p>
+
+      <h2>8. Limitación de responsabilidad</h2>
+      <p>En la máxima medida permitida por la ley, HoloRaid y sus mantenedores no se hacen
+      responsables de daños indirectos, incidentales o consecuentes derivados del uso o la
+      imposibilidad de uso del servicio, incluida la pérdida de datos.</p>
+
+      <h2>9. Suspensión y terminación</h2>
+      <p>Podemos suspender o terminar el acceso que infrinja estos Términos. Puedes dejar de usar el
+      servicio y solicitar la eliminación de tu cuenta en cualquier momento (ver la Política de
+      Privacidad).</p>
+
+      <h2>10. Cambios</h2>
+      <p>Podemos actualizar estos Términos. La fecha de “Última actualización” indica la versión
+      vigente. El uso continuado tras los cambios implica la aceptación de la versión actualizada.</p>
+
+      <h2>11. Contacto</h2>
+      <p>Dudas sobre estos Términos:
+      <a href="mailto:contato@holoraid.fun">contato@holoraid.fun</a>.</p>
+
+      <div class="note">Este documento es una plantilla inicial de buena fe. No constituye
+      asesoramiento jurídico — se recomienda la revisión por un profesional antes de su uso en
+      producción.</div>
+
+      <footer>
+        <a href="https://holoraid.fun">Inicio</a>
+        <a href="/privacy">Política de Privacidad</a>
+      </footer>
+    </section>
   </div>
+
+  <script>
+    (function () {
+      var SUPPORTED = ['en', 'pt', 'de', 'fr', 'es'];
+      var TITLES = {
+        en: 'Terms of Service — HoloRaid',
+        pt: 'Termos de Serviço — HoloRaid',
+        de: 'Nutzungsbedingungen — HoloRaid',
+        fr: "Conditions d'utilisation — HoloRaid",
+        es: 'Términos de Servicio — HoloRaid'
+      };
+      var KEY = 'holoraid_lang';
+
+      function pick() {
+        var q = new URLSearchParams(location.search).get('lang');
+        if (q && SUPPORTED.indexOf(q) >= 0) return q;
+        try {
+          var saved = localStorage.getItem(KEY);
+          if (saved && SUPPORTED.indexOf(saved) >= 0) return saved;
+        } catch (e) {}
+        var nav = (navigator.language || 'en').slice(0, 2).toLowerCase();
+        return SUPPORTED.indexOf(nav) >= 0 ? nav : 'en';
+      }
+
+      function apply(lang) {
+        if (SUPPORTED.indexOf(lang) < 0) lang = 'en';
+        var sections = document.querySelectorAll('[data-lang]');
+        for (var i = 0; i < sections.length; i++) {
+          sections[i].classList.toggle('active', sections[i].getAttribute('data-lang') === lang);
+        }
+        document.documentElement.lang = lang;
+        document.title = TITLES[lang] || TITLES.en;
+        var sel = document.getElementById('langSelect');
+        if (sel) sel.value = lang;
+        try { localStorage.setItem(KEY, lang); } catch (e) {}
+      }
+
+      var sel = document.getElementById('langSelect');
+      if (sel) sel.addEventListener('change', function () { apply(sel.value); });
+      apply(pick());
+    })();
+  </script>
 </body>
 </html>
