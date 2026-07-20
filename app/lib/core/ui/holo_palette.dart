@@ -20,7 +20,7 @@ class HoloPalette {
   static const glassBorderStrong = Color(0x477C8CFF); // .28
   static const discord = Color(0xFF5865F2);
 
-  /// Gradiente do wordmark (6 tons, stops 0/.22/.48/.72/.88/1).
-  static const wordmark = [blue, indigo, heal, gold, dps, red];
-  static const wordmarkStops = [0.0, 0.22, 0.48, 0.72, 0.88, 1.0];
+  /// Gradiente do wordmark: azul→índigo (tons frios da marca).
+  static const wordmark = [blue, indigo];
+  static const wordmarkStops = [0.0, 1.0];
 }

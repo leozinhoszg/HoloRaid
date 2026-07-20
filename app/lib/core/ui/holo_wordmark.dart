@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'holo_palette.dart';
 
-/// Wordmark "HoloRaid" em Audiowide com o gradiente de 6 tons + glow (do JSON).
+/// Wordmark "HoloRaid" em Audiowide com o gradiente azul→índigo + glow azul.
 class HoloWordmark extends StatelessWidget {
   const HoloWordmark({super.key, this.size = 34});
   final double size;
@@ -24,7 +24,6 @@ class HoloWordmark extends StatelessWidget {
           color: Colors.white,
           shadows: const [
             Shadow(color: Color(0x734AB4FF), blurRadius: 20),
-            Shadow(color: Color(0x59FF6464), blurRadius: 22),
           ],
         ),
       ),
