@@ -7,6 +7,7 @@ import 'package:holoraid/features/characters/characters_providers.dart';
 import 'package:holoraid/features/home/home_providers.dart';
 import 'package:holoraid/features/home/home_screen.dart';
 import 'package:holoraid/features/home/my_raid_model.dart';
+import '../../support/localized_tester.dart';
 
 Widget _app(List<Override> o) => ProviderScope(
     overrides: o,
@@ -36,12 +37,14 @@ List<Override> _overrides({required bool withRaid}) => [
     ];
 
 void main() {
+  setUpAll(initTestLocalization);
+
   testWidgets('Home com raid renderiza a próxima operation e os tiles', (tester) async {
     await tester.pumpWidget(_app(_overrides(withRaid: true)));
     await tester.pump();
     await tester.pump(const Duration(seconds: 2));
     expect(find.text('The Dread Fortress'), findsOneWidget);
-    expect(find.text('RAIDS ATIVAS'), findsOneWidget);
+    expect(find.text('ACTIVE RAIDS'), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
   });
 
@@ -49,7 +52,7 @@ void main() {
     await tester.pumpWidget(_app(_overrides(withRaid: false)));
     await tester.pump();
     await tester.pump(const Duration(seconds: 2));
-    expect(find.textContaining('Nenhuma operation'), findsOneWidget);
+    expect(find.textContaining('No operation'), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
   });
 

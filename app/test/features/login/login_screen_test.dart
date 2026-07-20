@@ -1,10 +1,14 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:holoraid/features/login/login_screen.dart';
+import '../../support/localized_tester.dart';
 
 void main() {
+  setUpAll(initTestLocalization);
+
   testWidgets('landing renderiza wordmark, tagline, CTA e destaques em ingles', (tester) async {
     tester.view.physicalSize = const Size(1200, 2200);
     tester.view.devicePixelRatio = 1.0;
@@ -13,7 +17,14 @@ void main() {
     final router = GoRouter(routes: [
       GoRoute(path: '/', builder: (_, _) => const LoginScreen()),
     ]);
-    await tester.pumpWidget(ProviderScope(child: MaterialApp.router(routerConfig: router)));
+    await tester.pumpWidget(wrapEasyLoc((ctx) => ProviderScope(
+          child: MaterialApp.router(
+            routerConfig: router,
+            locale: ctx.locale,
+            supportedLocales: ctx.supportedLocales,
+            localizationsDelegates: ctx.localizationDelegates,
+          ),
+        )));
     // avança o relógio: dispara os delays e completa as entradas do flutter_animate
     // (finitas) num passo determinístico, sem deixar timers pendentes.
     await tester.pump();

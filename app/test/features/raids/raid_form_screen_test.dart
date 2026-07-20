@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:holoraid/core/ui/holo_dropdown.dart';
 import 'package:holoraid/features/raids/raid_model.dart';
+import '../../support/localized_tester.dart';
 import '../../support/pump_raid_form.dart';
 
 Raid _raid({String notes = 'lockme', int size = 16, int minTier = 3}) => Raid(
@@ -20,29 +21,31 @@ Future<void> _pickOperation(WidgetTester tester) async {
 }
 
 void main() {
+  setUpAll(initTestLocalization);
+
   testWidgets('criar: renderiza titulo, switch e botao', (tester) async {
     await pumpRaidForm(tester);
-    expect(find.text('Criar raid'), findsWidgets); // AppBar + botão
+    expect(find.text('Create raid'), findsWidgets); // AppBar + botão
     expect(find.widgetWithText(SwitchListTile, 'Disable mentions'), findsOneWidget);
   });
 
   testWidgets('criar: guarda de slots desabilita o botao quando soma != size', (tester) async {
     await pumpRaidForm(tester);
     await _pickOperation(tester);
-    var btn = tester.widget<FilledButton>(find.widgetWithText(FilledButton, 'Criar raid'));
+    var btn = tester.widget<FilledButton>(find.widgetWithText(FilledButton, 'Create raid'));
     expect(btn.onPressed, isNotNull); // operation escolhida + 2/2/4=8 -> habilitado
     await tester.ensureVisible(find.byIcon(Icons.add).first);
     await tester.tap(find.byIcon(Icons.add).first);
     await tester.pump();
-    btn = tester.widget<FilledButton>(find.widgetWithText(FilledButton, 'Criar raid'));
+    btn = tester.widget<FilledButton>(find.widgetWithText(FilledButton, 'Create raid'));
     expect(btn.onPressed, isNull); // soma 9 != 8 -> desabilitado
   });
 
   testWidgets('criar: salvar chama create no repo', (tester) async {
     final fake = await pumpRaidForm(tester);
     await _pickOperation(tester);
-    await tester.ensureVisible(find.widgetWithText(FilledButton, 'Criar raid'));
-    await tester.tap(find.widgetWithText(FilledButton, 'Criar raid'));
+    await tester.ensureVisible(find.widgetWithText(FilledButton, 'Create raid'));
+    await tester.tap(find.widgetWithText(FilledButton, 'Create raid'));
     await tester.pumpAndSettle();
     expect(fake.createCalls, hasLength(1));
     expect(fake.createCalls.first['operation'], 'Dread Palace');
@@ -51,8 +54,8 @@ void main() {
 
   testWidgets('editar: preenche, esconde switch e trava os imutaveis', (tester) async {
     await pumpRaidForm(tester, editRaidId: 7, existing: _raid());
-    expect(find.text('Editar raid'), findsOneWidget); // AppBar
-    expect(find.widgetWithText(FilledButton, 'Salvar'), findsOneWidget);
+    expect(find.text('Edit raid'), findsOneWidget); // AppBar
+    expect(find.widgetWithText(FilledButton, 'Save'), findsOneWidget);
     expect(find.text('lockme'), findsOneWidget); // notes prefilled
     expect(find.widgetWithText(SwitchListTile, 'Disable mentions'), findsNothing);
     final op = tester.widget<HoloDropdown<String>>(find.byKey(const ValueKey('f_operation')));
@@ -61,8 +64,8 @@ void main() {
 
   testWidgets('editar: salvar chama update com id e payload', (tester) async {
     final fake = await pumpRaidForm(tester, editRaidId: 7, existing: _raid());
-    await tester.ensureVisible(find.widgetWithText(FilledButton, 'Salvar'));
-    await tester.tap(find.widgetWithText(FilledButton, 'Salvar'));
+    await tester.ensureVisible(find.widgetWithText(FilledButton, 'Save'));
+    await tester.tap(find.widgetWithText(FilledButton, 'Save'));
     await tester.pumpAndSettle();
     expect(fake.updateCalls, hasLength(1));
     expect(fake.updateCalls.first.id, 7);

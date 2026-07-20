@@ -68,7 +68,10 @@
     "status_waitlist": "Vous êtes sur la liste d'attente",
     "in_progress": "EN COURS",
     "starts_in": "COMMENCE DANS",
-    "view_raid": "VOIR LE RAID"
+    "view_raid": "VOIR LE RAID",
+    "stat_active_raids": "RAIDS ACTIFS",
+    "stat_characters": "PERSONNAGES",
+    "stat_confirmations": "CONFIRMATIONS"
   },
   "raid_status": {
     "open": "Ouverte",

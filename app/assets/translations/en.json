@@ -68,7 +68,10 @@
     "status_waitlist": "You're on the waitlist",
     "in_progress": "IN PROGRESS",
     "starts_in": "STARTS IN",
-    "view_raid": "VIEW RAID"
+    "view_raid": "VIEW RAID",
+    "stat_active_raids": "ACTIVE RAIDS",
+    "stat_characters": "CHARACTERS",
+    "stat_confirmations": "CONFIRMATIONS"
   },
   "raid_status": {
     "open": "Open",

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../core/ui/glass_card.dart';
 import '../../../core/ui/holo_palette.dart';
@@ -17,9 +18,9 @@ class StatTiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tiles = [
-      _tile('RAIDS ATIVAS', '$raids', HoloPalette.blue),
-      _tile('PERSONAGENS', '$chars', HoloPalette.heal),
-      _tile('CONFIRMAÇÕES', '$confirmed', HoloPalette.dps),
+      _tile('home.stat_active_raids'.tr(), '$raids', HoloPalette.blue),
+      _tile('home.stat_characters'.tr(), '$chars', HoloPalette.heal),
+      _tile('home.stat_confirmations'.tr(), '$confirmed', HoloPalette.dps),
     ];
     if (compact) {
       return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [

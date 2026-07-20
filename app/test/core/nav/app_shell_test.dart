@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:holoraid/core/nav/app_shell.dart';
 import 'package:holoraid/features/home/home_providers.dart';
+import '../../support/localized_tester.dart';
 
 GoRouter _router() => GoRouter(initialLocation: '/home', routes: [
       ShellRoute(
@@ -24,6 +25,8 @@ List<Override> _ov({required String role}) =>
     [meProvider.overrideWith((ref) async => {'username': 'ana', 'role': role, 'discord_id': null, 'avatar': null})];
 
 void main() {
+  setUpAll(initTestLocalization);
+
   testWidgets('wide: sidebar com destinos; Admin oculto p/ user', (tester) async {
     tester.view.physicalSize = const Size(1200, 900);
     tester.view.devicePixelRatio = 1.0;
@@ -31,7 +34,7 @@ void main() {
     await tester.pumpWidget(_app(_ov(role: 'user')));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1)); // drena o fade de entrada (flutter_animate)
-    expect(find.text('Personagens'), findsOneWidget);
+    expect(find.text('Characters'), findsOneWidget);
     expect(find.text('Raids'), findsOneWidget);
     expect(find.text('Admin'), findsNothing);
     expect(find.text('HOME-BODY'), findsOneWidget);
@@ -53,9 +56,9 @@ void main() {
     addTearDown(tester.view.reset);
     await tester.pumpWidget(_app(_ov(role: 'user')));
     await tester.pump();
-    expect(find.text('Personagens'), findsNothing); // escondido no drawer fechado
+    expect(find.text('Characters'), findsNothing); // escondido no drawer fechado
     await tester.tap(find.byIcon(Icons.menu));
     await tester.pumpAndSettle();
-    expect(find.text('Personagens'), findsOneWidget);
+    expect(find.text('Characters'), findsOneWidget);
   });
 }

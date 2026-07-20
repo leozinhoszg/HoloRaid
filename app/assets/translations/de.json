@@ -68,7 +68,10 @@
     "status_waitlist": "Du bist auf der Warteliste",
     "in_progress": "LÄUFT",
     "starts_in": "BEGINNT IN",
-    "view_raid": "RAID ANZEIGEN"
+    "view_raid": "RAID ANZEIGEN",
+    "stat_active_raids": "AKTIVE RAIDS",
+    "stat_characters": "CHARAKTERE",
+    "stat_confirmations": "BESTÄTIGUNGEN"
   },
   "raid_status": {
     "open": "Offen",

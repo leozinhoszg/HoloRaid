@@ -19,7 +19,7 @@ Future<OAuthResult> runDiscordOAuth(ApiClient api) async {
     callbackUrlScheme: AppConfig.oauthCallbackScheme,
   );
   final code = Uri.parse(result).queryParameters['code'];
-  if (code == null) throw Exception('Discord não retornou code');
+  if (code == null) throw Exception('Discord did not return a code');
 
   final cbRes = await api.dio.post('/auth/callback',
       data: {'code': code, 'codeVerifier': codeVerifier});

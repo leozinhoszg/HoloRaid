@@ -3,12 +3,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:holoraid/features/home/my_raid_model.dart';
 import 'package:holoraid/features/home/widgets/next_raid_hero.dart';
+import '../../support/localized_tester.dart';
 
 Widget _wrap(Widget c) => MaterialApp.router(
     routerConfig: GoRouter(
         routes: [GoRoute(path: '/', builder: (_, _) => Scaffold(body: SingleChildScrollView(child: c)))]));
 
 void main() {
+  setUpAll(initTestLocalization);
+
   testWidgets('com raid mostra operation', (tester) async {
     final r = MyRaid.fromJson({
       'id': 1,
@@ -29,6 +32,6 @@ void main() {
 
   testWidgets('sem raid mostra empty-state', (tester) async {
     await tester.pumpWidget(_wrap(const NextRaidHero(raid: null, compact: true)));
-    expect(find.textContaining('Nenhuma operation'), findsOneWidget);
+    expect(find.textContaining('No operation'), findsOneWidget);
   });
 }

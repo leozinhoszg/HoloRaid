@@ -1,7 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:holoraid/core/nav/nav_destinations.dart';
+import '../../support/localized_tester.dart';
 
 void main() {
+  setUpAll(initTestLocalization);
+
   test('admin oculto para user, visível para admin', () {
     expect(navDestinations(isAdmin: false).any((d) => d.route == '/admin/users'), isFalse);
     expect(navDestinations(isAdmin: true).any((d) => d.route == '/admin/users'), isTrue);
@@ -20,7 +23,8 @@ void main() {
     expect(fabForLocation('/home'), isNull);
   });
   test('titulo por localização', () {
-    expect(titleForLocation('/characters'), 'Personagens');
+    // As traduções (en) já foram carregadas no singleton por initTestLocalization.
+    expect(titleForLocation('/characters'), 'Characters');
     expect(titleForLocation('/raids/5'), 'Raids');
     expect(titleForLocation('/desconhecido'), 'HoloRaid');
   });
